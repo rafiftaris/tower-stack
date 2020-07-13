@@ -44,6 +44,7 @@ export default class Ground{
                 this.setDefaultSettings(groundTile);
                 scene.add.existing(groundTile);
                 scene.physics.add.existing(groundTile);
+                groundTile.setImmovable(true);
                 this.groundTiles[level].push(groundTile);
             }
         }
