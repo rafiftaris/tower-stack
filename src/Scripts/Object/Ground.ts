@@ -53,4 +53,8 @@ export default class Ground{
     setDefaultSettings(groundTile: Phaser.Physics.Arcade.Sprite): void{
         groundTile.setScale(SCALE);
     }
+
+    getGroundSurface(): Phaser.Physics.Arcade.Sprite[]{
+        return this.groundTiles[0];
+    }
 }

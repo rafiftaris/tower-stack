@@ -7,7 +7,7 @@ import TitleScene from "../Scene/TitleScene";
 import {getResolution} from '../Util/Util'
 
 export const config: PhaserConfig = {
-  title: "PhaserGame",
+  title: "TowerStack",
   type: Phaser.AUTO,
   scale: {
     parent: "phaser-app",

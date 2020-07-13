@@ -21,11 +21,16 @@ export default class BricksLayer{
             this.setDefaultSettings(brick);
             scene.add.existing(brick);
             scene.physics.add.existing(brick);
+            brick.setAccelerationY(100);
             this.bricks.push(brick);
         }
     }
 
     setDefaultSettings(brick: Phaser.Physics.Arcade.Sprite): void{
         brick.setScale(SCALE);
+    }
+
+    getDroppingBricks(): Phaser.Physics.Arcade.Sprite[]{
+        return this.bricks;
     }
 }
