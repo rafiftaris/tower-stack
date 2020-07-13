@@ -46,5 +46,5 @@ export function isInApp(): boolean {
 
 export const getUrlParams = () => {
   const urlParams = new URLSearchParams(window.location.search.substring(1));
-  return Object.fromEntries(urlParams);
+  // return Object.fromEntries(urlParams);
 };
