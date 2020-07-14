@@ -2,6 +2,7 @@ import * as Phaser from "phaser";
 
 const SCALE = 4;
 import {getResolution} from '../Util/Util';
+import AlignTool from "../Util/AlignTool";
 
 export default class BuildingBlock extends Phaser.Physics.Arcade.Sprite{
     private textureFrame: number;
@@ -22,6 +23,7 @@ export default class BuildingBlock extends Phaser.Physics.Arcade.Sprite{
     setDroppingBlockSettings(): void{
         let random = Math.floor(Math.random()*2);
         if(random == 0){
+            // AlignTool.alignX()
             this.setPosition(100,128);
             this.setVelocityX(500);
         } else {

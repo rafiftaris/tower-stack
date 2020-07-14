@@ -1,19 +1,24 @@
 import * as Phaser from "phaser"; 
+import AlignTool from "../Util/AlignTool";
+import { getResolution } from "../Util/Util";
 
 const PADDING_LEFT = 200;
 const SCALE = 5;
-const STEP = 16*SCALE;
+const SIZE = 16*SCALE;
 const LENGTH = 5;
 const DEPTH = 3;
 
 export default class Ground{
-    private groundTiles: Phaser.Physics.Arcade.Sprite[][];
+    private scene: Phaser.Scene;
+    //TODO: Jadiin container
+    private groundContainer: Phaser.GameObjects.Container;
+    private groundTiles: Phaser.Physics.Arcade.Sprite[];
 
     constructor(scene: Phaser.Scene){
         this.groundTiles = [];
+        this.scene = scene;
 
         for(var level=0; level<DEPTH; level++){
-            this.groundTiles.push([]);
             for(var i=0; i<LENGTH; i++){
                 let frame = 1;
                 if(level==0){
@@ -40,38 +45,36 @@ export default class Ground{
                     }
                 }
 
-                let groundTile = new Phaser.Physics.Arcade.Sprite(scene, PADDING_LEFT+STEP*i, 1200-STEP*(DEPTH-1)+(STEP*level), 'groundsheet',frame);
+                let groundTile = new Phaser.Physics.Arcade.Sprite(scene, SIZE*i, (SIZE*level), 'groundsheet',frame);
                 this.setDefaultSettings(groundTile);
-                scene.add.existing(groundTile);
-                scene.physics.add.existing(groundTile);
-                groundTile.setImmovable(true);
-                this.groundTiles[level].push(groundTile);
+                this.groundTiles.push(groundTile);
             }
         }
+        this.groundContainer = new Phaser.GameObjects.Container(scene,0,0,this.groundTiles);
+        this.groundContainer.setSize(SIZE*LENGTH,SIZE*DEPTH);
+        AlignTool.alignX(scene,this.groundContainer,0.3);
+        AlignTool.alignY(scene,this.groundContainer,0.9);
+        scene.add.existing(this.groundContainer);
+        scene.physics.add.existing(this.groundContainer);
+        let body = <Phaser.Physics.Arcade.Body>this.groundContainer.body;
+        body.setImmovable(true);
+        body.setOffset(SIZE*(LENGTH-1)/2,SIZE);
     }
 
     setDefaultSettings(groundTile: Phaser.Physics.Arcade.Sprite): void{
-        groundTile.setScale(SCALE);
+        AlignTool.scaleToScreenHeight(this.scene,groundTile,SIZE/1200);
     }
 
-    getGroundSurface(): Phaser.Physics.Arcade.Sprite[]{
-        return this.groundTiles[0];
+    getGround(): Phaser.GameObjects.Container{
+        return this.groundContainer;
     }
 
     pushDown(): void{
-        this.groundTiles.forEach(layer => {
-            layer.forEach(element => {
-                element.setY(element.y+STEP*2-32);
-            });
-        });
+        this.groundContainer.setY(this.groundContainer.y+SIZE*2-32);
     }
 
     hide(): void{
-        this.groundTiles.forEach(layer => {
-            layer.forEach(element => {
-                element.setVisible(false);
-                element.setActive(false);
-            });
-        });
+        this.groundContainer.setVisible(false);
+        this.groundContainer.setActive(false);
     }
 }

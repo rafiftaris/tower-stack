@@ -2,7 +2,7 @@ import * as Phaser from "phaser";
 import BuildingBlock from "../Object/Block";
 import AnimationHelper from "../Util/AnimationHelper";
 
-const STARTING_Y = 936;
+const STARTING_Y = 976;
 const SCALE = 4;
 const STEP = 32*SCALE;
 
@@ -49,6 +49,7 @@ export default class BlockManager{
             this.currentY = this.minY;
         }
 
+        console.log(this.droppingBlock.y,this.currentY);
         if(this.droppingBlock.y > this.currentY){
             this.setGameOver();
             return false;

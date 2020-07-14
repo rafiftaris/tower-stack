@@ -44,7 +44,7 @@ export default class LevelScene extends Phaser.Scene {
   update(): void {
     let droppingBlock = this.blockManager.getDroppingBlock();
     let me = this;
-    this.physics.collide(this.ground.getGroundSurface(),droppingBlock,this.makeStack,null,this);
+    this.physics.collide(this.ground.getGround(),droppingBlock,this.makeStack,null,this);
     this.physics.collide(droppingBlock,this.blockManager.getStackedBlocks(),this.makeStack,null,this);
     this.physics.world.on('worldbounds', ()=>{
       if(droppingBlock.y >= getResolution().height-32*4){
@@ -70,7 +70,7 @@ export default class LevelScene extends Phaser.Scene {
   }
 
   moveUp(): void{
-    if(this.ground.getGroundSurface()[0].y <= getResolution().height){
+    if(this.ground.getGround().y <= getResolution().height){
       this.ground.pushDown();
     } else {
       this.ground.hide();
