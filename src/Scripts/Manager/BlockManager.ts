@@ -1,11 +1,13 @@
 import * as Phaser from "phaser"; 
 import BuildingBlock from "../Object/Block";
+import AnimationHelper from "../Util/AnimationHelper";
 
-const STARTING_Y = 920;
-const SCALE = 5;
+const STARTING_Y = 936;
+const SCALE = 4;
 const STEP = 32*SCALE;
 
 export default class BlockManager{
+    private scene: Phaser.Scene;
     private stackedBlocks: BuildingBlock[];
     private blocksGroup: Phaser.Physics.Arcade.Group;
     private droppingBlock: BuildingBlock;
@@ -16,7 +18,8 @@ export default class BlockManager{
         this.stackedBlocks = [];
         this.currentY = STARTING_Y;
         this.minY = STARTING_Y-STEP*2;
-        console.log(this.minY);
+        this.scene = scene;
+
         // Init blocks group
         this.blocksGroup = new Phaser.Physics.Arcade.Group(scene.physics.world,scene,{
             classType: BuildingBlock,
@@ -40,16 +43,15 @@ export default class BlockManager{
         this.droppingBlock.drop();
     }
 
-    public stackBlock(): void{
+    public stackBlock(): boolean{
         this.currentY = STARTING_Y-STEP*this.stackedBlocks.length;
         if(this.currentY < this.minY){
             this.currentY = this.minY;
         }
 
-        console.log(this.droppingBlock.y,this.currentY)
         if(this.droppingBlock.y > this.currentY){
-            console.log('game over');
-            return;
+            this.setGameOver();
+            return false;
         }
 
         let block: BuildingBlock = this.getBlockFromGroup();
@@ -65,6 +67,8 @@ export default class BlockManager{
 
         // Reset dropping block
         this.droppingBlock.setDroppingBlockSettings();
+
+        return true;
     }
 
     /**
@@ -108,5 +112,12 @@ export default class BlockManager{
             outBlock.setActive(false);
             outBlock.setVisible(false);
         }
+    }
+
+    setGameOver(): void{
+        AnimationHelper.EaseOutAndFade(this.scene,this.droppingBlock,0.25);
+        this.droppingBlock.setGravityY(0);
+        //TODO: game over popup
+        console.log('game over');
     }
 }

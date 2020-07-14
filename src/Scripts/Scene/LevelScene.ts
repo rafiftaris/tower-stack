@@ -4,6 +4,7 @@ import Ground from "../Object/Ground";
 import BlockManager from "../Manager/BlockManager";
 
 import {getResolution} from '../Util/Util';
+import {GAME_STATE} from "../Enum/enum";
 
 const MAX_HEIGHT = 3;
 
@@ -13,6 +14,8 @@ export default class LevelScene extends Phaser.Scene {
   private blockManager: BlockManager;
   private inputZone: Phaser.GameObjects.Zone;
   private blockJustStacked: boolean;
+  private gameOver: boolean;
+  private gameState: GAME_STATE = GAME_STATE.GAME_ON;
 
   constructor() {
     super({ key: "LevelScene" });
@@ -29,18 +32,27 @@ export default class LevelScene extends Phaser.Scene {
     this.inputZone.setInteractive();
     this.add.existing(this.inputZone);
     this.blockJustStacked = false;
+    this.gameOver = false;
 
     let me = this;
     this.inputZone.on('pointerdown', ()=>{
       me.blockManager.dropBlock();
     });
+    this.physics.world.checkCollision.up = false;
   }
 
   update(): void {
-    this.physics.collide(this.ground.getGroundSurface(),this.blockManager.getDroppingBlock(),this.makeStack,null,this);
-    this.physics.collide(this.blockManager.getDroppingBlock(),this.blockManager.getStackedBlocks(),this.makeStack,null,this);
+    let droppingBlock = this.blockManager.getDroppingBlock();
+    let me = this;
+    this.physics.collide(this.ground.getGroundSurface(),droppingBlock,this.makeStack,null,this);
+    this.physics.collide(droppingBlock,this.blockManager.getStackedBlocks(),this.makeStack,null,this);
+    this.physics.world.on('worldbounds', ()=>{
+      if(droppingBlock.y >= getResolution().height-32*4){
+        me.setGameOver();
+      }
+    });
 
-    if(this.blockManager.getStackedBlocks().length >= MAX_HEIGHT && this.blockJustStacked){
+    if(this.blockManager.getStackedBlocks().length >= MAX_HEIGHT && this.blockJustStacked && this.gameState !== GAME_STATE.GAME_OVER){
       this.moveUp();
       this.blockJustStacked = false;
     }
@@ -50,7 +62,10 @@ export default class LevelScene extends Phaser.Scene {
   }
 
   makeStack(): void{
-    this.blockManager.stackBlock();
+    let success = this.blockManager.stackBlock();
+    if(!success){
+      this.gameState = GAME_STATE.GAME_OVER;
+    }
     this.blockJustStacked = true;
   }
 
@@ -63,5 +78,10 @@ export default class LevelScene extends Phaser.Scene {
 
     this.blockManager.pushDown();
     this.blockManager.checkBottomStack();
+  }
+
+  setGameOver(): void{
+    this.blockManager.setGameOver();
+    this.gameState = GAME_STATE.GAME_OVER;
   }
 }

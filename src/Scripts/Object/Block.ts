@@ -1,6 +1,6 @@
 import * as Phaser from "phaser";
 
-const SCALE = 5;
+const SCALE = 4;
 import {getResolution} from '../Util/Util';
 
 export default class BuildingBlock extends Phaser.Physics.Arcade.Sprite{
@@ -12,7 +12,6 @@ export default class BuildingBlock extends Phaser.Physics.Arcade.Sprite{
         scene.add.existing(this);
         scene.physics.add.existing(this);
         this.setDefaultSettings();
-        // this.drop();
     }
     
     setDefaultSettings(): void{
@@ -24,14 +23,17 @@ export default class BuildingBlock extends Phaser.Physics.Arcade.Sprite{
         let random = Math.floor(Math.random()*2);
         if(random == 0){
             this.setPosition(100,128);
-            this.setVelocityX(800);
+            this.setVelocityX(500);
         } else {
             this.setPosition(getResolution().width-100,128);
-            this.setVelocityX(-800);
+            this.setVelocityX(-500);
         }
         this.setBounceX(1);
         this.setCollideWorldBounds(true);
+        let body = <Phaser.Physics.Arcade.Body>this.body;
+        body.onWorldBounds = true;
         this.setBlockTexture();
+        this.setGravityY(0);
     }
     
     setBlockTexture(frame?: number): void{
@@ -45,6 +47,7 @@ export default class BuildingBlock extends Phaser.Physics.Arcade.Sprite{
     drop(): void{
         this.setVelocityX(0);
         this.setVelocityY(1000);
+        this.setGravityY(100);
     }
 
     getTextureFrame(): number{

@@ -1,9 +1,9 @@
 import * as Phaser from "phaser"; 
 
-const PADDING_LEFT = 125;
+const PADDING_LEFT = 200;
 const SCALE = 5;
 const STEP = 16*SCALE;
-const LENGTH = 7;
+const LENGTH = 5;
 const DEPTH = 3;
 
 export default class Ground{
@@ -25,7 +25,7 @@ export default class Ground{
                 } else if (level==DEPTH-1){
                     if(i==0){
                         frame = 14;
-                    } else if (i==6){
+                    } else if (i==LENGTH-1){
                         frame = 16;
                     } else {
                         frame = 15;
@@ -33,7 +33,7 @@ export default class Ground{
                 } else {
                     if(i==0){
                         frame = 7;
-                    } else if (i==6){
+                    } else if (i==LENGTH-1){
                         frame = 9;
                     } else {
                         frame = 8;
@@ -61,7 +61,7 @@ export default class Ground{
     pushDown(): void{
         this.groundTiles.forEach(layer => {
             layer.forEach(element => {
-                element.setY(element.y+STEP*2);
+                element.setY(element.y+STEP*2-32);
             });
         });
     }
