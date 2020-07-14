@@ -40,7 +40,7 @@ export default class Ground{
                     }
                 }
 
-                let groundTile = new Phaser.Physics.Arcade.Sprite(scene, PADDING_LEFT+STEP*i, 1200-STEP*(DEPTH-1)+(STEP*level), 'spritesheet',frame);
+                let groundTile = new Phaser.Physics.Arcade.Sprite(scene, PADDING_LEFT+STEP*i, 1200-STEP*(DEPTH-1)+(STEP*level), 'groundsheet',frame);
                 this.setDefaultSettings(groundTile);
                 scene.add.existing(groundTile);
                 scene.physics.add.existing(groundTile);
