@@ -57,4 +57,21 @@ export default class Ground{
     getGroundSurface(): Phaser.Physics.Arcade.Sprite[]{
         return this.groundTiles[0];
     }
+
+    pushDown(): void{
+        this.groundTiles.forEach(layer => {
+            layer.forEach(element => {
+                element.setY(element.y+STEP*2);
+            });
+        });
+    }
+
+    hide(): void{
+        this.groundTiles.forEach(layer => {
+            layer.forEach(element => {
+                element.setVisible(false);
+                element.setActive(false);
+            });
+        });
+    }
 }

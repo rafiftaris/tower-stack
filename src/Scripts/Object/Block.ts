@@ -1,6 +1,7 @@
-import * as Phaser from "phaser"; 
+import * as Phaser from "phaser";
 
 const SCALE = 5;
+import {getResolution} from '../Util/Util';
 
 export default class BuildingBlock extends Phaser.Physics.Arcade.Sprite{
     private textureFrame: number;
@@ -20,10 +21,16 @@ export default class BuildingBlock extends Phaser.Physics.Arcade.Sprite{
     }
 
     setDroppingBlockSettings(): void{
+        let random = Math.floor(Math.random()*2);
+        if(random == 0){
+            this.setPosition(100,128);
+            this.setVelocityX(800);
+        } else {
+            this.setPosition(getResolution().width-100,128);
+            this.setVelocityX(-800);
+        }
         this.setBounceX(1);
-        this.setPosition(100,128);
         this.setCollideWorldBounds(true);
-        this.setVelocityX(800);
         this.setBlockTexture();
     }
     
