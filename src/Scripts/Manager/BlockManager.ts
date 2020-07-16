@@ -11,7 +11,7 @@ export default class BlockManager{
     private scene: Phaser.Scene;
     private stackedBlocks: BuildingBlock[];
     private blocksGroup: Phaser.GameObjects.Group;
-    private droppingBlock: BuildingBlock;
+    private movingBlock: BuildingBlock;
 
     constructor(scene: Phaser.Scene){
         this.stackedBlocks = [];
@@ -23,47 +23,43 @@ export default class BlockManager{
             defaultKey: 'block',
             maxSize: 30,
         });
-        this.droppingBlock = this.blocksGroup.get();
-        this.droppingBlock.setDroppingBlockSettings();
+        this.movingBlock = this.getBlockFromGroup();
+        this.movingBlock.setMovingBlockSettings();
     }
-
-    public dropBlock(): void{
-        this.droppingBlock.drop();
-
-        // Reset dropping block
-        const blockBody = this.droppingBlock;
-        this.stackedBlocks.push(blockBody);
-
-        this.droppingBlock = null;
-
-        this.scene.time.addEvent({
-            delay: 1000,
-            callback: this.createDroppingBlock,
-            callbackScope: this
-        })
-    }
-
+    
     /**
      * Get building block from block group
      * @returns: building block
      */
     private getBlockFromGroup(): BuildingBlock{
         let block: BuildingBlock = this.blocksGroup.get();
-
+        
         if(block){
             block.setActive(true);
             block.setVisible(true);
             block.setDefaultSettings();
-
+            
             return block;
         }
         return null;
     }
+    
+    public dropBlock(): void{
+        let position: Phaser.Math.Vector2 = this.movingBlock.hide();
+
+        // Reset dropping block
+        const blockBody = this.getBlockFromGroup();
+        blockBody.setDroppingBlockSettings(position, this.movingBlock.getTextureFrame());
+        this.stackedBlocks.push(blockBody);
+    }
 
     setGameOver(): void{
-        AnimationHelper.EaseOutAndFade(this.scene,this.droppingBlock,0.25);
-        //TODO: game over popup
-        console.log('game over');
+        this.movingBlock.hide();
+
+        // Calculate Score
+        this.stackedBlocks.forEach((block,index) => {
+            
+        });
     }
 
     checkFallingBlocks(): void{
@@ -72,20 +68,18 @@ export default class BlockManager{
             block.x<=0 ||
             block.x>=getResolution().width){
                 block.setVisible(false);
-                block.resetSettings();
                 block.setActive(false);
                 this.stackedBlocks.splice(index,1);
             }
         });
     }
 
-    createDroppingBlock(): void{
-        if(this.droppingBlock){ return; }
-        this.droppingBlock = this.getBlockFromGroup();
-        this.droppingBlock.setDroppingBlockSettings();
+    showMovingBlock(): void{
+        this.movingBlock.show();
+        this.movingBlock.changeTexture();
     }
 
     getDroppingBlock(): BuildingBlock{
-        return this.droppingBlock;
+        return this.movingBlock;
     }
 }

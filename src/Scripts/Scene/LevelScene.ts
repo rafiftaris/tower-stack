@@ -1,5 +1,6 @@
 import * as Phaser from "phaser";
 import FpsText from "../Object/FpsText";
+import TimerText from "../Object/TimerText";
 import Ground from "../Object/Ground";
 import BlockManager from "../Manager/BlockManager";
 
@@ -11,6 +12,7 @@ import AlignTool from "../Util/AlignTool";
 
 export default class LevelScene extends Phaser.Scene {
   private fpsText: FpsText;
+  private timeText: TimerText;
   private ground: Ground;
   private blockManager: BlockManager;
   private inputZone: Phaser.GameObjects.Zone;
@@ -26,6 +28,7 @@ export default class LevelScene extends Phaser.Scene {
   create(): void {
     this.matter.world.setBounds(-500,-300,getResolution().width+1000,getResolution().height+500);
     this.fpsText = new FpsText(this);
+    this.timeText = new TimerText(this);
     this.ground = new Ground(this);
     this.blockManager = new BlockManager(this);
     this.inputZone = new Phaser.GameObjects.Zone(this,0,100,getResolution().width,getResolution().height-100);
@@ -35,10 +38,23 @@ export default class LevelScene extends Phaser.Scene {
     this.inputDisabled = false;
 
     let me = this;
-    this.inputZone.on('pointerdown', ()=>{
+    this.inputZone.on('pointerdown', () => {
+      if(this.inputDisabled || this.gameState === GAME_STATE.GAME_OVER) { return; }
       me.inputDisabled = true;
       me.blockManager.dropBlock();
-    });
+      me.timeText.createTimerEvent();
+
+      me.time.addEvent({
+        delay: 1000,
+        callback: me.showMovingBlock,
+        callbackScope: me
+      });
+    },this);
+  }
+
+  showMovingBlock(): void{
+    this.blockManager.showMovingBlock();
+    this.inputDisabled = false;
   }
 
   update(): void {
@@ -46,6 +62,9 @@ export default class LevelScene extends Phaser.Scene {
     // this.matter.world.on('collisionstart',this.checkCollision,this);
 
     this.fpsText.update();
+    if(this.timeText.timesUp()){
+      this.setGameOver();
+    }
 
     this.input.activePointer;
   }
@@ -75,7 +94,7 @@ export default class LevelScene extends Phaser.Scene {
     }
 
     if(worldBoundCollision && allowCreateBlock && !this.blockManager.getDroppingBlock()){
-      this.blockManager.createDroppingBlock();
+      this.blockManager.showMovingBlock();
       return;
     }
 
@@ -98,12 +117,13 @@ export default class LevelScene extends Phaser.Scene {
     }
     if(allowCreateBlock && !this.blockManager.getDroppingBlock()){
       // console.log('create drop')
-      this.blockManager.createDroppingBlock();
+      this.blockManager.showMovingBlock();
     }
   }
 
   setGameOver(): void{
     this.blockManager.setGameOver();
+    this.timeText.destroyTimeEvent();
     this.gameState = GAME_STATE.GAME_OVER;
   }
 }
