@@ -5,17 +5,17 @@ import BlockManager from "../Manager/BlockManager";
 
 import {getResolution} from '../Util/Util';
 import {GAME_STATE} from "../Enum/enum";
+import BuildingBlock from "../Object/Block";
+import AlignTool from "../Util/AlignTool";
 
-const MAX_HEIGHT = 3;
 
 export default class LevelScene extends Phaser.Scene {
   private fpsText: FpsText;
   private ground: Ground;
   private blockManager: BlockManager;
   private inputZone: Phaser.GameObjects.Zone;
-  private blockJustStacked: boolean;
-  private gameOver: boolean;
   private gameState: GAME_STATE = GAME_STATE.GAME_ON;
+  private inputDisabled: boolean;
 
   constructor() {
     super({ key: "LevelScene" });
@@ -24,6 +24,7 @@ export default class LevelScene extends Phaser.Scene {
   preload(): void {}
 
   create(): void {
+    this.matter.world.setBounds(-500,-300,getResolution().width+1000,getResolution().height+500);
     this.fpsText = new FpsText(this);
     this.ground = new Ground(this);
     this.blockManager = new BlockManager(this);
@@ -31,53 +32,74 @@ export default class LevelScene extends Phaser.Scene {
     this.inputZone.setOrigin(0,0);
     this.inputZone.setInteractive();
     this.add.existing(this.inputZone);
-    this.blockJustStacked = false;
-    this.gameOver = false;
+    this.inputDisabled = false;
 
     let me = this;
     this.inputZone.on('pointerdown', ()=>{
+      me.inputDisabled = true;
       me.blockManager.dropBlock();
     });
-    this.physics.world.checkCollision.up = false;
   }
 
   update(): void {
-    let droppingBlock = this.blockManager.getDroppingBlock();
-    let me = this;
-    this.physics.collide(this.ground.getGround(),droppingBlock,this.makeStack,null,this);
-    this.physics.collide(droppingBlock,this.blockManager.getStackedBlocks(),this.makeStack,null,this);
-    this.physics.world.on('worldbounds', ()=>{
-      if(droppingBlock.y >= getResolution().height-32*4){
-        me.setGameOver();
-      }
-    });
+    this.blockManager.checkFallingBlocks();
+    // this.matter.world.on('collisionstart',this.checkCollision,this);
 
-    if(this.blockManager.getStackedBlocks().length >= MAX_HEIGHT && this.blockJustStacked && this.gameState !== GAME_STATE.GAME_OVER){
-      this.moveUp();
-      this.blockJustStacked = false;
-    }
     this.fpsText.update();
 
     this.input.activePointer;
   }
 
-  makeStack(): void{
-    let success = this.blockManager.stackBlock();
-    if(!success){
-      this.gameState = GAME_STATE.GAME_OVER;
-    }
-    this.blockJustStacked = true;
-  }
+  checkCollision(event, obj1, obj2){
+    const threshY = AlignTool.getXfromScreenWidth(this,0.3)
+    let allowCreateBlock = false;
+    let worldBoundCollision = false;
 
-  moveUp(): void{
-    if(this.ground.getGround().y <= getResolution().height){
-      this.ground.pushDown();
-    } else {
-      this.ground.hide();
+    // Check if obj1 is world bounds
+    if(!obj1.gameObject){
+      if(!obj2.collidedWithWorldBounds){
+        obj2.collidedWithWorldBounds = true;
+        this.inputDisabled = false;
+        allowCreateBlock = true;
+        worldBoundCollision = true;
+      }
     }
 
-    this.blockManager.pushDown();
-    this.blockManager.checkBottomStack();
+    if(!obj2.gameObject){
+      if(!obj1.collidedWithWorldBounds){
+        obj1.collidedWithWorldBounds = true;
+        this.inputDisabled = false;
+        allowCreateBlock = true;
+        worldBoundCollision = true;
+      }
+    }
+
+    if(worldBoundCollision && allowCreateBlock && !this.blockManager.getDroppingBlock()){
+      this.blockManager.createDroppingBlock();
+      return;
+    }
+
+    // hasCollided undefined on ground objects
+    if(!obj1 && obj1.gameObject.hasCollided !== undefined){
+      // console.log("obj1",obj1.hasCollided);
+      if(!obj1.hasCollided && obj1.position.y >= threshY){
+        obj1.hasCollided = true;
+        this.inputDisabled = false;
+        allowCreateBlock = true;
+      }
+    }
+    if(obj2.gameObject.hasCollided !== undefined){
+      // console.log("obj2",obj2.hasCollided);
+      if(!obj2.hasCollided && obj2.position.y >= threshY){
+        obj2.hasCollided = true;
+        this.inputDisabled = false;
+        allowCreateBlock = true;
+      }
+    }
+    if(allowCreateBlock && !this.blockManager.getDroppingBlock()){
+      // console.log('create drop')
+      this.blockManager.createDroppingBlock();
+    }
   }
 
   setGameOver(): void{

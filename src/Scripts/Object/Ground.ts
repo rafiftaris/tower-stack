@@ -2,17 +2,18 @@ import * as Phaser from "phaser";
 import AlignTool from "../Util/AlignTool";
 import { getResolution } from "../Util/Util";
 
-const PADDING_LEFT = 200;
+const PADDING_LEFT = 125;
+const PADDING_TOP = 1100;
 const SCALE = 5;
 const SIZE = 16*SCALE;
-const LENGTH = 5;
+const LENGTH = 7;
 const DEPTH = 3;
 
 export default class Ground{
     private scene: Phaser.Scene;
     //TODO: Jadiin container
     private groundContainer: Phaser.GameObjects.Container;
-    private groundTiles: Phaser.Physics.Arcade.Sprite[];
+    private groundTiles: Phaser.Physics.Matter.Sprite[];
 
     constructor(scene: Phaser.Scene){
         this.groundTiles = [];
@@ -45,24 +46,18 @@ export default class Ground{
                     }
                 }
 
-                let groundTile = new Phaser.Physics.Arcade.Sprite(scene, SIZE*i, (SIZE*level), 'groundsheet',frame);
+                let groundTile = scene.matter.add.sprite(PADDING_LEFT+SIZE*i, PADDING_TOP+(SIZE*level), 'groundsheet',frame);
                 this.setDefaultSettings(groundTile);
                 this.groundTiles.push(groundTile);
             }
         }
         this.groundContainer = new Phaser.GameObjects.Container(scene,0,0,this.groundTiles);
-        this.groundContainer.setSize(SIZE*LENGTH,SIZE*DEPTH);
-        AlignTool.alignX(scene,this.groundContainer,0.3);
-        AlignTool.alignY(scene,this.groundContainer,0.9);
         scene.add.existing(this.groundContainer);
-        scene.physics.add.existing(this.groundContainer);
-        let body = <Phaser.Physics.Arcade.Body>this.groundContainer.body;
-        body.setImmovable(true);
-        body.setOffset(SIZE*(LENGTH-1)/2,SIZE);
     }
 
-    setDefaultSettings(groundTile: Phaser.Physics.Arcade.Sprite): void{
+    setDefaultSettings(groundTile: Phaser.Physics.Matter.Sprite): void{
         AlignTool.scaleToScreenHeight(this.scene,groundTile,SIZE/1200);
+        groundTile.setStatic(true);
     }
 
     getGround(): Phaser.GameObjects.Container{

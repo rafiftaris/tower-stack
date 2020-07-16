@@ -17,8 +17,11 @@ export const config: PhaserConfig = {
     height: getResolution().height,
   },
   physics: {
-    default: "arcade",
+    default: "matter",
     arcade: {
+      debug: false
+    },
+    matter:{
       debug: true
     }
   },
