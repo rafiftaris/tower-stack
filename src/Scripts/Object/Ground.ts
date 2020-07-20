@@ -1,6 +1,5 @@
 import * as Phaser from "phaser"; 
 import AlignTool from "../Util/AlignTool";
-import { getResolution } from "../Util/Util";
 
 export default class Ground{
     readonly PADDING_LEFT = 125;
@@ -11,8 +10,6 @@ export default class Ground{
     readonly DEPTH = 3;
     
     private scene: Phaser.Scene;
-    //TODO: Jadiin container
-    private groundContainer: Phaser.GameObjects.Container;
     private groundTiles: Phaser.Physics.Matter.Sprite[];
 
     constructor(scene: Phaser.Scene){
@@ -51,25 +48,21 @@ export default class Ground{
                 this.groundTiles.push(groundTile);
             }
         }
-        this.groundContainer = new Phaser.GameObjects.Container(scene,0,0,this.groundTiles);
-        scene.add.existing(this.groundContainer);
     }
 
-    setDefaultSettings(groundTile: Phaser.Physics.Matter.Sprite): void{
+    /**
+     * Set default settings of a ground tile.
+     * @param groundTile: ground tile
+     */
+    private setDefaultSettings(groundTile: Phaser.Physics.Matter.Sprite): void{
         AlignTool.scaleToScreenHeight(this.scene,groundTile,this.SIZE/1200);
         groundTile.setStatic(true);
     }
 
+    /**
+     * Get one of the ground block.
+     */
     getGroundBlock(): Phaser.Physics.Matter.Sprite{
         return this.groundTiles[0];
-    }
-
-    pushDown(): void{
-        this.groundContainer.setY(this.groundContainer.y+this.SIZE*2-32);
-    }
-
-    hide(): void{
-        this.groundContainer.setVisible(false);
-        this.groundContainer.setActive(false);
     }
 }

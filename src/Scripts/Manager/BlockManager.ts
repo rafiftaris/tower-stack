@@ -9,20 +9,27 @@ const STARTING_Y = 976;
 const SCALE = 4;
 const STEP = 32*SCALE;
 
-export default class BlockManager{
-    private scene: Phaser.Scene;
-    private stackedBlocks: BuildingBlock[];
-    private blocksGroup: Phaser.GameObjects.Group;
-    private movingBlock: BuildingBlock;
+class BlockManagerHelper{
+    private static instance: BlockManagerHelper;
+
+    private scene!: Phaser.Scene;
+    private stackedBlocks!: BuildingBlock[];
+    private blocksGroup!: Phaser.GameObjects.Group;
+    private movingBlock!: BuildingBlock;
     private currentDroppingBlock: BuildingBlock;
 
     private score: number = 0;
 
-    constructor(scene: Phaser.Scene){
+    public static get Instance() {
+        const instance = this.instance || (this.instance = new this());
+        return instance;
+    }
+
+    init(scene: Phaser.Scene) {
+        this.scene = scene;
         this.stackedBlocks = [];
         this.scene = scene;
         this.score = 0;
-
         // Init blocks group
         this.blocksGroup = scene.add.group({
             classType: BuildingBlock,
@@ -50,16 +57,34 @@ export default class BlockManager{
         return null;
     }
     
-    public dropBlock(): void{
-        let position: Phaser.Math.Vector2 = this.movingBlock.hide();
-
-        // Reset dropping block
-        const blockBody = this.getBlockFromGroup();
-        blockBody.setDroppingBlockSettings(position, this.movingBlock.getTextureFrame());
-        this.currentDroppingBlock = blockBody;
-        console.log("drop",this.currentDroppingBlock.hasCollided);
+    /**
+     * Get current score
+     * @returns: score
+     */
+    getScore(): number{
+        return this.score;
     }
 
+    /**
+     * Get moving block
+     * @returns: Building block
+     */
+    getMovingBlock(): BuildingBlock{
+        return this.movingBlock;
+    }
+
+    /**
+     * Get delay duration for game over panel popup
+     * @returns: delay duration
+     */
+    getDelayDuration(): number{
+        return (this.stackedBlocks.length+1) * 750;
+    }
+
+    /**
+     * Prepare game over state by counting score on stacked blocks.
+     * @param ground: In-game ground sprites
+     */
     setGameOver(ground: Ground): void{
         this.movingBlock.hide();
         if(this.currentDroppingBlock){
@@ -92,12 +117,24 @@ export default class BlockManager{
             repeat: this.stackedBlocks.length
         });
     }
-    
-    getScore(): number{
-        return this.score;
+
+    /**
+     * Drop block from moving block position
+     */
+    dropBlock(): void{
+        let position: Phaser.Math.Vector2 = this.movingBlock.hide();
+
+        // Reset dropping block
+        const blockBody = this.getBlockFromGroup();
+        blockBody.setDroppingBlockSettings(position, this.movingBlock.getTextureFrame());
+        this.currentDroppingBlock = blockBody;
     }
 
-    countBlockScore(ground: Ground): void{
+    /**
+     * Count score of each block and accumulate to final score
+     * @param ground: In-game ground sprites
+     */
+    private countBlockScore(ground: Ground): void{
         if(this.stackedBlocks.length > 0){
             let block = this.stackedBlocks.shift();
             AnimationHelper.ChangeAlpha(this.scene, block, 0.5, 0);
@@ -111,18 +148,24 @@ export default class BlockManager{
                 text: currentBlockScore.toString(),
                 duration: 1,
                 style: {
-                    fontSize: 24,
+                    fontSize: 96,
+                    fontStyle: "Bold",
                     fontFamily: "Courier",
-                    color: "white"
+                    color: "black",
+                    strokeThickness: 1
                   },
-                animType: ANIMATION_TYPE.EASE_IN,
-                retain: false,
+                animType: ANIMATION_TYPE.EMBIGGEN,
+                retain: true,
             })?.text as Phaser.GameObjects.Text;
             scoreText.setVisible(true);
             this.score += currentBlockScore;   
         }
     }
 
+    /**
+     * Check falling blocks every update. 
+     * Remove block when its falling outside the ground.
+     */
     checkFallingBlocks(): void{
         this.stackedBlocks.forEach((block,index) => {
             if(block.y>=getResolution().height ||
@@ -137,26 +180,29 @@ export default class BlockManager{
         });
     }
 
+    /**
+     * Show moving block after player drop a block.
+     */
     showMovingBlock(): void{
         this.movingBlock.show();
         this.movingBlock.changeTexture();
     }
 
-    getMovingBlock(): BuildingBlock{
-        return this.movingBlock;
-    }
-
-    getDelayDuration(): number{
-        return (this.stackedBlocks.length+1) * 750;
-    }
-
+    /**
+     * Add block to stacked blocks.
+     * @param block: block that is going to be added
+     */
     addBlockToStack(block: BuildingBlock): void{
-        console.log("stack",block.hasCollided);
         this.stackedBlocks.push(block);
         this.currentDroppingBlock = null;
     }
 
+    /**
+     * Freeze stack after game over.
+     */
     freezeStack(): void{
+        this.currentDroppingBlock?.setVisible(false);
+        this.currentDroppingBlock?.setActive(false);
         this.stackedBlocks.forEach((block,index) => {
             // Freeze box when not falling, remove from stack otherwise
             if(block.body.velocity.y < 2){
@@ -170,3 +216,5 @@ export default class BlockManager{
         });
     }
 }
+
+export const BlockManager = BlockManagerHelper.Instance;

@@ -2,7 +2,7 @@ import * as Phaser from "phaser";
 import FpsText from "../Object/FpsText";
 import Timer from "../Object/Timer";
 import Ground from "../Object/Ground";
-import BlockManager from "../Manager/BlockManager";
+import {BlockManager} from "../Manager/BlockManager";
 
 import {getResolution} from '../Util/Util';
 import {ImagePopUp} from "../Util/ImagePopUp";
@@ -18,7 +18,6 @@ export default class LevelScene extends Phaser.Scene {
   private fpsText: FpsText;
   private timeText: Timer;
   private ground: Ground;
-  private blockManager: BlockManager;
   private inputZone: Phaser.GameObjects.Zone;
   private gameState: GAME_STATE = GAME_STATE.GAME_ON;
   private inputDisabled: boolean;
@@ -38,7 +37,6 @@ export default class LevelScene extends Phaser.Scene {
     this.fpsText = new FpsText(this);
     this.timeText = new Timer(this);
     this.ground = new Ground(this);
-    this.blockManager = new BlockManager(this);
     this.inputZone = new Phaser.GameObjects.Zone(this,0,100,getResolution().width,getResolution().height-100);
     this.inputZone.setOrigin(0,0);
     this.inputZone.setInteractive();
@@ -54,7 +52,7 @@ export default class LevelScene extends Phaser.Scene {
     this.inputZone.on('pointerdown', () => {
       if(this.inputDisabled || this.gameState === GAME_STATE.GAME_OVER) { return; }
       me.inputDisabled = true;
-      me.blockManager.dropBlock();
+      BlockManager.dropBlock();
       me.timeText.createTimerEvent();
 
       me.time.addEvent({
@@ -68,16 +66,17 @@ export default class LevelScene extends Phaser.Scene {
   initializeStaticElements(): void{
     TextPopUp.init(this, DepthConfig.score);
     ImagePopUp.init(this, DepthConfig.gameOverPanel);
+    BlockManager.init(this);
   }
 
   showMovingBlock(): void{
     if(this.gameState === GAME_STATE.GAME_OVER) { return; }
-    this.blockManager.showMovingBlock();
+    BlockManager.showMovingBlock();
     this.inputDisabled = false;
   }
 
   update(): void {
-    this.blockManager.checkFallingBlocks();
+    BlockManager.checkFallingBlocks();
     this.matter.world.on('collisionstart',this.checkCollision,this);
 
     this.fpsText.update();
@@ -95,13 +94,13 @@ export default class LevelScene extends Phaser.Scene {
     if(!obj1.gameObject || !obj2.gameObject){ return; }
 
     // hasCollided undefined on ground objects
-    if(!obj1 && obj1.gameObject.hasCollided !== undefined){
+    if(obj1.gameObject.hasCollided !== undefined){
       // console.log("obj1",obj1.gameObject);
       block = <BuildingBlock>obj1.gameObject;
       if(!block.hasCollided){
         this.sound.play("thud", { volume: 1.7 });
         block.hasCollided = true;
-        this.blockManager.addBlockToStack(block);
+        BlockManager.addBlockToStack(block);
       }
     }
     if(obj2.gameObject.hasCollided !== undefined){
@@ -110,7 +109,7 @@ export default class LevelScene extends Phaser.Scene {
       if(!block.hasCollided){
         this.sound.play("thud", { volume: 1.7 });
         block.hasCollided = true;
-        this.blockManager.addBlockToStack(block);
+        BlockManager.addBlockToStack(block);
       }
     }
   }
@@ -120,12 +119,12 @@ export default class LevelScene extends Phaser.Scene {
     this.timeText.destroyTimeEvent();
     this.inputZone.removeInteractive();
     this.inputZone.destroy();
-    this.blockManager.setGameOver(this.ground);
-    this.time.delayedCall(this.blockManager.getDelayDuration(),this.showPanel,null,this);
+    BlockManager.setGameOver(this.ground);
+    this.time.delayedCall(BlockManager.getDelayDuration(),this.showPanel,null,this);
   }
 
   showPanel(): void{
-    this.score = this.blockManager.getScore();
+    this.score = BlockManager.getScore();
     this.gameOverPanel.showScore(this.score);
   }
 }

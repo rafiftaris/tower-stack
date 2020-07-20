@@ -1,6 +1,5 @@
 import * as Phaser from "phaser";
 import AlignTool from "../Util/AlignTool";
-import AnimationHelper from "../Util/AnimationHelper";
 import DepthConfig from "../Config/DepthConfig";
 
 const CONFIG = {
@@ -15,7 +14,6 @@ export default class BuildingBlock extends Phaser.Physics.Matter.Sprite{
     private textureFrame: number;
     private tween: Phaser.Tweens.Tween;
     public hasCollided: boolean;
-    private number: Phaser.GameObjects.Text;
 
     constructor(scene: Phaser.Scene){
         super(scene.matter.world,0,0,"blocksheet",0,CONFIG);
@@ -26,6 +24,10 @@ export default class BuildingBlock extends Phaser.Physics.Matter.Sprite{
         this.setDefaultSettings();
     }
     
+    /**
+     * Set default settings of a block.
+     * @param texture: texture index. If null, randomize index
+     */
     setDefaultSettings(texture?: number): void{
         this.hasCollided = false;
         this.setActive(true);
@@ -37,6 +39,9 @@ export default class BuildingBlock extends Phaser.Physics.Matter.Sprite{
         this.changeTexture(texture);
     }
 
+    /**
+     * Set moving block settings.
+     */
     setMovingBlockSettings(): void{
         this.resetSettings();
         AlignTool.alignX(this.scene,this,0.1);
@@ -53,6 +58,11 @@ export default class BuildingBlock extends Phaser.Physics.Matter.Sprite{
         this.setDefaultSettings();
     }
 
+    /**
+     * Set settings of dropping block based on moving block settings
+     * @param position: current position of moving block
+     * @param texture: current texture index of moving block
+     */
     setDroppingBlockSettings(position: Phaser.Math.Vector2, texture: number): void{
         this.resetSettings();
         this.setPosition(position.x, position.y);
@@ -61,6 +71,9 @@ export default class BuildingBlock extends Phaser.Physics.Matter.Sprite{
         this.setDefaultSettings(texture);
     }
 
+    /**
+     * Reset settings of a block
+     */
     private resetSettings(): void{
         this.setVelocityX(0);
         this.setVelocityY(0);
@@ -69,6 +82,10 @@ export default class BuildingBlock extends Phaser.Physics.Matter.Sprite{
         this.hasCollided = false;
     }
     
+    /**
+     * Change texture of a block.
+     * @param frame: frame index, randomize index if null
+     */
     changeTexture(frame?: number): void{
         if(!frame){
             frame = Math.floor(Math.random()*96);
@@ -77,6 +94,9 @@ export default class BuildingBlock extends Phaser.Physics.Matter.Sprite{
         this.textureFrame = frame;
     }
     
+    /**
+     * Hide moving block
+     */
     hide(): Phaser.Math.Vector2{
         this.tween.pause();
         this.setVisible(false);
@@ -84,15 +104,24 @@ export default class BuildingBlock extends Phaser.Physics.Matter.Sprite{
         return position;
     }
 
+    /**
+     * Show moving block
+     */
     show(): void{
         this.tween.resume();
         this.setVisible(true);
     }
 
+    /**
+     * Get texture frame index of block.
+     */
     getTextureFrame(): number{
         return this.textureFrame;
     }
 
+    /**
+     * Get tween of moving block.
+     */
     getTween(): Phaser.Tweens.Tween{
         return this.tween;
     }

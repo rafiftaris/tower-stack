@@ -1,20 +1,24 @@
 import * as Phaser from 'phaser';
 
 export default class RestartButton extends Phaser.GameObjects.Image{
-    constructor(scene: Phaser.Scene, x: number, y: number){
+    constructor(scene: Phaser.Scene, x: number, y: number, scale: number, depth: number){
         super(scene,x,y,"restart");
+        this.setInteractive();
+        this.setDepth(depth);
+        this.setScale(scale);
+\        scene.add.existing(this);
 
+        let me = this;
         this.on("pointerdown", () => {
-            console.log('restart');
-            this.emit("restartGame");
+            scene.scene.start("LevelScene");
         },this);
 
         this.on("pointerover",() => {
-            this.setScale(this.scale+0.5);
+            me.setScale(0.6);
         },this);
 
         this.on("pointerout",() => {
-            this.setScale(this.scale-0.5);
+            me.setScale(0.5);
         },this);
     }
 }
