@@ -7,4 +7,4 @@ export default {
     gameHeaderUI: 3,
     gameOverPanel: 4,
     gameOverContent: 5
-};
+}

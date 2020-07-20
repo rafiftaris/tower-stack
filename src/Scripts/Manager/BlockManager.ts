@@ -57,7 +57,7 @@ export default class BlockManager{
         const blockBody = this.getBlockFromGroup();
         blockBody.setDroppingBlockSettings(position, this.movingBlock.getTextureFrame());
         this.currentDroppingBlock = blockBody;
-        // this.stackedBlocks.push(blockBody);
+        console.log("drop",this.currentDroppingBlock.hasCollided);
     }
 
     setGameOver(ground: Ground): void{
@@ -151,6 +151,7 @@ export default class BlockManager{
     }
 
     addBlockToStack(block: BuildingBlock): void{
+        console.log("stack",block.hasCollided);
         this.stackedBlocks.push(block);
         this.currentDroppingBlock = null;
     }

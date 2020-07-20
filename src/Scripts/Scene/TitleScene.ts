@@ -12,7 +12,9 @@ export default class TitleScene extends Phaser.Scene {
 
   create(): void {
     this.fpsText = new FpsText(this);
-    // this.sound.play("bgm");
+    if(!this.sound.get("bgm")){
+      this.sound.play("bgm", { loop: true, volume: 0.5});
+    }
     this.scene.start("LevelScene");
   }
   

@@ -33,10 +33,6 @@ export default class LevelScene extends Phaser.Scene {
   preload(): void {}
 
   create(): void {
-    this.sound.play("bgm",{
-      loop: true,
-      volume: 0.4
-    });
     this.initializeStaticElements();
     this.matter.world.setBounds(-500,-300,getResolution().width+1000,getResolution().height+500);
     this.fpsText = new FpsText(this);
@@ -103,7 +99,7 @@ export default class LevelScene extends Phaser.Scene {
       // console.log("obj1",obj1.gameObject);
       block = <BuildingBlock>obj1.gameObject;
       if(!block.hasCollided){
-        this.sound.play("thud", { volume: 1.3 });
+        this.sound.play("thud", { volume: 1.7 });
         block.hasCollided = true;
         this.blockManager.addBlockToStack(block);
       }
@@ -112,7 +108,7 @@ export default class LevelScene extends Phaser.Scene {
       // console.log("obj2",obj2.gameObject);
       block = <BuildingBlock>obj2.gameObject;
       if(!block.hasCollided){
-        this.sound.play("thud", { volume: 1.3 });
+        this.sound.play("thud", { volume: 1.7 });
         block.hasCollided = true;
         this.blockManager.addBlockToStack(block);
       }

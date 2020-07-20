@@ -31,7 +31,7 @@ export default class GameOverPanel extends Phaser.GameObjects.Image{
 
         this.restartButton.on("pointerdown", () => {
             console.log('restart');
-            this.emit("restartGame");
+            this.scene.scene.start("LevelScene");
         },this);
         this.restartButton.on("pointerover",() => {
             this.restartButton.setScale(0.6);
@@ -51,7 +51,7 @@ export default class GameOverPanel extends Phaser.GameObjects.Image{
 
         this.backButton.on("pointerdown", () => {
             console.log('back');
-            this.emit("backToTitle");
+            this.scene.scene.start("TitleScene");
         },this);
 
         this.backButton.on("pointerover",() => {
