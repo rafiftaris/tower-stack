@@ -1,45 +1,36 @@
 import * as Phaser from "phaser";
-
-const SCALE = 4;
-import {getResolution} from '../Util/Util';
 import AlignTool from "../Util/AlignTool";
 import AnimationHelper from "../Util/AnimationHelper";
-import { Vector } from "matter";
+import DepthConfig from "../Config/DepthConfig";
 
 const CONFIG = {
     label: "Block",
-    mass: 10,
+    mass: 100,
     frictionAir: 0,
-    friction: 0.8,
-    frictionStatic: 100,
-    scale: new Phaser.Math.Vector2(SCALE,SCALE)
+    friction: 0.9,
+    frictionStatic: 10000,
 };
 
 export default class BuildingBlock extends Phaser.Physics.Matter.Sprite{
-    readonly SCALE = 5;
-
     private textureFrame: number;
     private tween: Phaser.Tweens.Tween;
+    public hasCollided: boolean;
+    private number: Phaser.GameObjects.Text;
 
     constructor(scene: Phaser.Scene){
         super(scene.matter.world,0,0,"blocksheet",0,CONFIG);
         this.textureFrame = 0;
         this.scene = scene;
-
-        // this = scene.matter.add.sprite(0,0,"blocksheet",0,{
-        //     label: "Block",
-        //     mass: 10,
-        //     frictionAir: 0,
-        //     friction: 0.5,
-        //     frictionStatic: 2,
-        //     scale: new Phaser.Math.Vector2(SCALE,SCALE)
-        // });
+        this.hasCollided = false;
+        
         this.setDefaultSettings();
     }
     
     setDefaultSettings(texture?: number): void{
+        this.hasCollided = false;
         this.setActive(true);
         this.setVisible(true);
+        this.setDepth(DepthConfig.block);
         this.setBounce(0);
         AlignTool.scaleToScreenHeight(this.scene,this,0.085);
 
@@ -53,7 +44,7 @@ export default class BuildingBlock extends Phaser.Physics.Matter.Sprite{
         this.tween = this.scene.tweens.add({  
             targets: this,
             x: AlignTool.getXfromScreenWidth(this.scene,0.9),
-            duration: 1000,
+            duration: 500,
             yoyo: true,
             repeat: -1
         })
@@ -75,6 +66,7 @@ export default class BuildingBlock extends Phaser.Physics.Matter.Sprite{
         this.setVelocityY(0);
         this.setAngle(0);
         this.setAngularVelocity(0);
+        this.hasCollided = false;
     }
     
     changeTexture(frame?: number): void{

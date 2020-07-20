@@ -25,8 +25,6 @@ export const config: PhaserConfig = {
       debug: true
     }
   },
-  backgroundColor: "#87ceeb",
-  // scene: [PreloadScene, TitleScene, LevelScene]
-  scene: [PreloadScene, LevelScene]
- 
+  backgroundColor: "#5fb3e5",
+  scene: [PreloadScene, TitleScene, LevelScene]
 };
