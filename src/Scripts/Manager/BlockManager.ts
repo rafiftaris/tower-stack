@@ -153,7 +153,7 @@ class BlockManagerHelper{
                     fontFamily: "Courier",
                     color: "black",
                     strokeThickness: 1
-                  },
+                },
                 animType: ANIMATION_TYPE.EMBIGGEN,
                 retain: true,
             })?.text as Phaser.GameObjects.Text;

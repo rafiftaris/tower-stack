@@ -1,7 +1,7 @@
 import * as Phaser from 'phaser';
 import AlignTool from "../Util/AlignTool";
 import RestartButton from "../Object/RestartButton";
-import BackButton from "../Object/BackButton";
+import BackButton from "./PlayButton";
 import DepthConfig from '../Config/DepthConfig';
 
 export default class GameOverPanel extends Phaser.GameObjects.Image{
@@ -19,6 +19,7 @@ export default class GameOverPanel extends Phaser.GameObjects.Image{
         this.initDisplayText(centerX, centerY);
         this.restartButton = new RestartButton(this.scene,centerX+100,centerY+100,0.5,DepthConfig.gameOverContent);
         this.backButton = new BackButton(this.scene,centerX-100,centerY+100,0.5,DepthConfig.gameOverContent);
+        this.backButton.setBackButton(scene);
 
         this.setScale(1,1.2);
         this.setDepth(DepthConfig.gameOverPanel);

@@ -6,7 +6,7 @@ export default class RestartButton extends Phaser.GameObjects.Image{
         this.setInteractive();
         this.setDepth(depth);
         this.setScale(scale);
-\        scene.add.existing(this);
+        scene.add.existing(this);
 
         let me = this;
         this.on("pointerdown", () => {

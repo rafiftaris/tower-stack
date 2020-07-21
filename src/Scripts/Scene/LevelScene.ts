@@ -2,28 +2,34 @@ import * as Phaser from "phaser";
 import FpsText from "../Object/FpsText";
 import Timer from "../Object/Timer";
 import Ground from "../Object/Ground";
+import GameOverPanel from "../Object/GameOverPanel";
+import BuildingBlock from "../Object/Block";
+import Background from "../Object/Background";
+
 import {BlockManager} from "../Manager/BlockManager";
 
 import {getResolution} from '../Util/Util';
 import {ImagePopUp} from "../Util/ImagePopUp";
 import {TextPopUp} from "../Util/TextPopUp";
-import {GAME_STATE} from "../Enum/enum";
-import GameOverPanel from "../Object/GameOverPanel";
-import BuildingBlock from "../Object/Block";
-import DepthConfig from "../Config/DepthConfig";
 import AlignTool from "../Util/AlignTool";
+
+import {GAME_STATE} from "../Enum/enum";
+
+import DepthConfig from "../Config/DepthConfig";
+import SoundConfig from "../Config/SoundConfig";
 
 
 export default class LevelScene extends Phaser.Scene {
   private fpsText: FpsText;
   private timeText: Timer;
   private ground: Ground;
+  private background: Background;
   private inputZone: Phaser.GameObjects.Zone;
   private gameState: GAME_STATE = GAME_STATE.GAME_ON;
   private inputDisabled: boolean;
   private score: number;
   private gameOverPanel: GameOverPanel;
-  private background: Phaser.GameObjects.Image;
+  private stopwatch: Phaser.GameObjects.Image;
 
   constructor() {
     super({ key: "LevelScene" });
@@ -32,21 +38,40 @@ export default class LevelScene extends Phaser.Scene {
   preload(): void {}
 
   create(): void {
+    this.cameras.main.setBackgroundColor("#5fb3e5");
     this.initializeStaticElements();
+
     this.matter.world.setBounds(-500,-300,getResolution().width+1000,getResolution().height+500);
+    this.background = new Background(this);
+
     this.fpsText = new FpsText(this);
     this.timeText = new Timer(this);
+
     this.ground = new Ground(this);
-    this.inputZone = new Phaser.GameObjects.Zone(this,0,100,getResolution().width,getResolution().height-100);
+
+    this.inputZone = new Phaser.GameObjects.Zone(
+      this,
+      0,
+      100,
+      AlignTool.getXfromScreenWidth(this,1),
+      AlignTool.getYfromScreenHeight(this,0.95)
+    );
     this.inputZone.setOrigin(0,0);
     this.inputZone.setInteractive();
     this.add.existing(this.inputZone);
-    this.inputDisabled = false;
+
     this.gameOverPanel = new GameOverPanel(this);
-    this.background = new Phaser.GameObjects.Image(this,0,AlignTool.getYfromScreenHeight(this,0.5),"background");
-    this.background.setScale(1.5);
-    this.background.setDepth(DepthConfig.background);
-    this.add.existing(this.background);
+
+    this.stopwatch = new Phaser.GameObjects.Image(
+      this,
+      AlignTool.getXfromScreenWidth(this,0.88),
+      AlignTool.getYfromScreenHeight(this,0.025),
+      "stopwatch"
+    );
+    this.stopwatch.setScale(0.12);
+    this.add.existing(this.stopwatch);
+    
+    this.inputDisabled = false;
 
     let me = this;
     this.inputZone.on('pointerdown', () => {
@@ -76,6 +101,7 @@ export default class LevelScene extends Phaser.Scene {
   }
 
   update(): void {
+    this.background.update();
     BlockManager.checkFallingBlocks();
     this.matter.world.on('collisionstart',this.checkCollision,this);
 
@@ -95,19 +121,20 @@ export default class LevelScene extends Phaser.Scene {
 
     // hasCollided undefined on ground objects
     if(obj1.gameObject.hasCollided !== undefined){
-      // console.log("obj1",obj1.gameObject);
       block = <BuildingBlock>obj1.gameObject;
+      
       if(!block.hasCollided){
-        this.sound.play("thud", { volume: 1.7 });
+        this.sound.play("thud", { volume: SoundConfig.sfxVolume });
         block.hasCollided = true;
         BlockManager.addBlockToStack(block);
       }
     }
+
     if(obj2.gameObject.hasCollided !== undefined){
-      // console.log("obj2",obj2.gameObject);
       block = <BuildingBlock>obj2.gameObject;
+      
       if(!block.hasCollided){
-        this.sound.play("thud", { volume: 1.7 });
+        this.sound.play("thud", { volume: SoundConfig.sfxVolume });
         block.hasCollided = true;
         BlockManager.addBlockToStack(block);
       }

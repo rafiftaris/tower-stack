@@ -11,7 +11,12 @@ export default class Timer{
 
   constructor(scene:Phaser.Scene) {
     this.scene = scene;
-    this.displayText = new Phaser.GameObjects.Text(scene, AlignTool.getXfromScreenWidth(scene,0.92), 10, '', { color: 'white', fontSize: '42px' });
+    this.displayText = new Phaser.GameObjects.Text(
+      scene, 
+      AlignTool.getXfromScreenWidth(scene,0.92), 
+      10, 
+      '', 
+      { color: 'black', fontSize: '42px' });
     scene.add.existing(this.displayText);
     this.displayText.setOrigin(0)
     this.displayText.setDepth(10);
