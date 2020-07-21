@@ -205,13 +205,13 @@ class BlockManagerHelper{
         this.currentDroppingBlock?.setActive(false);
         this.stackedBlocks.forEach((block,index) => {
             // Freeze box when not falling, remove from stack otherwise
-            let buildingBlock = <BuildingBlock>block;
-            if(buildingBlock.body.velocity.y < 2){
-                buildingBlock.setStatic(true);
-                buildingBlock.setIgnoreGravity(true);
+            let body = <MatterJS.BodyType>block.body
+            if(body.velocity.y < 2){
+                block.setStatic(true);
+                block.setIgnoreGravity(true);
             } else {
-                buildingBlock.setVisible(false);
-                buildingBlock.setActive(false);
+                block.setVisible(false);
+                block.setActive(false);
                 this.stackedBlocks.splice(index,1);
             }
         });
