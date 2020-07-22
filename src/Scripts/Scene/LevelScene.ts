@@ -43,7 +43,7 @@ export default class LevelScene extends Phaser.Scene {
     let bitfield = this.matter.world.nextCategory();
     this.gameState = GAME_STATE.GAME_ON;
     
-    this.cameras.main.setBackgroundColor("#5fb3e5");
+    this.cameras.main.setBackgroundColor("#85cff5");
     this.initializeStaticElements(bitfield);
 
     this.matter.world.setBounds(-500,-300,getResolution().width+1000,getResolution().height+500);

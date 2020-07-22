@@ -25,7 +25,7 @@ export default class TitleScene extends Phaser.Scene {
   preload(): void {}
 
   create(): void {
-    this.cameras.main.setBackgroundColor("#5fb3e5");
+    this.cameras.main.setBackgroundColor("#85cff5");
     this.initializeStaticElements();
 
     this.background = new Background(this);
