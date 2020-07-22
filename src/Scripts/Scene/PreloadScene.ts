@@ -20,7 +20,7 @@ export default class PreloadScene extends Phaser.Scene {
       frameHeight: 902/3
     });
 
-    this.load.image("title","Title.png");
+    this.load.image("title","stack-it-up.png");
     this.load.image("panel", "Panel.png");
     this.load.image("restart", "buttons/restart-button.png");
     this.load.image("play", "buttons/play-button.png");
