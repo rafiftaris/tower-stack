@@ -2,7 +2,6 @@ import * as Phaser from "phaser";
 import BuildingBlock from "../Object/Block";
 import AlignTool from "../Util/AlignTool";
 import AnimationHelper from "../Util/AnimationHelper";
-import { getResolution } from "../Util/Util";
 import Ground from "../Object/Ground";
 import { ANIMATION_TYPE, TextPopUp } from "../Util/TextPopUp";
 
@@ -137,15 +136,15 @@ class BlockManagerHelper{
         if(this.stackedBlocks.length > 0){
             let block = this.stackedBlocks.shift();
             AnimationHelper.ChangeAlpha(this.scene, block, 0.5, 0);
-
+            
             let groundBlock = ground.getGroundBlock();
             let blockY = AlignTool.getYfromScreenHeight(
                 this.scene,
-                (groundBlock.y - (groundBlock.displayHeight/2) - block.y)/1200
+                (groundBlock.y - (groundBlock.displayHeight/2) - block.y)/AlignTool.getYfromScreenHeight(this.scene,1)
             );
             let maxHeight = AlignTool.getYfromScreenHeight(
                 this.scene,
-                (Math.sqrt(2*((block.displayHeight/2)**2)))/1200 // When block is standing on one of its corner
+                (Math.sqrt(2*((block.displayHeight/2)**2)))/AlignTool.getYfromScreenHeight(this.scene,1) // When block is standing on one of its corner
             );
             let currentBlockScore = Math.ceil((blockY-maxHeight)/(block.displayHeight)) + 1;
             let scoreText = TextPopUp.showText({
@@ -174,9 +173,9 @@ class BlockManagerHelper{
      */
     checkFallingBlocks(): void{
         this.stackedBlocks.forEach((block,index) => {
-            if(block.y>=getResolution().height ||
-            block.x<=0 ||
-            block.x>=getResolution().width){
+            if(block.y>=AlignTool.getYfromScreenHeight(this.scene,1) ||
+            block.x<= AlignTool.getXfromScreenWidth(this.scene, 0) ||
+            block.x>= AlignTool.getXfromScreenWidth(this.scene, 1)){
                 block.setVisible(false);
                 block.setActive(false);
 
