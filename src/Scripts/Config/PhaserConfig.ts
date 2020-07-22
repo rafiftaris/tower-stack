@@ -22,9 +22,8 @@ export const config: PhaserConfig = {
       debug: false
     },
     matter:{
-      debug: true
+      debug: false
     }
   },
-  transparent: true,
   scene: [PreloadScene, TitleScene, LevelScene]
 };

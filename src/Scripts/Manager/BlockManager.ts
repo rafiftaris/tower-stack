@@ -5,9 +5,7 @@ import { getResolution } from "../Util/Util";
 import Ground from "../Object/Ground";
 import { ANIMATION_TYPE, TextPopUp } from "../Util/TextPopUp";
 
-const STARTING_Y = 976;
 const SCALE = 4;
-const STEP = 32*SCALE;
 
 class BlockManagerHelper{
     private static instance: BlockManagerHelper;
@@ -19,17 +17,19 @@ class BlockManagerHelper{
     private currentDroppingBlock: BuildingBlock;
 
     private score: number = 0;
+    private bitfield: number;
 
     public static get Instance() {
         const instance = this.instance || (this.instance = new this());
         return instance;
     }
 
-    init(scene: Phaser.Scene) {
+    init(scene: Phaser.Scene, bitfield: number) {
         this.scene = scene;
         this.stackedBlocks = [];
-        this.scene = scene;
         this.score = 0;
+        this.bitfield = bitfield;
+
         // Init blocks group
         this.blocksGroup = scene.add.group({
             classType: BuildingBlock,
@@ -37,7 +37,7 @@ class BlockManagerHelper{
             maxSize: 30,
         });
         this.movingBlock = this.getBlockFromGroup();
-        this.movingBlock.setMovingBlockSettings();
+        this.movingBlock.setMovingBlockSettings(this.bitfield);
     }
     
     /**
@@ -50,7 +50,7 @@ class BlockManagerHelper{
         if(block){
             block.setActive(true);
             block.setVisible(true);
-            block.setDefaultSettings();
+            block.setDefaultSettings(this.bitfield);
             
             return block;
         }
@@ -78,7 +78,7 @@ class BlockManagerHelper{
      * @returns: delay duration
      */
     getDelayDuration(): number{
-        return (this.stackedBlocks.length+1) * 750;
+        return ((this.stackedBlocks.length) * 750) + 1000;
     }
 
     /**
@@ -126,7 +126,7 @@ class BlockManagerHelper{
 
         // Reset dropping block
         const blockBody = this.getBlockFromGroup();
-        blockBody.setDroppingBlockSettings(position, this.movingBlock.getTextureFrame());
+        blockBody.setDroppingBlockSettings(position, this.bitfield, this.movingBlock.getTextureFrame());
         this.currentDroppingBlock = blockBody;
     }
 

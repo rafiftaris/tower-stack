@@ -29,7 +29,7 @@ export default class TitleScene extends Phaser.Scene {
     this.initializeStaticElements();
 
     this.background = new Background(this);
-    this.ground = new Ground(this);
+    this.ground = new Ground(this, 1);
 
     this.fpsText = new FpsText(this);
 

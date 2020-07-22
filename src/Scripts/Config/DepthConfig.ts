@@ -3,6 +3,7 @@ export default {
     touchArea: 1,
     ground: 2,
     block: 2,
+    collectibles: 2,
     score: 3,
     gameHeaderUI: 3,
     gameOverPanel: 4,

@@ -15,20 +15,21 @@ export default class BuildingBlock extends Phaser.Physics.Matter.Sprite{
     private tween: Phaser.Tweens.Tween;
     public hasCollided: boolean;
 
-    constructor(scene: Phaser.Scene){
+    constructor(scene: Phaser.Scene, bitfield: number){
         super(scene.matter.world,0,0,"blocksheet",0,CONFIG);
         this.textureFrame = 0;
         this.scene = scene;
         this.hasCollided = false;
         
-        this.setDefaultSettings();
+        this.setDefaultSettings(bitfield);
     }
     
     /**
      * Set default settings of a block.
+     * @param bitfield: collision bitfield
      * @param texture: texture index. If null, randomize index
      */
-    setDefaultSettings(texture?: number): void{
+    setDefaultSettings(bitfield?: number, texture?: number): void{
         this.hasCollided = false;
         this.setActive(true);
         this.setVisible(true);
@@ -37,12 +38,17 @@ export default class BuildingBlock extends Phaser.Physics.Matter.Sprite{
         AlignTool.scaleToScreenHeight(this.scene,this,0.085);
 
         this.changeTexture(texture);
+
+        if(bitfield){
+            this.setCollisionCategory(bitfield);
+        }
     }
 
     /**
      * Set moving block settings.
+     * @param bitfield: collision bitfield
      */
-    setMovingBlockSettings(): void{
+    setMovingBlockSettings(bitfield: number): void{
         this.resetSettings();
         AlignTool.alignX(this.scene,this,0.1);
         AlignTool.alignY(this.scene,this,0.1);
@@ -52,7 +58,7 @@ export default class BuildingBlock extends Phaser.Physics.Matter.Sprite{
             duration: 500,
             yoyo: true,
             repeat: -1
-        })
+        });
         this.setIgnoreGravity(true);
         this.setCollisionCategory(null);
         this.setDefaultSettings();
@@ -61,14 +67,15 @@ export default class BuildingBlock extends Phaser.Physics.Matter.Sprite{
     /**
      * Set settings of dropping block based on moving block settings
      * @param position: current position of moving block
+     * @param bitfield: collision bitfield
      * @param texture: current texture index of moving block
      */
-    setDroppingBlockSettings(position: Phaser.Math.Vector2, texture: number): void{
+    setDroppingBlockSettings(position: Phaser.Math.Vector2, bitfield: number, texture: number): void{
         this.resetSettings();
         this.setPosition(position.x, position.y);
         this.setVelocityY(10);
         this.setIgnoreGravity(false);
-        this.setDefaultSettings(texture);
+        this.setDefaultSettings(bitfield, texture);
     }
 
     /**

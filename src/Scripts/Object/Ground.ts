@@ -12,7 +12,7 @@ export default class Ground{
     private scene: Phaser.Scene;
     private groundTiles: Phaser.Physics.Matter.Sprite[];
 
-    constructor(scene: Phaser.Scene){
+    constructor(scene: Phaser.Scene, bitfield: number){
         this.groundTiles = [];
         this.scene = scene;
 
@@ -44,7 +44,7 @@ export default class Ground{
                 }
 
                 let groundTile = scene.matter.add.sprite(this.PADDING_LEFT+this.SIZE*i, this.PADDING_TOP+(this.SIZE*level), 'groundsheet',frame);
-                this.setDefaultSettings(groundTile);
+                this.setDefaultSettings(groundTile, bitfield);
                 this.groundTiles.push(groundTile);
             }
         }
@@ -53,10 +53,12 @@ export default class Ground{
     /**
      * Set default settings of a ground tile.
      * @param groundTile: ground tile
+     * @param bitfield: collision bitfield
      */
-    private setDefaultSettings(groundTile: Phaser.Physics.Matter.Sprite): void{
+    private setDefaultSettings(groundTile: Phaser.Physics.Matter.Sprite, bitfield: number): void{
         AlignTool.scaleToScreenHeight(this.scene,groundTile,this.SIZE/1200);
         groundTile.setStatic(true);
+        groundTile.setCollisionCategory(bitfield)
     }
 
     /**

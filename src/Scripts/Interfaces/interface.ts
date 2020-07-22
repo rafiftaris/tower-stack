@@ -1,3 +1,5 @@
+import { DIRECTION } from "../Enum/enum";
+
 interface IEventConfig {
   //General Config
   //images
@@ -164,4 +166,21 @@ interface ILevelConfig {
   level_settings_available_powerup: IPowerUp;
 
   level_settings_map: IRow[];
+}
+
+export interface Item {
+
+  itemType: string;
+  isHit: boolean;
+
+  fly(direction: DIRECTION): void;
+
+  setDefaultSettings(): void;
+
+  hideAfterHit(): void;
+
+  hide(): void
+
+  resetSettings(): void;
+
 }
