@@ -55,7 +55,7 @@ export default class BuildingBlock extends Phaser.Physics.Matter.Sprite{
         this.tween = this.scene.tweens.add({  
             targets: this,
             x: AlignTool.getXfromScreenWidth(this.scene,0.9),
-            duration: 500,
+            duration: 750,
             yoyo: true,
             repeat: -1
         });
@@ -73,7 +73,7 @@ export default class BuildingBlock extends Phaser.Physics.Matter.Sprite{
     setDroppingBlockSettings(position: Phaser.Math.Vector2, bitfield: number, texture: number): void{
         this.resetSettings();
         this.setPosition(position.x, position.y);
-        this.setVelocityY(10);
+        this.setVelocityY(20);
         this.setIgnoreGravity(false);
         this.setDefaultSettings(bitfield, texture);
     }
