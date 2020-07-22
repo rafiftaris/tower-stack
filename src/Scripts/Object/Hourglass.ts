@@ -33,7 +33,7 @@ export default class Hourglass extends Phaser.Physics.Matter.Sprite implements I
         this.isHit = false;
         this.setSensor(true);
         this.setIgnoreGravity(true);
-        this.setScale(0.04);
+        AlignTool.scaleToScreenHeight(this.scene,this,0.08);
         this.setDepth(DepthConfig.collectibles);
         this.scene.add.existing(this);
     }
@@ -43,7 +43,7 @@ export default class Hourglass extends Phaser.Physics.Matter.Sprite implements I
      * @param direction: left or right
      */
     fly(direction: DIRECTION): void{
-        let height = Math.floor(Math.random()*50) + 300;
+        let height = AlignTool.getYfromScreenHeight(this.scene,(Math.random()*50 + 300)/1200);
 
         if(direction == DIRECTION.right){
             this.setPosition(

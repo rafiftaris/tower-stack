@@ -43,8 +43,16 @@ export default class Ground{
                     }
                 }
 
-                let groundTile = scene.matter.add.sprite(this.PADDING_LEFT+this.SIZE*i, this.PADDING_TOP+(this.SIZE*level), 'groundsheet',frame);
-                this.setDefaultSettings(groundTile, bitfield);
+                let groundTile = scene.matter.add.sprite(0, 0, 'groundsheet',frame);
+                let x = AlignTool.getXfromScreenWidth(
+                    scene,
+                    (this.PADDING_LEFT+this.SIZE*i)/720
+                );
+                let y = AlignTool.getYfromScreenHeight(
+                    scene, 
+                    (this.PADDING_TOP+(this.SIZE*level))/1200
+                );
+                this.setDefaultSettings(x, y, groundTile, bitfield);
                 this.groundTiles.push(groundTile);
             }
         }
@@ -55,8 +63,9 @@ export default class Ground{
      * @param groundTile: ground tile
      * @param bitfield: collision bitfield
      */
-    private setDefaultSettings(groundTile: Phaser.Physics.Matter.Sprite, bitfield: number): void{
+    private setDefaultSettings(x: number, y: number, groundTile: Phaser.Physics.Matter.Sprite, bitfield: number): void{
         AlignTool.scaleToScreenHeight(this.scene,groundTile,this.SIZE/1200);
+        groundTile.setPosition(x,y);
         groundTile.setStatic(true);
         groundTile.setCollisionCategory(bitfield)
     }

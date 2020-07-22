@@ -49,7 +49,7 @@ export default class TitleScene extends Phaser.Scene {
       this,
       AlignTool.getXfromScreenWidth(this,0.5),
       AlignTool.getYfromScreenHeight(this,1.2),
-      0.7,
+      0.3,
       1
     );
     this.playButton.setPlayButton(this);

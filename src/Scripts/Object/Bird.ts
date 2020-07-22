@@ -36,7 +36,7 @@ export default class Bird extends Phaser.Physics.Matter.Sprite implements Item{
         this.frameNumber = 0;
         this.setSensor(true);
         this.setIgnoreGravity(true);
-        this.setScale(0.3);
+        AlignTool.scaleToScreenHeight(this.scene,this,0.1);
         this.setFlipX(false);
         this.setDepth(DepthConfig.collectibles);
         this.animate();
@@ -49,7 +49,7 @@ export default class Bird extends Phaser.Physics.Matter.Sprite implements Item{
      */
     fly(direction: DIRECTION): void{
         this.direction = direction;
-        let height = Math.random()*50 + 300;
+        let height = AlignTool.getYfromScreenHeight(this.scene,(Math.random()*50 + 300)/1200);
 
         if(direction == DIRECTION.right){
             this.setPosition(

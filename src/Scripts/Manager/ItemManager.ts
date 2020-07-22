@@ -40,11 +40,11 @@ class ItemManagerHelper{
         this.scene.time.addEvent({
             delay: delayRandomizer*1000,
             callback: () => {
-                let itemRandomizer = Math.floor(Math.random()*2);
+                let itemRandomizer = Math.random()*2;
                 
                 if(this.currentItem) { return; }
 
-                if(itemRandomizer == 0){
+                if(itemRandomizer <= 1.25){
                     this.currentItem = this.birdGroup.get();
                 } else {
                     this.currentItem = this.hourglassGroup.get();

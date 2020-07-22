@@ -1,11 +1,12 @@
 import * as Phaser from 'phaser';
+import AlignTool from '../Util/AlignTool';
 
 export default class RestartButton extends Phaser.GameObjects.Image{
-    constructor(scene: Phaser.Scene, x: number, y: number, scale: number, depth: number){
+    constructor(scene: Phaser.Scene, x: number, y: number, scalePercentage: number, depth: number){
         super(scene,x,y,"restart");
         this.setInteractive();
         this.setDepth(depth);
-        this.setScale(scale);
+        AlignTool.scaleToScreenWidth(scene,this,scalePercentage)
         scene.add.existing(this);
 
         let me = this;
@@ -14,11 +15,11 @@ export default class RestartButton extends Phaser.GameObjects.Image{
         },this);
 
         this.on("pointerover",() => {
-            me.setScale(0.6);
+            me.setScale(this.scale+0.1);
         },this);
 
         this.on("pointerout",() => {
-            me.setScale(0.5);
+            me.setScale(this.scale-0.1);
         },this);
     }
 }

@@ -69,11 +69,11 @@ export default class LevelScene extends Phaser.Scene {
 
     this.stopwatch = new Phaser.GameObjects.Image(
       this,
-      AlignTool.getXfromScreenWidth(this,0.88),
-      AlignTool.getYfromScreenHeight(this,0.025),
+      AlignTool.getXfromScreenWidth(this,0.85),
+      AlignTool.getYfromScreenHeight(this,0.03),
       "stopwatch"
     );
-    this.stopwatch.setScale(0.12);
+    AlignTool.scaleToScreenWidth(this,this.stopwatch,0.1);
     this.add.existing(this.stopwatch);
     
     

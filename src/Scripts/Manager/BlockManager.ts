@@ -1,11 +1,10 @@
 import * as Phaser from "phaser"; 
 import BuildingBlock from "../Object/Block";
+import AlignTool from "../Util/AlignTool";
 import AnimationHelper from "../Util/AnimationHelper";
 import { getResolution } from "../Util/Util";
 import Ground from "../Object/Ground";
 import { ANIMATION_TYPE, TextPopUp } from "../Util/TextPopUp";
-
-const SCALE = 4;
 
 class BlockManagerHelper{
     private static instance: BlockManagerHelper;
@@ -139,9 +138,16 @@ class BlockManagerHelper{
             let block = this.stackedBlocks.shift();
             AnimationHelper.ChangeAlpha(this.scene, block, 0.5, 0);
 
-            let blockY = ground.PADDING_TOP - (ground.getGroundBlock().displayHeight/2) - block.y;
-            let maxHeight = Math.sqrt(2*((block.displayHeight/2)**2)); // When block is standing on one of its corner
-            let currentBlockScore = Math.ceil((blockY-maxHeight)/block.displayHeight) + 1;
+            let groundBlock = ground.getGroundBlock();
+            let blockY = AlignTool.getYfromScreenHeight(
+                this.scene,
+                (groundBlock.y - (groundBlock.displayHeight/2) - block.y)/1200
+            );
+            let maxHeight = AlignTool.getYfromScreenHeight(
+                this.scene,
+                (Math.sqrt(2*((block.displayHeight/2)**2)))/1200 // When block is standing on one of its corner
+            );
+            let currentBlockScore = Math.ceil((blockY-maxHeight)/(block.displayHeight)) + 1;
             let scoreText = TextPopUp.showText({
                 x: block.x,
                 y: block.y,

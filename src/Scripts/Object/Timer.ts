@@ -14,13 +14,20 @@ export default class Timer{
 
   constructor(scene:Phaser.Scene) {
     this.scene = scene;
-    this.displayText = new Phaser.GameObjects.Text(
-      scene, 
-      AlignTool.getXfromScreenWidth(scene,0.92), 
-      10, 
-      '', 
-      { color: 'black', fontSize: '42px' });
-    scene.add.existing(this.displayText);
+    this.displayText = TextPopUp.showText({
+      x: AlignTool.getXfromScreenWidth(this.scene,0.9),
+      y: AlignTool.getYfromScreenHeight(this.scene,0.01),
+      text: "",
+      duration: 0.01,
+      style: {
+          fontSize: 48,
+          fontFamily: "Courier",
+          color: "black",
+          strokeThickness: 1
+      },
+      animType: ANIMATION_TYPE.EMBIGGEN,
+      retain: true,
+    })?.text as Phaser.GameObjects.Text;
     this.displayText.setOrigin(0)
     this.displayText.setDepth(10);
     this.countdown = TIME_LIMIT;
