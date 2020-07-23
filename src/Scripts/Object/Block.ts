@@ -73,7 +73,7 @@ export default class BuildingBlock extends Phaser.Physics.Matter.Sprite{
     setDroppingBlockSettings(position: Phaser.Math.Vector2, bitfield: number, texture: number): void{
         this.resetSettings();
         this.setPosition(position.x, position.y);
-        this.setVelocityY(AlignTool.getYfromScreenHeight(this.scene,0.015));
+        this.setVelocityY(AlignTool.getYfromScreenHeight(this.scene,0.01));
         this.setIgnoreGravity(false);
         this.setDefaultSettings(bitfield, texture);
     }
