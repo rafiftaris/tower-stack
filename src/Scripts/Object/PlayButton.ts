@@ -19,6 +19,10 @@ export default class PlayButton extends Phaser.GameObjects.Image{
         },this);
     }
 
+    /**
+     * Set button functionality to back
+     * @param scene: Game scene
+     */
     setBackButton(scene: Phaser.Scene): void{
         this.setFlipX(true);
         this.on("pointerdown", () => {
@@ -26,6 +30,10 @@ export default class PlayButton extends Phaser.GameObjects.Image{
         },this);
     }
 
+    /**
+     * Set button functionality to play
+     * @param scene: Game scene
+     */
     setPlayButton(scene: Phaser.Scene): void{
         this.on("pointerdown", () => {
             scene.scene.start("LevelScene");

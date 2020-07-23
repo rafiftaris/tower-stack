@@ -73,6 +73,11 @@ export default class Timer{
     this.timerEvent.paused = true;
   }
 
+  /**
+   * Add time after block hit hourglass item and create text pop-up
+   * @param x: Item position on x axis
+   * @param y: Item position on y axis
+   */
   increase(x: number, y: number): void{
     if(this.onCooldown) { return; }
     this.countdown += 3;
@@ -99,6 +104,11 @@ export default class Timer{
     this.addCooldown();
   }
 
+  /**
+   * Decrease time after block hit bird item and create text pop-up
+   * @param x: Item position on x axis
+   * @param y: Item position on y axis
+   */
   decrease(x: number, y: number): void{
     if(this.onCooldown) { return; }
     
@@ -128,6 +138,10 @@ export default class Timer{
     this.addCooldown();
   }
 
+  /**
+   * Add cooldown after block hit item so the time
+   * wont increase/decrease more than once in a split second.
+   */
   private addCooldown(): void{
     this.onCooldown = true;
     if(!this.cooldown){

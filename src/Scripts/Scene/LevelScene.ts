@@ -135,7 +135,7 @@ export default class LevelScene extends Phaser.Scene {
 
       // Falling block collided with item
       if(obj2.gameObject.itemType !== undefined){
-        if(!obj2.gameObject.isHit){
+        if(!obj2.gameObject.isHit && !block.hasCollided){
           if(obj2.gameObject.itemType == "Hourglass"){
             this.timeText.increase(obj2.position.x, obj2.position.y);
           } else {
@@ -161,7 +161,7 @@ export default class LevelScene extends Phaser.Scene {
       
       // Falling block collided with item
       if(obj1.gameObject.itemType !== undefined){
-        if(!obj1.gameObject.isHit){
+        if(!obj1.gameObject.isHit && !block.hasCollided){
           if(obj1.gameObject.itemType == "Hourglass"){
             this.timeText.increase(obj1.position.x, obj1.position.y);
           } else {

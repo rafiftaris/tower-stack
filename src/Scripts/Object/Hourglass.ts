@@ -28,6 +28,9 @@ export default class Hourglass extends Phaser.Physics.Matter.Sprite implements I
         );
     }
 
+    /**
+     * Set default settings of hourglass item
+     */
     setDefaultSettings(): void{
         this.itemType = "Hourglass";
         this.isHit = false;
@@ -70,17 +73,26 @@ export default class Hourglass extends Phaser.Physics.Matter.Sprite implements I
         }
     }
 
+    /**
+     * Hide hourglass item
+     */
     hide(): void{
         this.setVisible(false);
         this.setActive(false);
     }
 
+    /**
+     * Hide hourglass after hit by falling block
+     */
     hideAfterHit(): void{
         this.isHit = true;
         this.hide();
         this.resetSettings();
     }
 
+    /**
+     * Reset hourglass settings
+     */
     resetSettings(): void{
         this.setAngle(0);
         this.setAngularVelocity(0);
