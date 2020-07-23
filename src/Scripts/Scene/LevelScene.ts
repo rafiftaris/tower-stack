@@ -110,7 +110,7 @@ export default class LevelScene extends Phaser.Scene {
 
   update(): void {
     this.background.update();
-    BlockManager.checkFallingBlocks();
+    BlockManager.checkStackedBlocks();
     ItemManager.checkItem();
     
     this.matter.world.on('collisionstart',this.checkCollision,this);

@@ -4,10 +4,10 @@ import DepthConfig from "../Config/DepthConfig";
 
 const CONFIG = {
     label: "Block",
-    mass: 100,
+    mass: 10000,
     frictionAir: 0,
     friction: 0.99,
-    frictionStatic: 10000,
+    frictionStatic: 10000000,
 };
 
 export default class BuildingBlock extends Phaser.Physics.Matter.Sprite{

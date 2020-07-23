@@ -35,7 +35,6 @@ export default class Ground{
                 scene,
                 (this.PADDING_LEFT+margin*i)/720
             );
-            console.log(x);
             let y = AlignTool.getYfromScreenHeight(
                 scene, 
                 this.PADDING_TOP/1200

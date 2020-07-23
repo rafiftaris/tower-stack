@@ -172,11 +172,17 @@ class BlockManagerHelper{
     }
 
     /**
-     * Check falling blocks every update. 
+     * Check stacked blocks every update. 
      * Remove block when its falling outside the ground.
+     * Reduce horizontal speed when its rolling too fast.
      */
-    checkFallingBlocks(): void{
+    checkStackedBlocks(): void{
         this.stackedBlocks.forEach((block,index) => {
+            if(block.body.velocity.x >= 1.5){
+                block.setVelocityX(1.5);
+            } else if (block.body.velocity.x <= -1.5){
+                block.setVelocityX(-1.5);
+            }
             if(block.y>=AlignTool.getYfromScreenHeight(this.scene,1) ||
             block.x<= AlignTool.getXfromScreenWidth(this.scene, 0) ||
             block.x>= AlignTool.getXfromScreenWidth(this.scene, 1)){
