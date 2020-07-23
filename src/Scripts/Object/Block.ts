@@ -6,7 +6,7 @@ const CONFIG = {
     label: "Block",
     mass: 100,
     frictionAir: 0,
-    friction: 0.9,
+    friction: 0.99,
     frictionStatic: 10000,
 };
 

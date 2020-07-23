@@ -7,10 +7,6 @@ export default class PreloadScene extends Phaser.Scene {
 
   preload(): void {
     this.load.path = "src/Assets/";
-    this.load.spritesheet("groundsheet","spritesheet/nature-paltformer-tileset-16x16.png", {
-        frameWidth: 16,
-        frameHeight: 16
-    });
     this.load.spritesheet("blocksheet","spritesheet/blocks-sheet.png", {
       frameWidth: 32,
       frameHeight: 32
@@ -27,6 +23,9 @@ export default class PreloadScene extends Phaser.Scene {
     this.load.image("stopwatch","stopwatch.png")
     this.load.image("background","sky.jpg");
     this.load.image("hourglass", "hourglass.png");
+    this.load.image("grass-left", "spritesheet/GrassLeft.png");
+    this.load.image("grass-mid", "spritesheet/GrassMid.png");
+    this.load.image("grass-right", "spritesheet/GrassRight.png");
 
     this.load.audio("thud",["sound/thud.mp3","sound/thud.ogg"]);
     this.load.audio("bgm",["sound/bgm.mp3","sound/bgm.ogg"]);
