@@ -1,9 +1,13 @@
 import * as Phaser from "phaser"; 
+
 import BuildingBlock from "../Object/Block";
+import Ground from "../Object/Ground";
+
 import AlignTool from "../Util/AlignTool";
 import AnimationHelper from "../Util/AnimationHelper";
-import Ground from "../Object/Ground";
 import { ANIMATION_TYPE, TextPopUp } from "../Util/TextPopUp";
+
+import SoundConfig from "../Config/SoundConfig";
 
 class BlockManagerHelper{
     private static instance: BlockManagerHelper;
@@ -162,7 +166,7 @@ class BlockManagerHelper{
                 animType: ANIMATION_TYPE.EMBIGGEN,
                 retain: true,
             })?.text as Phaser.GameObjects.Text;
-            scoreText.setVisible(true);
+            this.scene.sound.play("score", { volume: SoundConfig.sfxVolume });
             this.score += currentBlockScore;   
         }
     }

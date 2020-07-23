@@ -32,6 +32,8 @@ export default class PreloadScene extends Phaser.Scene {
     this.load.audio("bgm",["sound/bgm.mp3","sound/bgm.ogg"]);
     this.load.audio("bling",["sound/bling.mp3","sound/bling.ogg"]);
     this.load.audio("bam",["sound/bam.mp3","sound/bam.ogg"]);
+    this.load.audio("gameover",["sound/game-over.mp3","sound/game-over.ogg"]);
+    this.load.audio("score",["sound/score.mp3","sound/score.ogg"]);
   }
 
   create(): void {

@@ -4,6 +4,7 @@ import RestartButton from "../Object/RestartButton";
 import BackButton from "./PlayButton";
 import DepthConfig from '../Config/DepthConfig';
 import { ANIMATION_TYPE, TextPopUp } from "../Util/TextPopUp";
+import SoundConfig from '../Config/SoundConfig';
 
 export default class GameOverPanel extends Phaser.GameObjects.Image{
     private text: Phaser.GameObjects.Text;
@@ -81,6 +82,7 @@ export default class GameOverPanel extends Phaser.GameObjects.Image{
             animType: ANIMATION_TYPE.EMBIGGEN,
             retain: true,
         })?.text as Phaser.GameObjects.Text;
+        this.scene.sound.play("gameover", { volume: SoundConfig.sfxVolume });
         this.text.setDepth(11);
     }
 }
