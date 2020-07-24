@@ -5,7 +5,9 @@
   "main": "app.js",
   "scripts": {
     "build": "webpack",
-    "start": "webpack --watch & live-server --port=8085"
+    "start": "node server.js",
+    "heroku-postbuild": "webpack -p",
+    "dev": "webpack --watch & live-server --port=8085"
   },
   "author": "kevin sutrisno",
   "license": "MIT",
