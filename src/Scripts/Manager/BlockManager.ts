@@ -188,6 +188,10 @@ class BlockManagerHelper{
             block.x>= AlignTool.getXfromScreenWidth(this.scene, 1)){
                 block.setVisible(false);
                 block.setActive(false);
+                block.setPosition(
+                    AlignTool.getXfromScreenWidth(this.scene,0.5),
+                    AlignTool.getYfromScreenHeight(this.scene,1)
+                );
 
                 this.stackedBlocks.splice(index,1);
                 // console.log("fall",this.stackedBlocks.length);
