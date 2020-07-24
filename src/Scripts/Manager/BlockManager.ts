@@ -178,9 +178,10 @@ class BlockManagerHelper{
      */
     checkStackedBlocks(): void{
         this.stackedBlocks.forEach((block,index) => {
-            if(block.body.velocity.x >= 1.5){
+            let body = <MatterJS.BodyType>block.body
+            if(body.velocity.x >= 1.5){
                 block.setVelocityX(1.5);
-            } else if (block.body.velocity.x <= -1.5){
+            } else if (body.velocity.x <= -1.5){
                 block.setVelocityX(-1.5);
             }
             if(block.y>=AlignTool.getYfromScreenHeight(this.scene,1) ||
