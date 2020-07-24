@@ -7,7 +7,7 @@ import TitleScene from "../Scene/TitleScene";
 import {getResolution} from '../Util/Util'
 
 export const config: PhaserConfig = {
-  title: "TowerStack",
+  title: "Tower Stack",
   type: Phaser.AUTO,
   scale: {
     parent: "phaser-app",
@@ -18,12 +18,11 @@ export const config: PhaserConfig = {
   },
   physics: {
     default: "matter",
-    arcade: {
-      debug: false
-    },
-    matter:{
+    matter: {
       debug: false
     }
   },
+  backgroundColor: "#493a52",
   scene: [PreloadScene, TitleScene, LevelScene]
+ 
 };

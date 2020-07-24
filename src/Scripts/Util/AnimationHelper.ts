@@ -495,34 +495,6 @@ export default class AnimationHelper {
   }
 
   /**
-   * Give object ease in animation, object grows smaller and then dissipates
-   * @param scene the current game scene
-   * @param object object to animate
-   * @param duration duration of the animation
-   * @returns Tweens [Resize, ChangeAlpha]
-   */
-  static EaseOutAndFade(scene: Phaser.Scene, object: any, duration: number) {
-    const startScale = {
-      x: object.scaleX,
-      y: object.scaleY,
-    };
-
-    const finalScale = {
-      x: object.scaleX * 0.3,
-      y: object.scaleY * 0.3,
-    };
-
-    let easeDuration = duration * 0.5;
-
-    if (easeDuration > 0.3) easeDuration = 0.5;
-
-    return [
-      this.Resize2(scene, object, easeDuration, startScale, finalScale),
-      this.ChangeAlpha(scene, object, duration - easeDuration, 0, false, 0.5),
-    ];
-  }
-
-  /**
    * Creates flash animation
    * @param scene 
    * @param object Image to flash

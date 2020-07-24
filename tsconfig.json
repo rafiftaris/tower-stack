@@ -1,7 +1,6 @@
 {
     "compilerOptions": {
-      "target": "es5",
-      "lib": ["ES2015", "ES2017.Object", "ES2019.Object", "ES2020", "dom"]
+      "target": "es5"
     },
     "include": [
       "src/Scripts/app.ts"
