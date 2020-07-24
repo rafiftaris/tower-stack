@@ -35,7 +35,7 @@ export default class BuildingBlock extends Phaser.Physics.Matter.Sprite{
         this.setVisible(true);
         this.setDepth(DepthConfig.block);
         this.setBounce(0);
-        AlignTool.scaleToScreenHeight(this.scene,this,0.085);
+        AlignTool.scaleToScreenWidth(this.scene,this,0.14);
 
         this.changeTexture(texture);
 
@@ -55,7 +55,7 @@ export default class BuildingBlock extends Phaser.Physics.Matter.Sprite{
         this.tween = this.scene.tweens.add({  
             targets: this,
             x: AlignTool.getXfromScreenWidth(this.scene,0.9),
-            duration: 750,
+            duration: 600,
             yoyo: true,
             repeat: -1
         });
@@ -73,7 +73,7 @@ export default class BuildingBlock extends Phaser.Physics.Matter.Sprite{
     setDroppingBlockSettings(position: Phaser.Math.Vector2, bitfield: number, texture: number): void{
         this.resetSettings();
         this.setPosition(position.x, position.y);
-        this.setVelocityY(AlignTool.getYfromScreenHeight(this.scene,0.01));
+        this.setVelocityY(AlignTool.getYfromScreenHeight(this.scene,0.015));
         this.setIgnoreGravity(false);
         this.setDefaultSettings(bitfield, texture);
     }

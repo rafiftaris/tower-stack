@@ -31,26 +31,24 @@ export default class Ground{
             }
 
             let groundTile = scene.matter.add.image(0, 0, image);
-            let x = AlignTool.getXfromScreenWidth(
-                scene,
-                (this.PADDING_LEFT+margin*i)/720
-            );
-            let y = AlignTool.getYfromScreenHeight(
-                scene, 
-                this.PADDING_TOP/1200
-            );
-            this.setDefaultSettings(x, y, groundTile, bitfield);
+            this.setDefaultSettings(i, groundTile, bitfield);
             this.groundTiles.push(groundTile);
         }
     }
-
+    
     /**
      * Set default settings of a ground tile.
      * @param groundTile: ground tile
      * @param bitfield: collision bitfield
      */
-    private setDefaultSettings(x: number, y: number, groundTile: Phaser.Physics.Matter.Image, bitfield: number): void{
-        AlignTool.scaleToScreenHeight(this.scene,groundTile,0.17);
+    private setDefaultSettings(index: number, groundTile: Phaser.Physics.Matter.Image, bitfield: number): void{
+        const x = AlignTool.getXfromScreenWidth(this.scene,0.25) + AlignTool.getXfromScreenWidth(this.scene,0.25)*index;
+        
+        const y = AlignTool.getYfromScreenHeight(
+            this.scene, 
+            0.95
+        );
+        AlignTool.scaleToScreenWidth(this.scene,groundTile,0.25);
         groundTile.setPosition(x,y);
         groundTile.setStatic(true);
         groundTile.setCollisionCategory(bitfield)
