@@ -178,21 +178,26 @@ class BlockManagerHelper{
      */
     checkStackedBlocks(): void{
         this.stackedBlocks.forEach((block,index) => {
-            let body = <MatterJS.BodyType>block.body
-            if(body.velocity.x >= 1.5){
-                block.setVelocityX(1.5);
-            } else if (body.velocity.x <= -1.5){
-                block.setVelocityX(-1.5);
+            let body = <MatterJS.BodyType>block.body;
+            let velocityLimit = AlignTool.getXfromScreenWidth(this.scene,0.002);
+            
+            // Check velocity limit
+            if(body.velocity.x >= velocityLimit){
+                block.setVelocityX(velocityLimit);
+            } else if (body.velocity.x <= -velocityLimit){
+                block.setVelocityX(-velocityLimit);
             }
-            if(block.y>=AlignTool.getYfromScreenHeight(this.scene,1) ||
+
+            // Check if falling
+            if(block.y>=AlignTool.getYfromScreenHeight(this.scene,0.925) ||
             block.x<= AlignTool.getXfromScreenWidth(this.scene, 0) ||
             block.x>= AlignTool.getXfromScreenWidth(this.scene, 1)){
-                block.setVisible(false);
-                block.setActive(false);
                 block.setPosition(
                     AlignTool.getXfromScreenWidth(this.scene,0.5),
                     AlignTool.getYfromScreenHeight(this.scene,1)
                 );
+                block.setVisible(false);
+                block.setActive(false);
 
                 this.stackedBlocks.splice(index,1);
                 // console.log("fall",this.stackedBlocks.length);

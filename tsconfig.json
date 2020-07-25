@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
       "target": "es5",
-      "lib": ["ES2015", "ES2017.Object", "ES2019.Object", "ES2020", "dom"]
+      "lib": ["dom", "es6", "ES2019"], // dom needed for window, URLSearchParams, etc. ;es6 needed for polyfill functions such as string.includes(); es2019 needed for Object.fromEntries function
     },
     "include": [
       "src/Scripts/app.ts"

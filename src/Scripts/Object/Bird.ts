@@ -95,6 +95,7 @@ export default class Bird extends Phaser.Physics.Matter.Sprite implements Item{
     }
 
     hide(): void{
+        this.isHit = false;
         this.setVisible(false);
         this.setActive(false);
     }
