@@ -1,8 +1,5 @@
 import "phaser";
 import {config, PhaserConfig} from "./Config/PhaserConfig";
-import * as React from 'jsx-dom';
-window['React'] = React;
-export { React };
 
 var game;
 

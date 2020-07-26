@@ -13,9 +13,7 @@ export default class Background extends Phaser.GameObjects.TileSprite{
             "background"
         );
 
-        let displayHeight = scene.cameras.main.height * 0.75;
-        this.displayHeight = displayHeight;
-        this.setScale(this.scaleY);
+        AlignTool.scaleToScreenHeight(scene, this, 0.75);
         this.setDepth(DepthConfig.background);
         scene.add.existing(this);
     }

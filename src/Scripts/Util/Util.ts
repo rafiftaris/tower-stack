@@ -4,9 +4,8 @@ export const getResolution = () => {
 
 
   if (isTargetDevice() !== -1) {
-    w = window.innerWidth * window.devicePixelRatio;
-    h = window.innerHeight * window.devicePixelRatio;
- 
+    w = window.innerWidth; // * window.devicePixelRatio;
+    h = window.innerHeight; // * window.devicePixelRatio;
   }
   return { width: w, height: h };
 };
