@@ -5,6 +5,7 @@ import Timer from "../Object/Timer";
 import Ground from "../Object/Ground";
 import GameOverPanel from "../Object/GameOverPanel";
 import BuildingBlock from "../Object/Block";
+import Firework from "../Object/Firework";
 
 import {BlockManager} from "../Manager/BlockManager";
 import {ItemManager} from "../Manager/ItemManager";
@@ -32,6 +33,9 @@ export default class LevelScene extends Phaser.Scene {
   private gameOverPanel: GameOverPanel;
   private stopwatch: Phaser.GameObjects.Image;
 
+  private fireworkA: Firework;
+  private fireworkB: Firework;
+
   constructor() {
     super({ key: SceneKeys.Level });
   }
@@ -47,10 +51,37 @@ export default class LevelScene extends Phaser.Scene {
     this.matter.world.setBounds(-500,-300,getResolution().width+1000,getResolution().height+500);
     // this.background = new Background(this);
 
-    this.timeText = new Timer(this);
-
     this.ground = new Ground(this, bitfield);
+      
+    // Stopwatch and timer
+    this.timeText = new Timer(this);
+    this.stopwatch = new Phaser.GameObjects.Image(
+      this,
+      AlignTool.getXfromScreenWidth(this,0.85),
+      AlignTool.getYfromScreenHeight(this,0.03),
+      "stopwatch"
+    );
+    AlignTool.scaleToScreenWidth(this,this.stopwatch,0.1);
+    this.add.existing(this.stopwatch);
+    
+    // Game over components
+    this.gameOverPanel = new GameOverPanel(this);
+    this.fireworkA = new Firework(
+      this,
+      AlignTool.getXfromScreenWidth(this,0.3),
+      AlignTool.getYfromScreenHeight(this,0.2),
+      0.4
+    );
+    this.fireworkB = new Firework(
+      this,
+      AlignTool.getXfromScreenWidth(this,0.7),
+      AlignTool.getYfromScreenHeight(this,0.2),
+      0.4
+    );
+    // this.fireworkA.show();
+    // this.fireworkB.show();
 
+    // Input zone
     this.inputZone = new Phaser.GameObjects.Zone(
       this,
       0,
@@ -61,50 +92,23 @@ export default class LevelScene extends Phaser.Scene {
     this.inputZone.setOrigin(0,0);
     this.inputZone.setInteractive();
     this.add.existing(this.inputZone);
-
-    this.gameOverPanel = new GameOverPanel(this);
-
-    this.stopwatch = new Phaser.GameObjects.Image(
-      this,
-      AlignTool.getXfromScreenWidth(this,0.85),
-      AlignTool.getYfromScreenHeight(this,0.03),
-      "stopwatch"
-    );
-    AlignTool.scaleToScreenWidth(this,this.stopwatch,0.1);
-    this.add.existing(this.stopwatch);
-    
-    
     this.inputDisabled = false;
-    
-    let me = this;
+
     this.inputZone.on('pointerdown', () => {
       if(this.inputDisabled || this.gameState === GAME_STATE.GAME_OVER) { return; }
-      me.inputDisabled = true;
+      this.inputDisabled = true;
       ItemManager.addGenerateItemEvent();
       BlockManager.dropBlock();
-      me.timeText.createTimerEvent();
+      this.timeText.createTimerEvent();
 
-      me.time.addEvent({
+      this.time.addEvent({
         delay: 1000,
-        callback: me.showMovingBlock,
-        callbackScope: me
+        callback: this.showMovingBlock,
+        callbackScope: this
       });
     },this);
   }
-
-  initializeStaticElements(bitfield: number): void{
-    TextPopUp.init(this, DepthConfig.score);
-    ImagePopUp.init(this, DepthConfig.gameOverPanel);
-    BlockManager.init(this, bitfield);
-    ItemManager.init(this);
-  }
-
-  showMovingBlock(): void{
-    if(this.gameState === GAME_STATE.GAME_OVER) { return; }
-    BlockManager.showMovingBlock();
-    this.inputDisabled = false;
-  }
-
+  
   update(): void {
     // this.background.update();
     BlockManager.checkStackedBlocks();
@@ -179,17 +183,31 @@ export default class LevelScene extends Phaser.Scene {
     }
   }
 
+  initializeStaticElements(bitfield: number): void{
+    TextPopUp.init(this, DepthConfig.score);
+    ImagePopUp.init(this, DepthConfig.gameOverPanel);
+    BlockManager.init(this, bitfield);
+    ItemManager.init(this);
+  }
+
+  showMovingBlock(): void{
+    if(this.gameState === GAME_STATE.GAME_OVER) { return; }
+    BlockManager.showMovingBlock();
+    this.inputDisabled = false;
+  }
+
   setGameOver(): void{
     this.gameState = GAME_STATE.GAME_OVER;
     this.timeText.destroyTimeEvent();
     ItemManager.setGameOver();
-    // this.inputZone.removeInteractive();
     this.inputZone.destroy();
     BlockManager.setGameOver(this.ground);
     this.time.delayedCall(BlockManager.getDelayDuration(),this.showPanel,null,this);
   }
 
   showPanel(): void{
+    this.fireworkA.show(true);
+    this.fireworkB.show(true);
     this.score = BlockManager.getScore();
     this.gameOverPanel.showScore(this.score);
   }

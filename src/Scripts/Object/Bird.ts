@@ -38,7 +38,7 @@ export default class Bird extends Phaser.Physics.Matter.Sprite implements Item{
         this.setIgnoreGravity(true);
         AlignTool.scaleToScreenHeight(this.scene,this,0.1);
         this.setFlipX(false);
-        this.setDepth(DepthConfig.collectibles);
+        this.setDepth(DepthConfig.item);
         this.animate();
         this.scene.add.existing(this);
     }

@@ -1,8 +1,7 @@
 import * as Phaser from 'phaser';
 import AlignTool from '../Util/AlignTool';
+import {TIME_LIMIT} from "../Config/GameConfig";
 import { ANIMATION_TYPE, TextPopUp } from "../Util/TextPopUp";
-
-const TIME_LIMIT = 30;
 
 export default class Timer{
     private displayText: Phaser.GameObjects.Text;

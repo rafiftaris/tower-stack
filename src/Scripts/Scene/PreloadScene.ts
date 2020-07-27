@@ -16,6 +16,10 @@ export default class PreloadScene extends Phaser.Scene {
       frameWidth: 1029/3,
       frameHeight: 902/3
     });
+    this.load.spritesheet("firework","spritesheet/firework.png",{
+      frameWidth: 1536/6,
+      frameHeight: 1280/5
+    });
 
     this.load.image("title","stack-it-up.png");
     this.load.image("panel", "Panel.png");
@@ -34,6 +38,7 @@ export default class PreloadScene extends Phaser.Scene {
     this.load.audio("bam",["sound/bam.mp3","sound/bam.ogg"]);
     this.load.audio("gameover",["sound/game-over.mp3","sound/game-over.ogg"]);
     this.load.audio("score",["sound/score.mp3","sound/score.ogg"]);
+    this.load.audio("firework",["sound/firework.mp3","sound/firework.ogg"]);
 
   }
 

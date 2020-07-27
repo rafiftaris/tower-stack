@@ -2,6 +2,7 @@ import * as Phaser from "phaser";
 
 import BuildingBlock from "../Object/Block";
 import Ground from "../Object/Ground";
+import Firework from "../Object/Firework";
 
 import AlignTool from "../Util/AlignTool";
 import AnimationHelper from "../Util/AnimationHelper";
@@ -166,6 +167,14 @@ class BlockManagerHelper{
                 animType: ANIMATION_TYPE.EMBIGGEN,
                 retain: true,
             })?.text as Phaser.GameObjects.Text;
+            
+            let firework = new Firework(
+                this.scene,
+                block.x,
+                block.y,
+                0.14
+            ).show(false);
+
             this.scene.sound.play("score", { volume: SoundConfig.sfxVolume });
             this.score += currentBlockScore;   
         }

@@ -37,7 +37,7 @@ export default class Hourglass extends Phaser.Physics.Matter.Sprite implements I
         this.setSensor(true);
         this.setIgnoreGravity(true);
         AlignTool.scaleToScreenHeight(this.scene,this,0.08);
-        this.setDepth(DepthConfig.collectibles);
+        this.setDepth(DepthConfig.item);
         this.scene.add.existing(this);
     }
 
