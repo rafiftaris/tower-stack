@@ -1,6 +1,4 @@
 import * as Phaser from "phaser";
-import FpsText from "../Object/FpsText";
-import Background from "../Object/Background";
 import Ground from "../Object/Ground";
 
 import {ImagePopUp, ANIMATION_TYPE} from "../Util/ImagePopUp";
@@ -10,28 +8,26 @@ import DepthConfig from "../Config/DepthConfig";
 import SoundConfig from "../Config/SoundConfig";
 import AlignTool from "../Util/AlignTool";
 import PlayButton from "../Object/PlayButton";
+import { SceneKeys } from "../Config/SceneKeys";
 
 export default class TitleScene extends Phaser.Scene {
-  private fpsText: FpsText;
   private titleText: Phaser.GameObjects.Image;
   private ground: Ground;
-  private background: Background;
   private playButton: PlayButton;
 
   constructor() {
-    super({ key: "TitleScene" });
+    super({ key: SceneKeys.Title });
   }
 
   preload(): void {}
 
   create(): void {
-    this.cameras.main.setBackgroundColor("#85cff5");
+    this.scene.run(SceneKeys.GameUI);
+    this.scene.sendToBack(SceneKeys.GameUI);
+    
     this.initializeStaticElements();
 
-    this.background = new Background(this);
     this.ground = new Ground(this, 1);
-
-    this.fpsText = new FpsText(this);
 
     this.titleText = ImagePopUp.showImage({
       x: AlignTool.getXfromScreenWidth(this,0.5),
@@ -74,10 +70,7 @@ export default class TitleScene extends Phaser.Scene {
     // this.scene.start("LevelScene");
   }
   
-  update(): void {
-    this.background.update();
-    this.fpsText.update();
-  }
+  update(): void {}
 
   initializeStaticElements(): void{
     TextPopUp.init(this, DepthConfig.score);

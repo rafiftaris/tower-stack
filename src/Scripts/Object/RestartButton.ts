@@ -1,5 +1,6 @@
 import * as Phaser from 'phaser';
 import AlignTool from '../Util/AlignTool';
+import { SceneKeys } from "../Config/SceneKeys";
 
 export default class RestartButton extends Phaser.GameObjects.Image{
     constructor(scene: Phaser.Scene, x: number, y: number, scalePercentage: number, depth: number){
@@ -11,7 +12,8 @@ export default class RestartButton extends Phaser.GameObjects.Image{
 
         let me = this;
         this.on("pointerdown", () => {
-            scene.scene.start("LevelScene");
+            scene.scene.stop(SceneKeys.Level);
+            scene.scene.start(SceneKeys.Level);
         },this);
 
         this.on("pointerover",() => {

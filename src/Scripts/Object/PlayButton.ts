@@ -1,4 +1,6 @@
 import * as Phaser from 'phaser';
+import { SceneKeys } from "../Config/SceneKeys";
+
 import AlignTool from '../Util/AlignTool';
 
 export default class PlayButton extends Phaser.GameObjects.Image{
@@ -26,7 +28,8 @@ export default class PlayButton extends Phaser.GameObjects.Image{
     setBackButton(scene: Phaser.Scene): void{
         this.setFlipX(true);
         this.on("pointerdown", () => {
-            scene.scene.start("TitleScene");
+            scene.scene.stop(SceneKeys.Level);
+            scene.scene.start(SceneKeys.Title);
         },this);
     }
 
@@ -36,7 +39,8 @@ export default class PlayButton extends Phaser.GameObjects.Image{
      */
     setPlayButton(scene: Phaser.Scene): void{
         this.on("pointerdown", () => {
-            scene.scene.start("LevelScene");
+            scene.scene.stop(SceneKeys.Title);
+            scene.scene.start(SceneKeys.Level);
         },this);
     }
 }

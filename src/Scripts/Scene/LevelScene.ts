@@ -1,10 +1,10 @@
 import * as Phaser from "phaser";
-import FpsText from "../Object/FpsText";
+import {SceneKeys} from '../Config/SceneKeys';
+
 import Timer from "../Object/Timer";
 import Ground from "../Object/Ground";
 import GameOverPanel from "../Object/GameOverPanel";
 import BuildingBlock from "../Object/Block";
-import Background from "../Object/Background";
 
 import {BlockManager} from "../Manager/BlockManager";
 import {ItemManager} from "../Manager/ItemManager";
@@ -22,10 +22,9 @@ import SoundConfig from "../Config/SoundConfig";
 
 
 export default class LevelScene extends Phaser.Scene {
-  private fpsText: FpsText;
   private timeText: Timer;
   private ground: Ground;
-  private background: Background;
+  // private background: Background;
   private inputZone: Phaser.GameObjects.Zone;
   private gameState: GAME_STATE;
   private inputDisabled: boolean;
@@ -34,7 +33,7 @@ export default class LevelScene extends Phaser.Scene {
   private stopwatch: Phaser.GameObjects.Image;
 
   constructor() {
-    super({ key: "LevelScene" });
+    super({ key: SceneKeys.Level });
   }
 
   preload(): void {}
@@ -43,13 +42,11 @@ export default class LevelScene extends Phaser.Scene {
     let bitfield = this.matter.world.nextCategory();
     this.gameState = GAME_STATE.GAME_ON;
     
-    this.cameras.main.setBackgroundColor("#85cff5");
     this.initializeStaticElements(bitfield);
 
     this.matter.world.setBounds(-500,-300,getResolution().width+1000,getResolution().height+500);
-    this.background = new Background(this);
+    // this.background = new Background(this);
 
-    this.fpsText = new FpsText(this);
     this.timeText = new Timer(this);
 
     this.ground = new Ground(this, bitfield);
@@ -109,13 +106,12 @@ export default class LevelScene extends Phaser.Scene {
   }
 
   update(): void {
-    this.background.update();
+    // this.background.update();
     BlockManager.checkStackedBlocks();
     ItemManager.checkItem();
     
     this.matter.world.on('collisionstart',this.checkCollision,this);
 
-    this.fpsText.update();
     if(this.timeText.timesUp() && this.gameState === GAME_STATE.GAME_ON){
       this.setGameOver();
     }

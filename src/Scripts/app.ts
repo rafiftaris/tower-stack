@@ -1,5 +1,7 @@
 import "phaser";
+import {SceneKeys} from './Config/SceneKeys';
 import {config, PhaserConfig} from "./Config/PhaserConfig";
+import registerScenes from './registerScenes';
 
 var game;
 
@@ -9,7 +11,9 @@ export class PhaserGame extends Phaser.Game {
   }
 }
 window.onload = () => {
-   game = new PhaserGame(config);
+  game = new PhaserGame(config);
+  registerScenes(game); // register all available scenes to game obj
+  game.scene.start(SceneKeys.Preload);
 };
 
 export function getGame()

@@ -3,6 +3,7 @@ export type PhaserConfig = Phaser.Types.Core.GameConfig;
 import LevelScene from "../Scene/LevelScene";
 import PreloadScene from "../Scene/PreloadScene";
 import TitleScene from "../Scene/TitleScene";
+import BackgroundScene from "../Scene/GameUI"
 
 import {getResolution} from '../Util/Util'
 
@@ -23,6 +24,5 @@ export const config: PhaserConfig = {
     }
   },
   backgroundColor: "#493a52",
-  scene: [PreloadScene, TitleScene, LevelScene]
- 
+  transparent: true 
 };

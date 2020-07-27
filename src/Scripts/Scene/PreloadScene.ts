@@ -1,8 +1,9 @@
 import * as Phaser from "phaser";
+import {SceneKeys} from '../Config/SceneKeys';
 
 export default class PreloadScene extends Phaser.Scene {
   constructor() {
-    super({ key: "PreloadScene" });
+    super({ key: SceneKeys.Preload });
   }
 
   preload(): void {
@@ -20,7 +21,7 @@ export default class PreloadScene extends Phaser.Scene {
     this.load.image("panel", "Panel.png");
     this.load.image("restart", "buttons/restart-button.png");
     this.load.image("play", "buttons/play-button.png");
-    this.load.image("stopwatch","stopwatch.png")
+    this.load.image("stopwatch","stopwatch.png");
     this.load.image("background","sky.jpg");
     this.load.image("hourglass", "hourglass.png");
     this.load.image("grass-left", "spritesheet/GrassLeft.png");
@@ -33,10 +34,12 @@ export default class PreloadScene extends Phaser.Scene {
     this.load.audio("bam",["sound/bam.mp3","sound/bam.ogg"]);
     this.load.audio("gameover",["sound/game-over.mp3","sound/game-over.ogg"]);
     this.load.audio("score",["sound/score.mp3","sound/score.ogg"]);
+
   }
 
   create(): void {
-    this.scene.start("TitleScene");
-    // this.scene.start("LevelScene");
+    this.scene.stop(SceneKeys.Preload);
+
+    this.scene.start(SceneKeys.Title);
   }
 }
