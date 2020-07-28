@@ -1,8 +1,14 @@
 import * as Phaser from 'phaser';
 import { SceneKeys } from '../Config/SceneKeys';
 
+import { Timer } from "../Object/Timer";
 import Background from '../Object/Background';
 import { IBackground } from '../Interfaces/interface';
+
+import { TextPopUp } from "../Util/TextPopUp";
+import { ImagePopUp } from "../Util/ImagePopUp";
+
+import DepthConfig from "../Config/DepthConfig";
 
 export default class GameUI extends Phaser.Scene {
   private background: IBackground;
@@ -15,6 +21,7 @@ export default class GameUI extends Phaser.Scene {
   preload(): void {}
 
   create(): void {
+    this.initializeStaticElements();
     this.background = new Background(this);
     this.cameras.main.setBackgroundColor('#85cff5');
     // this.fpsText = new FpsText(this);
@@ -23,5 +30,12 @@ export default class GameUI extends Phaser.Scene {
   update(): void {
     this.background.update();
     // this.fpsText.update();
+  }
+
+  initializeStaticElements(): void {
+    TextPopUp.init(this, DepthConfig.gameHeaderUI);
+    ImagePopUp.init(this, DepthConfig.gameHeaderUI);
+    Timer.init(this, DepthConfig.gameHeaderUI);
+    Timer.hide();  
   }
 }

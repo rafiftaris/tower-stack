@@ -87,8 +87,9 @@ implements IButton{
           'pointerdown',
           () => {
             if (this.isEnabled) {
-              this.scene.scene.stop(SceneKeys.Level);
-              this.scene.scene.start(SceneKeys.Title);
+                this.scene.scene.stop(SceneKeys.GameOver);
+                this.scene.scene.stop(SceneKeys.Level);
+                this.scene.scene.start(SceneKeys.Title);
             }
           },
           this
@@ -114,6 +115,7 @@ implements IButton{
         this.on(
           'pointerdown',
           () => {
+            this.scene.scene.stop(SceneKeys.GameOver);
             this.scene.scene.stop(SceneKeys.Level);
             this.scene.scene.start(SceneKeys.Level);
           },

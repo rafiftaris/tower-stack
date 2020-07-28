@@ -1,36 +1,27 @@
 import * as Phaser from 'phaser';
 import { SceneKeys } from '../Config/SceneKeys';
 
-import Timer from '../Object/Timer';
+import { Timer } from '../Object/Timer';
 import Ground from '../Object/Ground';
-import GameOverPanel from '../Object/GameOverPanel';
 import BuildingBlock from '../Object/Block';
-import Firework from '../Object/Firework';
 
 import { BlockManager } from '../Manager/BlockManager';
 import { ItemManager } from '../Manager/ItemManager';
 
-import { getResolution } from '../Util/Util';
 import { ImagePopUp } from '../Util/ImagePopUp';
 import { TextPopUp } from '../Util/TextPopUp';
 import AlignTool from '../Util/AlignTool';
 
 import { GAME_STATE } from '../Enum/enum';
-import { IItem, ITimer, IGround, IFirework, IGameOverPanel } from '../Interfaces/interface';
+import { IItem, IGround } from '../Interfaces/interface';
 
 import DepthConfig from '../Config/DepthConfig';
 import SoundConfig from '../Config/SoundConfig';
 
 export default class LevelScene extends Phaser.Scene {
-  private timeText: ITimer;
   private ground: IGround;
 
   private inputZone: Phaser.GameObjects.Zone;
-  private gameOverPanel: IGameOverPanel;
-  private stopwatch: Phaser.GameObjects.Image;
-
-  private fireworkA: IFirework;
-  private fireworkB: IFirework;
 
   private gameState: GAME_STATE;
   private inputDisabled: boolean;
@@ -51,39 +42,11 @@ export default class LevelScene extends Phaser.Scene {
     this.matter.world.setBounds(
       -500,
       -300,
-      getResolution().width + 1000,
-      getResolution().height + 500
+      AlignTool.getXfromScreenWidth(this, 2),
+      AlignTool.getYfromScreenHeight(this,1.5)
     );
 
     this.ground = new Ground(this, bitfield);
-
-    // Stopwatch and timer
-    this.timeText = new Timer(this);
-    this.stopwatch = new Phaser.GameObjects.Image(
-      this,
-      AlignTool.getXfromScreenWidth(this, 0.85),
-      AlignTool.getYfromScreenHeight(this, 0.03),
-      'stopwatch'
-    );
-    AlignTool.scaleToScreenWidth(this, this.stopwatch, 0.1);
-    this.add.existing(this.stopwatch);
-
-    // Game over components
-    this.gameOverPanel = new GameOverPanel(this);
-    this.fireworkA = new Firework(
-      this,
-      AlignTool.getXfromScreenWidth(this, 0.3),
-      AlignTool.getYfromScreenHeight(this, 0.2),
-      0.4
-    );
-    this.fireworkB = new Firework(
-      this,
-      AlignTool.getXfromScreenWidth(this, 0.7),
-      AlignTool.getYfromScreenHeight(this, 0.2),
-      0.4
-    );
-    // this.fireworkA.show();
-    // this.fireworkB.show();
 
     // Input zone
     this.inputZone = new Phaser.GameObjects.Zone(
@@ -107,7 +70,7 @@ export default class LevelScene extends Phaser.Scene {
         this.inputDisabled = true;
         ItemManager.addGenerateItemEvent();
         BlockManager.dropBlock();
-        this.timeText.createTimerEvent();
+        Timer.createTimerEvent();
 
         this.time.addEvent({
           delay: 1000,
@@ -126,7 +89,7 @@ export default class LevelScene extends Phaser.Scene {
 
     this.matter.world.on('collisionstart', this.checkCollision, this);
 
-    if (this.timeText.timesUp() && this.gameState === GAME_STATE.GAME_ON) {
+    if (Timer.timesUp() && this.gameState === GAME_STATE.GAME_ON) {
       this.setGameOver();
     }
 
@@ -149,9 +112,9 @@ export default class LevelScene extends Phaser.Scene {
       if (obj2.gameObject.itemType !== undefined) {
         if (!obj2.gameObject.isHit && !block.hasCollided) {
           if (obj2.gameObject.itemType == 'Hourglass') {
-            this.timeText.increase(obj2.position.x, obj2.position.y);
+            Timer.increase(obj2.position.x, obj2.position.y);
           } else {
-            this.timeText.decrease(obj2.position.x, obj2.position.y);
+            Timer.decrease(obj2.position.x, obj2.position.y);
           }
           const item = <IItem>obj2.gameObject;
           item.hideAfterHit();
@@ -175,9 +138,9 @@ export default class LevelScene extends Phaser.Scene {
       if (obj1.gameObject.itemType !== undefined) {
         if (!obj1.gameObject.isHit && !block.hasCollided) {
           if (obj1.gameObject.itemType == 'Hourglass') {
-            this.timeText.increase(obj1.position.x, obj1.position.y);
+            Timer.increase(obj1.position.x, obj1.position.y);
           } else {
-            this.timeText.decrease(obj1.position.x, obj1.position.y);
+            Timer.decrease(obj1.position.x, obj1.position.y);
           }
           const item = <IItem>obj1.gameObject;
           item.hideAfterHit();
@@ -200,6 +163,7 @@ export default class LevelScene extends Phaser.Scene {
     ImagePopUp.init(this, DepthConfig.gameOverPanel);
     BlockManager.init(this, bitfield);
     ItemManager.init(this);
+    Timer.show();
   }
 
   showMovingBlock(): void {
@@ -212,31 +176,17 @@ export default class LevelScene extends Phaser.Scene {
 
   setGameOver(): void {
     this.gameState = GAME_STATE.GAME_OVER;
-    this.timeText.destroyTimeEvent();
+    Timer.destroyTimeEvent();
     ItemManager.setGameOver();
     this.inputZone.destroy();
     BlockManager.setGameOver(this.ground);
     this.time.delayedCall(
       BlockManager.getDelayDuration(),
-      this.showPanel,
+      () => {
+        this.scene.run(SceneKeys.GameOver);
+      },
       null,
       this
     );
-  }
-
-  showPanel(): void {
-    this.fireworkA.show(true);
-    this.fireworkB.show(true);
-    this.score = BlockManager.getScore();
-    this.gameOverPanel.showScore(this.score);
-    
-    let currentHighScore = 0;
-    if(localStorage.getItem("highScore") !== null){
-      currentHighScore = parseInt(localStorage.getItem("highScore"));
-    }
-
-    if(this.score > currentHighScore){
-      localStorage.setItem("highScore",this.score.toString());
-    }
   }
 }

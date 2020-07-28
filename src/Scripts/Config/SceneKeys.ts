@@ -3,5 +3,6 @@ export enum SceneKeys {
   GameUI = 'GameUI',
   Title = 'TitleScene',
   Level = 'LevelScene',
-  HowTo = 'InstructionScene'
+  HowTo = 'InstructionScene',
+  GameOver = "GameOverScene"
 }

@@ -9,6 +9,7 @@ import DepthConfig from '../Config/DepthConfig';
 import SoundConfig from '../Config/SoundConfig';
 import { SceneKeys } from '../Config/SceneKeys';
 
+import { Timer } from "../Object/Timer";
 import Button from '../Object/Button';
 
 import { BUTTON_TYPE } from '../Enum/enum';
@@ -165,5 +166,6 @@ export default class TitleScene extends Phaser.Scene {
   initializeStaticElements(): void {
     TextPopUp.init(this, DepthConfig.score);
     ImagePopUp.init(this, DepthConfig.gameOverPanel);
+    Timer.hide();
   }
 }

@@ -4,7 +4,9 @@ import { TIME_LIMIT } from '../Config/GameConfig';
 import { ANIMATION_TYPE, TextPopUp } from '../Util/TextPopUp';
 import { ITimer } from '../Interfaces/interface';
 
-export default class Timer implements ITimer{
+class TimerHelper implements ITimer{
+  private static instance: TimerHelper;
+
   private displayText: Phaser.GameObjects.Text;
   private countdown: number;
   private timerEvent: Phaser.Time.TimerEvent;
@@ -12,7 +14,14 @@ export default class Timer implements ITimer{
   private cooldown: Phaser.Time.TimerEvent;
   private onCooldown: boolean;
 
-  constructor(scene: Phaser.Scene) {
+  private stopwatch: Phaser.GameObjects.Image;
+
+  public static get Instance() {
+    const instance = this.instance || (this.instance = new this());
+    return instance;
+  }
+
+  init(scene: Phaser.Scene, depth: number) {
     this.scene = scene;
     this.displayText = TextPopUp.showText({
       x: AlignTool.getXfromScreenWidth(this.scene, 0.9),
@@ -29,10 +38,39 @@ export default class Timer implements ITimer{
       retain: true
     })?.text as Phaser.GameObjects.Text;
     this.displayText.setOrigin(0);
-    this.displayText.setDepth(10);
+    this.displayText.setDepth(depth);
     this.countdown = TIME_LIMIT;
     this.onCooldown = false;
 
+    this.displayText.setText(this.countdown.toString());
+
+    // Stopwatch and timer
+    this.stopwatch = new Phaser.GameObjects.Image(
+      scene,
+      AlignTool.getXfromScreenWidth(scene, 0.85),
+      AlignTool.getYfromScreenHeight(scene, 0.03),
+      'stopwatch'
+    );
+    AlignTool.scaleToScreenWidth(scene, this.stopwatch, 0.1);
+    this.stopwatch.setDepth(depth);
+    scene.add.existing(this.stopwatch);
+  }
+
+  /**
+   * Hide timer
+   */
+  hide(): void{
+    this.displayText.setVisible(false);
+    this.stopwatch.setVisible(false);
+  }
+
+  /**
+   * Reset and show timer
+   */
+  show(): void{
+    this.displayText.setVisible(true);
+    this.stopwatch.setVisible(true);
+    this.countdown = TIME_LIMIT;
     this.displayText.setText(this.countdown.toString());
   }
 
@@ -70,7 +108,8 @@ export default class Timer implements ITimer{
    * Pause the countdown
    */
   destroyTimeEvent(): void {
-    this.timerEvent.paused = true;
+    this.timerEvent.destroy();
+    this.timerEvent = null;
   }
 
   /**
@@ -162,3 +201,5 @@ export default class Timer implements ITimer{
     }
   }
 }
+
+export const Timer = TimerHelper.Instance;
