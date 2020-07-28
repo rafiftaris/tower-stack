@@ -146,7 +146,7 @@ class BlockManagerHelper {
       const block = this.stackedBlocks.shift();
       AnimationHelper.ChangeAlpha(this.scene, block, 0.5, 0);
 
-      const groundBlock = ground.getGroundBlock();
+      const groundBlock = ground.getGroundArray()[0];
       const blockY = AlignTool.getYfromScreenHeight(
         this.scene,
         (groundBlock.y - groundBlock.displayHeight / 2 - block.y) /

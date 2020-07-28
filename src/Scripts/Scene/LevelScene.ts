@@ -54,7 +54,6 @@ export default class LevelScene extends Phaser.Scene {
       getResolution().width + 1000,
       getResolution().height + 500
     );
-    // this.background = new Background(this);
 
     this.ground = new Ground(this, bitfield);
 
@@ -230,5 +229,14 @@ export default class LevelScene extends Phaser.Scene {
     this.fireworkB.show(true);
     this.score = BlockManager.getScore();
     this.gameOverPanel.showScore(this.score);
+    
+    let currentHighScore = 0;
+    if(localStorage.getItem("highScore") !== null){
+      currentHighScore = parseInt(localStorage.getItem("highScore"));
+    }
+
+    if(this.score > currentHighScore){
+      localStorage.setItem("highScore",this.score.toString());
+    }
   }
 }

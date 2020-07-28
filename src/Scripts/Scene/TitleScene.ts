@@ -23,6 +23,7 @@ export default class TitleScene extends Phaser.Scene {
 
   private playText: Phaser.GameObjects.Text;
   private howToText: Phaser.GameObjects.Text;
+  private highScoreText: Phaser.GameObjects.Text;
 
   constructor() {
     super({ key: SceneKeys.Title });
@@ -38,7 +39,7 @@ export default class TitleScene extends Phaser.Scene {
     // Title text
     this.titleText = ImagePopUp.showImage({
       x: AlignTool.getXfromScreenWidth(this, 0.5),
-      y: AlignTool.getYfromScreenHeight(this, 0.15),
+      y: AlignTool.getYfromScreenHeight(this, 0.1),
       image: 'title',
       width: 591,
       height: 146,
@@ -92,6 +93,27 @@ export default class TitleScene extends Phaser.Scene {
     this.time.addEvent({
       delay: 3000,
       callback: () => {
+        let highscore = 0;
+        if(localStorage.getItem("highScore") !== null){
+          highscore = parseInt(localStorage.getItem("highScore"));
+        }
+
+        this.highScoreText = TextPopUp.showText({
+          x: AlignTool.getXfromScreenWidth(this, 0.5),
+          y: AlignTool.getYfromScreenHeight(this, 0.25),
+          text: 'High Score: ' + highscore.toString(),
+          duration: 0.5,
+          style: {
+            fontSize: 72,
+            fontFamily: 'TrulyMadly',
+            color: 'black',
+            strokeThickness: 1
+          },
+          animType: TEXT_ANIM_TYPE.EMBIGGEN,
+          retain: true
+        })?.text as Phaser.GameObjects.Text;
+        this.add.existing(this.highScoreText);
+
         this.playText = TextPopUp.showText({
           x: AlignTool.getXfromScreenWidth(this, 0.61),
           y: AlignTool.getYfromScreenHeight(this, 0.4),

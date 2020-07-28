@@ -60,9 +60,9 @@ export default class Ground implements IGround{
   }
 
   /**
-   * Get one of the ground block.
+   * Get array of the ground blocks.
    */
-  getGroundBlock(): Phaser.Physics.Matter.Image {
-    return this.groundTiles[0];
+  getGroundArray(): Phaser.Physics.Matter.Image[] {
+    return this.groundTiles;
   }
 }
