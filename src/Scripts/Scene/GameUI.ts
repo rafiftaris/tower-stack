@@ -2,7 +2,6 @@ import * as Phaser from "phaser";
 import {SceneKeys} from '../Config/SceneKeys';
 
 import Background from "../Object/Background";
-import FpsText from "../Object/FpsText";
 
 export default class GameUI extends Phaser.Scene {
   private background: Background;

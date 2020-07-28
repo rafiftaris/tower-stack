@@ -4,3 +4,23 @@ body {
   
 }
 
+@font-face {
+  font-family: SNES;
+  src: url('./src/Assets/fonts/SnesItalic-vmAPZ.ttf');
+  font-weight:400;
+  font-weight:normal;
+}
+
+@font-face {
+  font-family: SlopeOpera;
+  src: url('./src/Assets/fonts/SlopeOpera-gg1Y.ttf');
+  font-weight:400;
+  font-weight:normal;
+}
+
+@font-face {
+  font-family: TrulyMadly;
+  src: url('./src/Assets/fonts/TrulyMadlyDpad-a72o.ttf');
+  font-weight:400;
+  font-weight:normal;
+}

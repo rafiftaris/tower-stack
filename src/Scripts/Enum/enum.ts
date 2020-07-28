@@ -7,3 +7,11 @@ export enum DIRECTION {
     right,
     left
 }
+
+export enum BUTTON_TYPE {
+    Play,
+    HowTo,
+    Restart,
+    BackFromGameOver,
+    BackFromHowTo
+}

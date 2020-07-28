@@ -5,6 +5,7 @@
   "main": "app.js",
   "scripts": {
     "build": "webpack",
+    "watch": "webpack --watch",
     "dev": "npm run build && webpack-dev-server --port=8080 --hot --inline",
     "start": "node server.js",
     "lint": "eslint . --ext .ts",

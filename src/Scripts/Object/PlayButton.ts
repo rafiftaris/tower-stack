@@ -3,9 +3,18 @@ import { SceneKeys } from "../Config/SceneKeys";
 
 import AlignTool from '../Util/AlignTool';
 
+import {BUTTON_TYPE} from "../Enum/enum";
+
 export default class PlayButton extends Phaser.GameObjects.Image{
-    constructor(scene: Phaser.Scene, x: number, y: number, scalePercentage: number, depth: number){
+    private buttonType: BUTTON_TYPE;
+    private isEnabled: boolean;
+
+    constructor(scene: Phaser.Scene, x: number, y: number, scalePercentage: number, depth: number, buttonType: BUTTON_TYPE){
         super(scene,x,y,"play");
+        this.buttonType = buttonType;
+        this.isEnabled = true;
+
+        this.setSettings();
         this.setInteractive();
         this.setDepth(depth);
         AlignTool.scaleToScreenWidth(scene,this,scalePercentage)
@@ -22,25 +31,58 @@ export default class PlayButton extends Phaser.GameObjects.Image{
     }
 
     /**
-     * Set button functionality to back
-     * @param scene: Game scene
+     * Set settings for button
      */
-    setBackButton(scene: Phaser.Scene): void{
-        this.setFlipX(true);
-        this.on("pointerdown", () => {
-            scene.scene.stop(SceneKeys.Level);
-            scene.scene.start(SceneKeys.Title);
-        },this);
+    private setSettings(): void{
+        switch (this.buttonType){
+            case BUTTON_TYPE.Play:
+                this.on("pointerdown", () => {
+                    if(this.isEnabled){
+                        this.scene.scene.stop(SceneKeys.Title);
+                        this.scene.scene.start(SceneKeys.Level);
+                    }
+                },this);
+                this.isEnabled = false;
+                break;
+            
+            case BUTTON_TYPE.HowTo:
+                this.on("pointerdown", () => {
+                    if(this.isEnabled){
+                        this.scene.scene.stop(SceneKeys.Title);
+                        this.scene.scene.start(SceneKeys.HowTo);
+                    }
+                },this);
+                this.isEnabled = false;
+                break;
+            
+            case BUTTON_TYPE.BackFromGameOver:
+                this.setFlipX(true);
+                this.on("pointerdown", () => {
+                    if(this.isEnabled){
+                        this.scene.scene.stop(SceneKeys.Level);
+                        this.scene.scene.start(SceneKeys.Title);
+                    }
+                },this);
+                break;
+            
+            case BUTTON_TYPE.BackFromHowTo:
+                this.setFlipX(true);
+                this.on("pointerdown", () => {
+                    if(this.isEnabled){
+                        this.scene.scene.stop(SceneKeys.HowTo);
+                        this.scene.scene.start(SceneKeys.Title);
+                    }
+                },this);
+                break;
+
+        }
     }
 
     /**
-     * Set button functionality to play
-     * @param scene: Game scene
+     * Enable/disable button for input
+     * @param value: true to enable button, false otherwise
      */
-    setPlayButton(scene: Phaser.Scene): void{
-        this.on("pointerdown", () => {
-            scene.scene.stop(SceneKeys.Title);
-            scene.scene.start(SceneKeys.Level);
-        },this);
+    setEnabled(value: boolean){
+        this.isEnabled = value;
     }
 }

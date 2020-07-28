@@ -43,6 +43,9 @@ export default class PreloadScene extends Phaser.Scene {
   }
 
   create(): void {
+    this.scene.run(SceneKeys.GameUI);
+    this.scene.sendToBack(SceneKeys.GameUI);
+    
     this.scene.stop(SceneKeys.Preload);
 
     this.scene.start(SceneKeys.Title);

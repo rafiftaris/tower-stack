@@ -5,6 +5,7 @@ import BackButton from "./PlayButton";
 import DepthConfig from '../Config/DepthConfig';
 import { ANIMATION_TYPE, TextPopUp } from "../Util/TextPopUp";
 import SoundConfig from '../Config/SoundConfig';
+import { BUTTON_TYPE } from '../Enum/enum';
 
 export default class GameOverPanel extends Phaser.GameObjects.Image{
     private text: Phaser.GameObjects.Text;
@@ -18,7 +19,7 @@ export default class GameOverPanel extends Phaser.GameObjects.Image{
         super(scene,centerX,centerY,"panel");
         this.scene = scene;
 
-        this.displayText = "\t\tGAME OVER\n\nYour score: "
+        this.displayText = "\t\t\t\tGAME OVER\n\nYour score: "
         this.restartButton = new RestartButton(
             this.scene,
             AlignTool.getXfromScreenWidth(scene,0.65),
@@ -31,9 +32,9 @@ export default class GameOverPanel extends Phaser.GameObjects.Image{
             AlignTool.getXfromScreenWidth(scene,0.35),
             AlignTool.getYfromScreenHeight(scene,0.6),
             0.2,
-            DepthConfig.gameOverContent
+            DepthConfig.gameOverContent,
+            BUTTON_TYPE.BackFromGameOver
         );
-        this.backButton.setBackButton(scene);
 
         AlignTool.scaleToScreenHeight(scene,this,0.4);
         this.setDepth(DepthConfig.gameOverPanel);
@@ -74,8 +75,8 @@ export default class GameOverPanel extends Phaser.GameObjects.Image{
             text: this.displayText,
             duration: 0.5,
             style: {
-                fontSize: 48,
-                fontFamily: "Courier",
+                fontSize: 64,
+                fontFamily: "TrulyMadly",
                 color: "white",
                 strokeThickness: 1
             },
