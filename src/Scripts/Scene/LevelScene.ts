@@ -16,24 +16,25 @@ import { TextPopUp } from '../Util/TextPopUp';
 import AlignTool from '../Util/AlignTool';
 
 import { GAME_STATE } from '../Enum/enum';
-import { Item } from '../Interfaces/interface';
+import { IItem, ITimer, IGround, IFirework, IGameOverPanel } from '../Interfaces/interface';
 
 import DepthConfig from '../Config/DepthConfig';
 import SoundConfig from '../Config/SoundConfig';
 
 export default class LevelScene extends Phaser.Scene {
-  private timeText: Timer;
-  private ground: Ground;
-  // private background: Background;
+  private timeText: ITimer;
+  private ground: IGround;
+
   private inputZone: Phaser.GameObjects.Zone;
+  private gameOverPanel: IGameOverPanel;
+  private stopwatch: Phaser.GameObjects.Image;
+
+  private fireworkA: IFirework;
+  private fireworkB: IFirework;
+
   private gameState: GAME_STATE;
   private inputDisabled: boolean;
   private score: number;
-  private gameOverPanel: GameOverPanel;
-  private stopwatch: Phaser.GameObjects.Image;
-
-  private fireworkA: Firework;
-  private fireworkB: Firework;
 
   constructor() {
     super({ key: SceneKeys.Level });
@@ -153,7 +154,7 @@ export default class LevelScene extends Phaser.Scene {
           } else {
             this.timeText.decrease(obj2.position.x, obj2.position.y);
           }
-          const item = <Item>obj2.gameObject;
+          const item = <IItem>obj2.gameObject;
           item.hideAfterHit();
         }
       }
@@ -179,7 +180,7 @@ export default class LevelScene extends Phaser.Scene {
           } else {
             this.timeText.decrease(obj1.position.x, obj1.position.y);
           }
-          const item = <Item>obj1.gameObject;
+          const item = <IItem>obj1.gameObject;
           item.hideAfterHit();
         }
       }

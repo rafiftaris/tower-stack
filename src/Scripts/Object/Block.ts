@@ -1,6 +1,7 @@
 import * as Phaser from 'phaser';
 import AlignTool from '../Util/AlignTool';
 import DepthConfig from '../Config/DepthConfig';
+import { IBUildingBlock } from '../Interfaces/interface';
 
 const CONFIG = {
   label: 'Block',
@@ -10,7 +11,10 @@ const CONFIG = {
   frictionStatic: 10000000
 };
 
-export default class BuildingBlock extends Phaser.Physics.Matter.Sprite {
+export default class BuildingBlock
+extends Phaser.Physics.Matter.Sprite 
+implements IBUildingBlock{
+  
   private textureFrame: number;
   private tween: Phaser.Tweens.Tween;
   public hasCollided: boolean;
@@ -107,6 +111,7 @@ export default class BuildingBlock extends Phaser.Physics.Matter.Sprite {
 
   /**
    * Hide moving block
+   * @returns: position of moving block
    */
   hide(): Phaser.Math.Vector2 {
     this.tween.pause();

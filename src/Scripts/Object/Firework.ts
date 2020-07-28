@@ -1,8 +1,12 @@
 import * as Phaser from 'phaser';
 import AlignTool from '../Util/AlignTool';
 import DepthConfig from '../Config/DepthConfig';
+import { IFirework } from '../Interfaces/interface';
 
-export default class Firework extends Phaser.Physics.Matter.Image {
+export default class Firework
+extends Phaser.Physics.Matter.Image 
+implements IFirework{
+    
   private frameNumber: number;
   private realX: number;
   private realY: number;
@@ -38,6 +42,7 @@ export default class Firework extends Phaser.Physics.Matter.Image {
 
   /**
    * Show firework
+   * @param playSound: play firework sfx when true, false otherwise
    */
   show(playSound: boolean): void {
     this.setPosition(this.realX, this.realY);

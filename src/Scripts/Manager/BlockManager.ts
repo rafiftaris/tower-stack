@@ -9,6 +9,7 @@ import AnimationHelper from '../Util/AnimationHelper';
 import { ANIMATION_TYPE, TextPopUp } from '../Util/TextPopUp';
 
 import SoundConfig from '../Config/SoundConfig';
+import { IGround } from '../Interfaces/interface';
 
 class BlockManagerHelper {
   private static instance: BlockManagerHelper;
@@ -88,7 +89,7 @@ class BlockManagerHelper {
    * Prepare game over state by counting score on stacked blocks.
    * @param ground: In-game ground sprites
    */
-  setGameOver(ground: Ground): void {
+  setGameOver(ground: IGround): void {
     this.movingBlock.hide();
     if (this.currentDroppingBlock) {
       this.scene.time.addEvent({

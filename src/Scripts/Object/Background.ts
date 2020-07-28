@@ -1,8 +1,11 @@
 import * as Phaser from 'phaser';
 import AlignTool from '../Util/AlignTool';
 import DepthConfig from '../Config/DepthConfig';
+import {IBackground} from "../Interfaces/interface";
 
-export default class Background extends Phaser.GameObjects.TileSprite {
+export default class Background 
+extends Phaser.GameObjects.TileSprite 
+implements IBackground{
   constructor(scene: Phaser.Scene) {
     super(
       scene,

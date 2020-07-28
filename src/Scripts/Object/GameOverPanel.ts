@@ -5,8 +5,12 @@ import DepthConfig from '../Config/DepthConfig';
 import { ANIMATION_TYPE, TextPopUp } from '../Util/TextPopUp';
 import SoundConfig from '../Config/SoundConfig';
 import { BUTTON_TYPE } from '../Enum/enum';
+import { IGameOverPanel } from '../Interfaces/interface';
 
-export default class GameOverPanel extends Phaser.GameObjects.Image {
+export default class GameOverPanel
+extends Phaser.GameObjects.Image 
+implements IGameOverPanel{
+    
   private text: Phaser.GameObjects.Text;
   private displayText: string;
   private restartButton: Button;

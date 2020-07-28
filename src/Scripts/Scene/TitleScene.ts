@@ -12,13 +12,14 @@ import { SceneKeys } from '../Config/SceneKeys';
 import Button from '../Object/Button';
 
 import { BUTTON_TYPE } from '../Enum/enum';
+import { IGround, IButton } from '../Interfaces/interface';
 
 export default class TitleScene extends Phaser.Scene {
   private titleText: Phaser.GameObjects.Image;
-  private ground: Ground;
+  private ground: IGround;
 
-  private playButton: Button;
-  private howToButton: Button;
+  private playButton: IButton;
+  private howToButton: IButton;
 
   private playText: Phaser.GameObjects.Text;
   private howToText: Phaser.GameObjects.Text;

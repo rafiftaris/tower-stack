@@ -4,14 +4,14 @@ import DepthConfig from '../Config/DepthConfig';
 
 import { DIRECTION } from '../Enum/enum';
 
-import { Item } from '../Interfaces/interface';
+import { IItem } from '../Interfaces/interface';
 
 const CONFIG = {
   label: 'Bird',
   frictionAir: 0
 };
 
-export default class Bird extends Phaser.Physics.Matter.Sprite implements Item {
+export default class Bird extends Phaser.Physics.Matter.Sprite implements IItem {
   private direction: DIRECTION;
   private frameNumber: number;
   private flyingTween: Phaser.Tweens.Tween;

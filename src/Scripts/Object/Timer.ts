@@ -2,8 +2,9 @@ import * as Phaser from 'phaser';
 import AlignTool from '../Util/AlignTool';
 import { TIME_LIMIT } from '../Config/GameConfig';
 import { ANIMATION_TYPE, TextPopUp } from '../Util/TextPopUp';
+import { ITimer } from '../Interfaces/interface';
 
-export default class Timer {
+export default class Timer implements ITimer{
   private displayText: Phaser.GameObjects.Text;
   private countdown: number;
   private timerEvent: Phaser.Time.TimerEvent;

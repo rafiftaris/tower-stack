@@ -4,7 +4,7 @@ import DepthConfig from '../Config/DepthConfig';
 
 import { DIRECTION } from '../Enum/enum';
 
-import { Item } from '../Interfaces/interface';
+import { IItem } from '../Interfaces/interface';
 
 const CONFIG = {
   label: 'Hourglass',
@@ -12,7 +12,7 @@ const CONFIG = {
 };
 
 export default class Hourglass extends Phaser.Physics.Matter.Sprite
-  implements Item {
+  implements IItem {
   private direction: DIRECTION;
   private flyingTween: Phaser.Tweens.Tween;
   itemType: string;

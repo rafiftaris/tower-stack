@@ -1,7 +1,8 @@
 import * as Phaser from 'phaser';
 import AlignTool from '../Util/AlignTool';
+import { IGround } from '../Interfaces/interface';
 
-export default class Ground {
+export default class Ground implements IGround{
   readonly PADDING_LEFT = 160;
   readonly PADDING_TOP = 1100;
   readonly SCALE = 5;

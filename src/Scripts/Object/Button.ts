@@ -4,8 +4,12 @@ import { SceneKeys } from '../Config/SceneKeys';
 import AlignTool from '../Util/AlignTool';
 
 import { BUTTON_TYPE } from '../Enum/enum';
+import { IButton } from '../Interfaces/interface';
 
-export default class Button extends Phaser.GameObjects.Image {
+export default class Button 
+extends Phaser.GameObjects.Image 
+implements IButton{
+
   private buttonType: BUTTON_TYPE;
   private isEnabled: boolean;
 
@@ -122,7 +126,7 @@ export default class Button extends Phaser.GameObjects.Image {
    * Enable/disable button for input
    * @param value: true to enable button, false otherwise
    */
-  setEnabled(value: boolean) {
+  public setEnabled(value: boolean) {
     this.isEnabled = value;
   }
 }
