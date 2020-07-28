@@ -1,4 +1,4 @@
-import {SceneKeys} from './Config/SceneKeys';
+import { SceneKeys } from './Config/SceneKeys';
 
 import TitleScene from './Scene/TitleScene';
 import HowToScene from './Scene/HowToScene';

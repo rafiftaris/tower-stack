@@ -1,17 +1,17 @@
 export enum GAME_STATE {
-    GAME_ON,
-    GAME_OVER,
+  GAME_ON,
+  GAME_OVER
 }
 
 export enum DIRECTION {
-    right,
-    left
+  right,
+  left
 }
 
 export enum BUTTON_TYPE {
-    Play,
-    HowTo,
-    Restart,
-    BackFromGameOver,
-    BackFromHowTo
+  Play,
+  HowTo,
+  Restart,
+  BackFromGameOver,
+  BackFromHowTo
 }

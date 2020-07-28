@@ -2,7 +2,6 @@ export const getResolution = () => {
   let w = 720;
   let h = 1200;
 
-
   if (isTargetDevice() !== -1) {
     w = window.innerWidth; // * window.devicePixelRatio;
     h = window.innerHeight; // * window.devicePixelRatio;
@@ -40,7 +39,7 @@ export function isInApp(): boolean {
   return (
     navigator.userAgent.includes('Shopee') ||
     navigator.userAgent.includes('Beeshop')
-  )
+  );
 }
 
 export const getUrlParams = () => {

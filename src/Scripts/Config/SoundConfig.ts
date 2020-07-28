@@ -1,4 +1,4 @@
 export default {
-    bgmVolume: 0.5,
-    sfxVolume: 1.7
-}
+  bgmVolume: 0.5,
+  sfxVolume: 1.7
+};

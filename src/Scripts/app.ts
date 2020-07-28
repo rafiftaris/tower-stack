@@ -1,9 +1,9 @@
-import "phaser";
-import {SceneKeys} from './Config/SceneKeys';
-import {config, PhaserConfig} from "./Config/PhaserConfig";
+import 'phaser';
+import { SceneKeys } from './Config/SceneKeys';
+import { config, PhaserConfig } from './Config/PhaserConfig';
 import registerScenes from './registerScenes';
 
-var game;
+let game;
 
 export class PhaserGame extends Phaser.Game {
   constructor(config: PhaserConfig) {
@@ -16,7 +16,6 @@ window.onload = () => {
   game.scene.start(SceneKeys.Preload);
 };
 
-export function getGame()
-{
-    return game;
+export function getGame() {
+  return game;
 }

@@ -1,7 +1,7 @@
-import * as Phaser from "phaser";
-import {SceneKeys} from '../Config/SceneKeys';
+import * as Phaser from 'phaser';
+import { SceneKeys } from '../Config/SceneKeys';
 
-import Background from "../Object/Background";
+import Background from '../Object/Background';
 
 export default class GameUI extends Phaser.Scene {
   private background: Background;
@@ -15,10 +15,10 @@ export default class GameUI extends Phaser.Scene {
 
   create(): void {
     this.background = new Background(this);
-    this.cameras.main.setBackgroundColor("#85cff5");
+    this.cameras.main.setBackgroundColor('#85cff5');
     // this.fpsText = new FpsText(this);
   }
-  
+
   update(): void {
     this.background.update();
     // this.fpsText.update();
