@@ -4,7 +4,7 @@ interface IItem {
   itemType: string;
   isHit: boolean;
 
-  fly(direction: DIRECTION): void;
+  fly(direction: DIRECTION, height: number): void;
 
   setDefaultSettings(): void;
 

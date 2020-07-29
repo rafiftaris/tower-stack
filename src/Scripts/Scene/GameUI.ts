@@ -1,8 +1,10 @@
 import * as Phaser from 'phaser';
 import { SceneKeys } from '../Config/SceneKeys';
 
+import { InputZone } from "../Object/InputZone";
 import { Timer } from "../Object/Timer";
 import Background from '../Object/Background';
+
 import { IBackground } from '../Interfaces/interface';
 
 import { TextPopUp } from "../Util/TextPopUp";
@@ -35,6 +37,7 @@ export default class GameUI extends Phaser.Scene {
   initializeStaticElements(): void {
     TextPopUp.init(this, DepthConfig.gameHeaderUI);
     ImagePopUp.init(this, DepthConfig.gameHeaderUI);
+    InputZone.init(this);
     Timer.init(this, DepthConfig.gameHeaderUI);
     Timer.hide();  
   }

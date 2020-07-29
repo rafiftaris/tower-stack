@@ -22,6 +22,7 @@ class BlockManagerHelper {
 
   private score = 0;
   private bitfield: number;
+  private maxStackLevel: number;
 
   public static get Instance() {
     const instance = this.instance || (this.instance = new this());
@@ -33,6 +34,7 @@ class BlockManagerHelper {
     this.stackedBlocks = [];
     this.score = 0;
     this.bitfield = bitfield;
+    this.maxStackLevel = 1;
 
     // Init blocks group
     this.blocksGroup = scene.add.group({
@@ -83,6 +85,14 @@ class BlockManagerHelper {
    */
   getDelayDuration(): number {
     return this.stackedBlocks.length * 750 + 1000;
+  }
+
+  /**
+   * Get current max level of block stack
+   * @returns: max stack level
+   */
+  getMaxStackLevel(): number{
+    return this.maxStackLevel
   }
 
   /**
@@ -138,6 +148,30 @@ class BlockManagerHelper {
   }
 
   /**
+   * Get level of block, relative to ground
+   * @param block: current block
+   * @param ground: ground
+   * @param countScore: set true for counting score
+   */
+  private getBlockLevel(block: BuildingBlock, ground: Ground): number{
+    const groundBlock = ground.getGroundArray()[0];
+    const blockY = AlignTool.getYfromScreenHeight(
+      this.scene,
+      (groundBlock.y - groundBlock.displayHeight / 2 - block.y) /
+        AlignTool.getYfromScreenHeight(this.scene, 1)
+    );
+    const maxHeight = AlignTool.getYfromScreenHeight(
+      this.scene,
+      Math.sqrt(2 * (block.displayHeight / 2) ** 2) /
+        AlignTool.getYfromScreenHeight(this.scene, 1) // When block is standing on one of its corner
+    );
+    const blockLevel =
+      Math.ceil((blockY - maxHeight) / block.displayHeight) + 1;
+    
+    return blockLevel
+  }
+
+  /**
    * Count score of each block and accumulate to final score
    * @param ground: In-game ground sprites
    */
@@ -146,19 +180,8 @@ class BlockManagerHelper {
       const block = this.stackedBlocks.shift();
       AnimationHelper.ChangeAlpha(this.scene, block, 0.5, 0);
 
-      const groundBlock = ground.getGroundArray()[0];
-      const blockY = AlignTool.getYfromScreenHeight(
-        this.scene,
-        (groundBlock.y - groundBlock.displayHeight / 2 - block.y) /
-          AlignTool.getYfromScreenHeight(this.scene, 1)
-      );
-      const maxHeight = AlignTool.getYfromScreenHeight(
-        this.scene,
-        Math.sqrt(2 * (block.displayHeight / 2) ** 2) /
-          AlignTool.getYfromScreenHeight(this.scene, 1) // When block is standing on one of its corner
-      );
-      const currentBlockScore =
-        Math.ceil((blockY - maxHeight) / block.displayHeight) + 1;
+      const currentBlockScore = this.getBlockLevel(block, ground);
+      
       const scoreText = TextPopUp.showText({
         x: block.x,
         y: block.y,
@@ -189,7 +212,8 @@ class BlockManagerHelper {
    * Remove block when its falling outside the ground.
    * Reduce horizontal speed when its rolling too fast.
    */
-  checkStackedBlocks(): void {
+  checkStackedBlocks(ground: Ground): void {
+    let currentMaxLevel = 1;
     this.stackedBlocks.forEach((block, index) => {
       const body = <MatterJS.BodyType>block.body;
       const velocityLimit = AlignTool.getXfromScreenWidth(this.scene, 0.002);
@@ -217,7 +241,14 @@ class BlockManagerHelper {
         this.stackedBlocks.splice(index, 1);
         // console.log("fall",this.stackedBlocks.length);
       }
+
+      let level = this.getBlockLevel(block, ground);
+      if(level > currentMaxLevel) {
+        currentMaxLevel = level;
+      }
     });
+
+    this.maxStackLevel = currentMaxLevel;
   }
 
   /**
@@ -255,6 +286,18 @@ class BlockManagerHelper {
         this.stackedBlocks.splice(index, 1);
       }
     });
+  }
+
+  /**
+   * Update height of moving block
+   * @params newHeight: new height adjustment
+   */
+  updateHeight(newHeight: number): void{
+    this.movingBlock.setPosition(
+      this.movingBlock.x,
+      this.movingBlock.movingBlockStartingHeight + (AlignTool.getYfromScreenHeight(this.scene,1) - newHeight) / 2
+    );
+    console.log(AlignTool.getYfromScreenHeight(this.scene,0.1), this.movingBlock.y);
   }
 }
 

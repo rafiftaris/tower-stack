@@ -14,6 +14,9 @@ class ItemManagerHelper {
   private delay: number;
   private generator: Phaser.Time.TimerEvent;
 
+  private heightRange: number;
+  private startingHeight: number;
+
   public static get Instance() {
     const instance = this.instance || (this.instance = new this());
     return instance;
@@ -21,6 +24,9 @@ class ItemManagerHelper {
 
   init(scene: Phaser.Scene) {
     this.scene = scene;
+
+    this.startingHeight = AlignTool.getYfromScreenHeight(this.scene, 0.3);
+    this.heightRange = AlignTool.getYfromScreenHeight(this.scene,0.25);
 
     // Init blocks group
     this.birdGroup = scene.add.group({
@@ -58,10 +64,11 @@ class ItemManagerHelper {
           this.currentItem.setDefaultSettings();
 
           const directionRandomizer = Math.floor(Math.random() * 2);
+          const heightRandomizer = (Math.random()*this.heightRange) + this.startingHeight;
           if (directionRandomizer == 0) {
-            this.currentItem.fly(DIRECTION.left);
+            this.currentItem.fly(DIRECTION.left, heightRandomizer);
           } else {
-            this.currentItem.fly(DIRECTION.right);
+            this.currentItem.fly(DIRECTION.right, heightRandomizer);
           }
         }
       },
@@ -74,7 +81,7 @@ class ItemManagerHelper {
       return;
     }
     this.generator = this.scene.time.addEvent({
-      delay: 4000,
+      delay: 3000,
       callback: this.generateItem,
       callbackScope: this,
       repeat: -1
@@ -92,13 +99,18 @@ class ItemManagerHelper {
   checkItem(): void {
     if (this.currentItem) {
       if (
-        this.currentItem.x >= AlignTool.getXfromScreenWidth(this.scene, 1.2) ||
-        this.currentItem.x <= AlignTool.getXfromScreenWidth(this.scene, -0.2)
+        this.currentItem.x > AlignTool.getXfromScreenWidth(this.scene, 2) ||
+        this.currentItem.x < AlignTool.getXfromScreenWidth(this.scene, -1)
       ) {
         this.currentItem.hide();
         this.currentItem = null;
       }
     }
+  }
+
+  updateHeightRange(newHeight: number): void{
+    this.startingHeight = AlignTool.getYfromScreenHeight(this.scene, 0.3) + 
+    (AlignTool.getYfromScreenHeight(this.scene,1) - newHeight) / 2;
   }
 
   setGameOver(): void {

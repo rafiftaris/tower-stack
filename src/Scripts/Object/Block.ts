@@ -14,6 +14,7 @@ const CONFIG = {
 export default class BuildingBlock
 extends Phaser.Physics.Matter.Sprite 
 implements IBUildingBlock{
+  public readonly movingBlockStartingHeight = AlignTool.getYfromScreenHeight(this.scene,0.1);
   
   private textureFrame: number;
   private tween: Phaser.Tweens.Tween;
@@ -55,7 +56,7 @@ implements IBUildingBlock{
   setMovingBlockSettings(bitfield: number): void {
     this.resetSettings();
     AlignTool.alignX(this.scene, this, 0.1);
-    AlignTool.alignY(this.scene, this, 0.1);
+    this.setPosition(this.x, this.movingBlockStartingHeight);
     this.tween = this.scene.tweens.add({
       targets: this,
       x: AlignTool.getXfromScreenWidth(this.scene, 0.9),

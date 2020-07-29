@@ -47,27 +47,23 @@ export default class Bird extends Phaser.Physics.Matter.Sprite implements IItem 
    * Fly to the desired direction
    * @param direction: left or right
    */
-  fly(direction: DIRECTION): void {
+  fly(direction: DIRECTION, height: number): void {
     this.direction = direction;
-    const height = AlignTool.getYfromScreenHeight(
-      this.scene,
-      (Math.random() * 50 + 300) / 1200
-    );
 
     if (direction == DIRECTION.right) {
-      this.setPosition(AlignTool.getXfromScreenWidth(this.scene, -0.1), height);
+      this.setPosition(AlignTool.getXfromScreenWidth(this.scene, -1), height);
       this.flyingTween = this.scene.tweens.add({
         targets: this,
-        x: AlignTool.getXfromScreenWidth(this.scene, 1.25),
-        duration: 2500
+        x: AlignTool.getXfromScreenWidth(this.scene, 2.1),
+        duration: 3500
       });
     } else if (direction == DIRECTION.left) {
       this.setFlipX(true);
-      this.setPosition(AlignTool.getXfromScreenWidth(this.scene, 1.1), height);
+      this.setPosition(AlignTool.getXfromScreenWidth(this.scene, 2), height);
       this.flyingTween = this.scene.tweens.add({
         targets: this,
-        x: AlignTool.getXfromScreenWidth(this.scene, -0.25),
-        duration: 2500
+        x: AlignTool.getXfromScreenWidth(this.scene, -1.1),
+        duration: 3500
       });
     }
   }

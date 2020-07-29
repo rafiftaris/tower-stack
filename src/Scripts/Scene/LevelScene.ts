@@ -2,6 +2,7 @@ import * as Phaser from 'phaser';
 import { SceneKeys } from '../Config/SceneKeys';
 
 import { Timer } from '../Object/Timer';
+import { InputZone } from '../Object/InputZone';
 import Ground from '../Object/Ground';
 import BuildingBlock from '../Object/Block';
 
@@ -13,18 +14,15 @@ import { TextPopUp } from '../Util/TextPopUp';
 import AlignTool from '../Util/AlignTool';
 
 import { GAME_STATE } from '../Enum/enum';
-import { IItem, IGround } from '../Interfaces/interface';
+import { IItem } from '../Interfaces/interface';
 
 import DepthConfig from '../Config/DepthConfig';
 import SoundConfig from '../Config/SoundConfig';
 
 export default class LevelScene extends Phaser.Scene {
-  private ground: IGround;
-
-  private inputZone: Phaser.GameObjects.Zone;
+  private ground: Ground;
 
   private gameState: GAME_STATE;
-  private inputDisabled: boolean;
   private score: number;
 
   constructor() {
@@ -40,53 +38,20 @@ export default class LevelScene extends Phaser.Scene {
     this.initializeStaticElements(bitfield);
 
     this.matter.world.setBounds(
-      -500,
-      -300,
+      AlignTool.getXfromScreenWidth(this, -0.5),
+      AlignTool.getYfromScreenHeight(this, -1.25),
       AlignTool.getXfromScreenWidth(this, 2),
-      AlignTool.getYfromScreenHeight(this,1.5)
+      AlignTool.getYfromScreenHeight(this, 2.25)
     );
 
     this.ground = new Ground(this, bitfield);
 
-    // Input zone
-    this.inputZone = new Phaser.GameObjects.Zone(
-      this,
-      0,
-      100,
-      AlignTool.getXfromScreenWidth(this, 1),
-      AlignTool.getYfromScreenHeight(this, 0.95)
-    );
-    this.inputZone.setOrigin(0, 0);
-    this.inputZone.setInteractive();
-    this.add.existing(this.inputZone);
-    this.inputDisabled = false;
-
-    this.inputZone.on(
-      'pointerdown',
-      () => {
-        if (this.inputDisabled || this.gameState === GAME_STATE.GAME_OVER) {
-          return;
-        }
-        this.inputDisabled = true;
-        ItemManager.addGenerateItemEvent();
-        BlockManager.dropBlock();
-        Timer.createTimerEvent();
-
-        this.time.addEvent({
-          delay: 1000,
-          callback: this.showMovingBlock,
-          callbackScope: this
-        });
-      },
-      this
-    );
   }
 
   update(): void {
-    // this.background.update();
-    BlockManager.checkStackedBlocks();
+    BlockManager.checkStackedBlocks(this.ground);
     ItemManager.checkItem();
-
+    
     this.matter.world.on('collisionstart', this.checkCollision, this);
 
     if (Timer.timesUp() && this.gameState === GAME_STATE.GAME_ON) {
@@ -112,6 +77,7 @@ export default class LevelScene extends Phaser.Scene {
       if (obj2.gameObject.itemType !== undefined) {
         if (!obj2.gameObject.isHit && !block.hasCollided) {
           if (obj2.gameObject.itemType == 'Hourglass') {
+            // console.log("hourglass hit");
             Timer.increase(obj2.position.x, obj2.position.y);
           } else {
             Timer.decrease(obj2.position.x, obj2.position.y);
@@ -127,6 +93,8 @@ export default class LevelScene extends Phaser.Scene {
           this.sound.play('thud', { volume: SoundConfig.sfxVolume });
           block.hasCollided = true;
           BlockManager.addBlockToStack(block);
+          BlockManager.checkStackedBlocks(this.ground);
+          this.zoomCamera();
         }
       }
     }
@@ -138,6 +106,7 @@ export default class LevelScene extends Phaser.Scene {
       if (obj1.gameObject.itemType !== undefined) {
         if (!obj1.gameObject.isHit && !block.hasCollided) {
           if (obj1.gameObject.itemType == 'Hourglass') {
+            // console.log("hourglass hit");
             Timer.increase(obj1.position.x, obj1.position.y);
           } else {
             Timer.decrease(obj1.position.x, obj1.position.y);
@@ -153,6 +122,8 @@ export default class LevelScene extends Phaser.Scene {
           this.sound.play('thud', { volume: SoundConfig.sfxVolume });
           block.hasCollided = true;
           BlockManager.addBlockToStack(block);
+          BlockManager.checkStackedBlocks(this.ground);
+          this.zoomCamera();
         }
       }
     }
@@ -164,21 +135,14 @@ export default class LevelScene extends Phaser.Scene {
     BlockManager.init(this, bitfield);
     ItemManager.init(this);
     Timer.show();
-  }
-
-  showMovingBlock(): void {
-    if (this.gameState === GAME_STATE.GAME_OVER) {
-      return;
-    }
-    BlockManager.showMovingBlock();
-    this.inputDisabled = false;
+    InputZone.setState(GAME_STATE.GAME_ON);
   }
 
   setGameOver(): void {
     this.gameState = GAME_STATE.GAME_OVER;
+    InputZone.setState(this.gameState);
     Timer.destroyTimeEvent();
     ItemManager.setGameOver();
-    this.inputZone.destroy();
     BlockManager.setGameOver(this.ground);
     this.time.delayedCall(
       BlockManager.getDelayDuration(),
@@ -188,5 +152,20 @@ export default class LevelScene extends Phaser.Scene {
       null,
       this
     );
+  }
+
+  zoomCamera(): void{
+    let zoomFactor = 1 / Math.cbrt(BlockManager.getMaxStackLevel());
+    this.cameras.main.zoomTo(zoomFactor,500);
+
+    const newHeight = AlignTool.getYfromScreenHeight(this,1) / zoomFactor;
+    console.log("new height", newHeight)
+    this.cameras.main.pan(
+      AlignTool.getXfromScreenWidth(this,1) / 2, 
+      (2*AlignTool.getYfromScreenHeight(this,1) - newHeight) / 2, 500
+    );
+    
+    BlockManager.updateHeight(newHeight);
+    ItemManager.updateHeightRange(newHeight);
   }
 }
