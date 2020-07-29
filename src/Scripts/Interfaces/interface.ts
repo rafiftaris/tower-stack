@@ -50,7 +50,7 @@ interface IFirework{
 }
 
 interface IGameOverPanel{
-  showScore(score: number): void
+  showScore(score: number, newHighScore: boolean): void
 }
 
 interface IGround{

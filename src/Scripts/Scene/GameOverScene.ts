@@ -54,15 +54,17 @@ export default class GameUI extends Phaser.Scene {
         this.fireworkB.show(true);
         let score = BlockManager.getScore();
         console.log(score);
-        this.gameOverPanel.showScore(score);
         
         let currentHighScore = 0;
         if(localStorage.getItem("highScore") !== null){
           currentHighScore = parseInt(localStorage.getItem("highScore"));
         }
-    
+        
         if(score > currentHighScore){
           localStorage.setItem("highScore",score.toString());
+          this.gameOverPanel.showScore(score, true);
+        } else {
+          this.gameOverPanel.showScore(score, false);
         }
-    }
+      }
 }

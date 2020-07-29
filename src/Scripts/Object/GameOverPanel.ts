@@ -22,7 +22,7 @@ implements IGameOverPanel{
     super(scene, centerX, centerY, 'panel');
     this.scene = scene;
 
-    this.displayText = '\t\t\t\tGAME OVER\n\nYour score: ';
+    this.displayText = '\t\t\t\tGAME OVER\nYour score: ';
     this.restartButton = new Button(
       this.scene,
       AlignTool.getXfromScreenWidth(scene, 0.65),
@@ -69,9 +69,10 @@ implements IGameOverPanel{
    * Show final score
    * @param score: final score
    */
-  showScore(score: number): void {
+  showScore(score: number, newHighScore: boolean): void {
     this.show();
     this.displayText += score.toString();
+
     this.text = TextPopUp.showText({
       x: AlignTool.getXfromScreenWidth(this.scene, 0.5),
       y: AlignTool.getYfromScreenHeight(this.scene, 0.42),
@@ -86,7 +87,36 @@ implements IGameOverPanel{
       animType: ANIMATION_TYPE.EMBIGGEN,
       retain: true
     })?.text as Phaser.GameObjects.Text;
+
+    let highScoreText = TextPopUp.showText({
+      x: AlignTool.getXfromScreenWidth(this.scene, 0.5),
+      y: AlignTool.getYfromScreenHeight(this.scene, 0.5),
+      text: "New High Score!",
+      duration: 0.01,
+      style: {
+        fontSize: 32,
+        fontFamily: 'TrulyMadly',
+        color: 'white',
+        strokeThickness: 1
+      },
+      animType: ANIMATION_TYPE.EMBIGGEN,
+      retain: true
+    })?.text as Phaser.GameObjects.Text;
+    highScoreText.setVisible(false);
+
+    if(newHighScore){
+      this.scene.time.addEvent({
+        delay: 500,
+        callback: () => {
+          highScoreText.setVisible(!highScoreText.visible)
+        },
+        callbackScope: this,
+        repeat: -1
+      });
+    }
+    
     this.scene.sound.play('gameover', { volume: SoundConfig.sfxVolume });
-    this.text.setDepth(11);
+    this.text.setDepth(DepthConfig.gameOverContent);
+    highScoreText.setDepth(DepthConfig.gameOverContent);
   }
 }
