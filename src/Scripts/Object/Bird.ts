@@ -56,7 +56,7 @@ export default class Bird extends Phaser.Physics.Matter.Sprite implements IItem 
       this.flyingTween = this.scene.tweens.add({
         targets: this,
         x: AlignTool.getXfromScreenWidth(this.scene, 2.1),
-        duration: 3500
+        duration: 4000
       });
     } else if (direction == DIRECTION.left) {
       this.setFlipX(true);
@@ -64,7 +64,7 @@ export default class Bird extends Phaser.Physics.Matter.Sprite implements IItem 
       this.flyingTween = this.scene.tweens.add({
         targets: this,
         x: AlignTool.getXfromScreenWidth(this.scene, -1.1),
-        duration: 3500
+        duration: 4000
       });
     }
   }

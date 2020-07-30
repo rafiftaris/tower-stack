@@ -54,14 +54,14 @@ export default class Hourglass extends Phaser.Physics.Matter.Sprite
       this.flyingTween = this.scene.tweens.add({
         targets: this,
         x: AlignTool.getXfromScreenWidth(this.scene, 2.1),
-        duration: 3500
+        duration: 4000
       });
     } else if (direction == DIRECTION.left) {
       this.setPosition(AlignTool.getXfromScreenWidth(this.scene, 2), height);
       this.flyingTween = this.scene.tweens.add({
         targets: this,
         x: AlignTool.getXfromScreenWidth(this.scene, -1.1),
-        duration: 3500
+        duration: 4000
       });
     }
   }

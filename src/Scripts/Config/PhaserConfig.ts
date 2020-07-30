@@ -15,7 +15,7 @@ export const config: PhaserConfig = {
   physics: {
     default: 'matter',
     matter: {
-      debug: true
+      debug: false
     }
   },
   backgroundColor: '#493a52',
