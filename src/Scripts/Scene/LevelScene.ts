@@ -65,7 +65,7 @@ export default class LevelScene extends Phaser.Scene {
     let block: BuildingBlock;
 
     // Check if either object is world bounds
-    if (!obj1.gameObject || !obj2.gameObject) {
+    if (!obj1.gameObject || !obj2.gameObject || this.gameState === GAME_STATE.GAME_OVER) {
       return;
     }
 
@@ -140,10 +140,13 @@ export default class LevelScene extends Phaser.Scene {
 
   setGameOver(): void {
     this.gameState = GAME_STATE.GAME_OVER;
+
     InputZone.setState(this.gameState);
+
     Timer.destroyTimeEvent();
     ItemManager.setGameOver();
     BlockManager.setGameOver(this.ground);
+
     this.time.delayedCall(
       BlockManager.getDelayDuration(),
       () => {
