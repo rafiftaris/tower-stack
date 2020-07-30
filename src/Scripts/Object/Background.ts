@@ -1,4 +1,5 @@
 import * as Phaser from 'phaser';
+import { TextureKeys } from "../Enum/enum";
 import AlignTool from '../Util/AlignTool';
 import DepthConfig from '../Config/DepthConfig';
 import {IBackground} from "../Interfaces/interface";
@@ -13,7 +14,7 @@ implements IBackground{
       AlignTool.getYfromScreenHeight(scene, 0.35),
       1920,
       860,
-      'background'
+      TextureKeys.Background
     );
 
     AlignTool.scaleToScreenHeight(scene, this, 0.75);

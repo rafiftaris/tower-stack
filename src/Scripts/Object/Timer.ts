@@ -3,6 +3,7 @@ import AlignTool from '../Util/AlignTool';
 import { TIME_LIMIT } from '../Config/GameConfig';
 import { ANIMATION_TYPE, TextPopUp } from '../Util/TextPopUp';
 import { ITimer } from '../Interfaces/interface';
+import { TextureKeys, AudioKeys } from '../Enum/enum';
 
 class TimerHelper implements ITimer{
   private static instance: TimerHelper;
@@ -49,7 +50,7 @@ class TimerHelper implements ITimer{
       scene,
       AlignTool.getXfromScreenWidth(scene, 0.85),
       AlignTool.getYfromScreenHeight(scene, 0.03),
-      'stopwatch'
+      TextureKeys.Stopwatch
     );
     AlignTool.scaleToScreenWidth(scene, this.stopwatch, 0.1);
     this.stopwatch.setDepth(depth);
@@ -140,7 +141,7 @@ class TimerHelper implements ITimer{
       retain: false
     })?.text as Phaser.GameObjects.Text;
 
-    this.scene.sound.play('bling');
+    this.scene.sound.play(AudioKeys.Bling);
 
     this.addCooldown();
   }
@@ -178,7 +179,7 @@ class TimerHelper implements ITimer{
       retain: false
     })?.text as Phaser.GameObjects.Text;
 
-    this.scene.sound.play('bam');
+    this.scene.sound.play(AudioKeys.Bam);
 
     this.addCooldown();
   }

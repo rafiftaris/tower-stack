@@ -1,5 +1,8 @@
 import * as Phaser from 'phaser';
 import { SceneKeys } from '../Config/SceneKeys';
+import DepthConfig from "../Config/DepthConfig";
+import { BACKGROUND_COLOR } from '../Config/GameConfig';
+import SoundConfig from "../Config/SoundConfig";
 
 import { InputZone } from "../Object/InputZone";
 import { Timer } from "../Object/Timer";
@@ -10,7 +13,8 @@ import { IBackground } from '../Interfaces/interface';
 import { TextPopUp } from "../Util/TextPopUp";
 import { ImagePopUp } from "../Util/ImagePopUp";
 
-import DepthConfig from "../Config/DepthConfig";
+import { AudioKeys } from "../Enum/enum";
+
 
 export default class GameUI extends Phaser.Scene {
   private background: IBackground;
@@ -25,7 +29,8 @@ export default class GameUI extends Phaser.Scene {
   create(): void {
     this.initializeStaticElements();
     this.background = new Background(this);
-    this.cameras.main.setBackgroundColor('#85cff5');
+    this.cameras.main.setBackgroundColor(BACKGROUND_COLOR);
+    this.sound.play(AudioKeys.Bgm, { loop: true, volume: SoundConfig.bgmVolume });
     // this.fpsText = new FpsText(this);
   }
 

@@ -1,4 +1,5 @@
 import * as Phaser from 'phaser';
+import { TextureKeys, AudioKeys } from "../Enum/enum";
 import AlignTool from '../Util/AlignTool';
 import DepthConfig from '../Config/DepthConfig';
 import { IFirework } from '../Interfaces/interface';
@@ -17,7 +18,7 @@ implements IFirework{
     y: number,
     scalePercentage: number
   ) {
-    super(scene.matter.world, x, y, 'firework', 0);
+    super(scene.matter.world, x, y, TextureKeys.Firework, 0);
     this.frameNumber = 0;
     this.realX = x;
     this.realY = y;
@@ -51,13 +52,13 @@ implements IFirework{
     this.frameNumber = 0;
 
     if (playSound) {
-      this.scene.sound.play('firework');
+      this.scene.sound.play(AudioKeys.Firework);
     }
 
     this.scene.time.addEvent({
       delay: 50,
       callback: () => {
-        this.setTexture('firework', this.frameNumber);
+        this.setTexture(TextureKeys.Firework, this.frameNumber);
         this.frameNumber++;
       },
       callbackScope: this,

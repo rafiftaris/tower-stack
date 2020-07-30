@@ -1,4 +1,5 @@
 import * as Phaser from 'phaser';
+import { TextureKeys } from "../Enum/enum";
 import AlignTool from '../Util/AlignTool';
 import DepthConfig from '../Config/DepthConfig';
 import { IBUildingBlock } from '../Interfaces/interface';
@@ -21,7 +22,7 @@ implements IBUildingBlock{
   public hasCollided: boolean;
 
   constructor(scene: Phaser.Scene, bitfield: number) {
-    super(scene.matter.world, 0, 0, 'blocksheet', 0, CONFIG);
+    super(scene.matter.world, 0, 0, TextureKeys.Blocksheet, 0, CONFIG);
     this.textureFrame = 0;
     this.scene = scene;
     this.hasCollided = false;

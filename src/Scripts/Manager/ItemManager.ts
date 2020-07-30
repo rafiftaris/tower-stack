@@ -1,5 +1,5 @@
 import * as Phaser from 'phaser';
-import { DIRECTION } from '../Enum/enum';
+import { Direction } from '../Enum/enum';
 import Bird from '../Object/Bird';
 import Hourglass from '../Object/Hourglass';
 import AlignTool from '../Util/AlignTool';
@@ -66,11 +66,11 @@ class ItemManagerHelper {
 
           const directionRandomizer = Math.floor(Math.random() * 2);
           const heightRandomizer = (Math.random()*this.heightRange) + this.startingHeight;
-          
+
           if (directionRandomizer == 0) {
-            this.currentItem.fly(DIRECTION.left, heightRandomizer);
+            this.currentItem.fly(Direction.Left, heightRandomizer);
           } else {
-            this.currentItem.fly(DIRECTION.right, heightRandomizer);
+            this.currentItem.fly(Direction.Right, heightRandomizer);
           }
         }
       },

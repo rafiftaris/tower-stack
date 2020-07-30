@@ -1,10 +1,10 @@
-import { DIRECTION } from '../Enum/enum';
+import { Direction } from '../Enum/enum';
 
 interface IItem {
   itemType: string;
   isHit: boolean;
 
-  fly(direction: DIRECTION, height: number): void;
+  fly(direction: Direction, height: number): void;
 
   setDefaultSettings(): void;
 

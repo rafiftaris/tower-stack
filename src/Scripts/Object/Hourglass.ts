@@ -2,7 +2,7 @@ import * as Phaser from 'phaser';
 import AlignTool from '../Util/AlignTool';
 import DepthConfig from '../Config/DepthConfig';
 
-import { DIRECTION } from '../Enum/enum';
+import { Direction, TextureKeys } from '../Enum/enum';
 
 import { IItem } from '../Interfaces/interface';
 
@@ -13,7 +13,7 @@ const CONFIG = {
 
 export default class Hourglass extends Phaser.Physics.Matter.Sprite
   implements IItem {
-  private direction: DIRECTION;
+  private direction: Direction;
   private flyingTween: Phaser.Tweens.Tween;
   itemType: string;
   isHit: boolean;
@@ -23,7 +23,7 @@ export default class Hourglass extends Phaser.Physics.Matter.Sprite
       scene.matter.world,
       AlignTool.getXfromScreenWidth(scene, 0.5),
       AlignTool.getYfromScreenHeight(scene, 0.5),
-      'hourglass',
+      TextureKeys.Hourglass,
       0,
       CONFIG
     );
@@ -46,22 +46,22 @@ export default class Hourglass extends Phaser.Physics.Matter.Sprite
    * Fly to the desired direction
    * @param direction: left or right
    */
-  fly(direction: DIRECTION, height: number): void {
+  fly(direction: Direction, height: number): void {
     this.isHit = false;
 
-    if (direction == DIRECTION.right) {
+    if (direction == Direction.Right) {
       this.setPosition(AlignTool.getXfromScreenWidth(this.scene, -1), height);
       this.flyingTween = this.scene.tweens.add({
         targets: this,
         x: AlignTool.getXfromScreenWidth(this.scene, 2.1),
-        duration: 4000
+        duration: 4500
       });
-    } else if (direction == DIRECTION.left) {
+    } else if (direction == Direction.Left) {
       this.setPosition(AlignTool.getXfromScreenWidth(this.scene, 2), height);
       this.flyingTween = this.scene.tweens.add({
         targets: this,
         x: AlignTool.getXfromScreenWidth(this.scene, -1.1),
-        duration: 4000
+        duration: 4500
       });
     }
   }

@@ -4,7 +4,7 @@ import Button from './Button';
 import DepthConfig from '../Config/DepthConfig';
 import { ANIMATION_TYPE, TextPopUp } from '../Util/TextPopUp';
 import SoundConfig from '../Config/SoundConfig';
-import { BUTTON_TYPE } from '../Enum/enum';
+import { ButtonType, TextureKeys, FontKeys, AudioKeys } from '../Enum/enum';
 import { IGameOverPanel } from '../Interfaces/interface';
 
 export default class GameOverPanel
@@ -19,7 +19,7 @@ implements IGameOverPanel{
   constructor(scene: Phaser.Scene) {
     const centerX = AlignTool.getCenterHorizontal(scene);
     const centerY = AlignTool.getCenterVertical(scene);
-    super(scene, centerX, centerY, 'panel');
+    super(scene, centerX, centerY, TextureKeys.Panel);
     this.scene = scene;
 
     this.displayText = '\t\t\t\tGAME OVER\nYour score: ';
@@ -29,7 +29,7 @@ implements IGameOverPanel{
       AlignTool.getYfromScreenHeight(scene, 0.6),
       0.2,
       DepthConfig.gameOverContent,
-      BUTTON_TYPE.Restart
+      ButtonType.Restart
     );
     this.backButton = new Button(
       this.scene,
@@ -37,7 +37,7 @@ implements IGameOverPanel{
       AlignTool.getYfromScreenHeight(scene, 0.6),
       0.2,
       DepthConfig.gameOverContent,
-      BUTTON_TYPE.BackFromGameOver
+      ButtonType.BackFromGameOver
     );
 
     AlignTool.scaleToScreenHeight(scene, this, 0.4);
@@ -80,7 +80,7 @@ implements IGameOverPanel{
       duration: 0.5,
       style: {
         fontSize: 64,
-        fontFamily: 'TrulyMadly',
+        fontFamily: FontKeys.TrulyMadly,
         color: 'white',
         strokeThickness: 1
       },
@@ -95,7 +95,7 @@ implements IGameOverPanel{
       duration: 0.01,
       style: {
         fontSize: 32,
-        fontFamily: 'TrulyMadly',
+        fontFamily: FontKeys.TrulyMadly,
         color: 'white',
         strokeThickness: 1
       },
@@ -115,7 +115,7 @@ implements IGameOverPanel{
       });
     }
     
-    this.scene.sound.play('gameover', { volume: SoundConfig.sfxVolume });
+    this.scene.sound.play(AudioKeys.GameOver, { volume: SoundConfig.sfxVolume });
     this.text.setDepth(DepthConfig.gameOverContent);
     highScoreText.setDepth(DepthConfig.gameOverContent);
   }

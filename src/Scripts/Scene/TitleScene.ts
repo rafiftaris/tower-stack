@@ -12,7 +12,7 @@ import { SceneKeys } from '../Config/SceneKeys';
 import { Timer } from "../Object/Timer";
 import Button from '../Object/Button';
 
-import { BUTTON_TYPE } from '../Enum/enum';
+import { ButtonType, FontKeys, AudioKeys } from '../Enum/enum';
 import { IGround, IButton } from '../Interfaces/interface';
 
 export default class TitleScene extends Phaser.Scene {
@@ -57,7 +57,7 @@ export default class TitleScene extends Phaser.Scene {
       AlignTool.getYfromScreenHeight(this, 0.4),
       0.2,
       1,
-      BUTTON_TYPE.Play
+      ButtonType.Play
     );
 
     // How To Button
@@ -67,7 +67,7 @@ export default class TitleScene extends Phaser.Scene {
       AlignTool.getYfromScreenHeight(this, 0.7),
       0.2,
       1,
-      BUTTON_TYPE.HowTo
+      ButtonType.HowTo
     );
 
     this.time.addEvent({
@@ -106,7 +106,7 @@ export default class TitleScene extends Phaser.Scene {
           duration: 0.5,
           style: {
             fontSize: 72,
-            fontFamily: 'TrulyMadly',
+            fontFamily: FontKeys.TrulyMadly,
             color: 'black',
             strokeThickness: 1
           },
@@ -122,7 +122,7 @@ export default class TitleScene extends Phaser.Scene {
           duration: 0.5,
           style: {
             fontSize: 72,
-            fontFamily: 'TrulyMadly',
+            fontFamily: FontKeys.TrulyMadly,
             color: 'black',
             strokeThickness: 1
           },
@@ -138,7 +138,7 @@ export default class TitleScene extends Phaser.Scene {
           duration: 0.5,
           style: {
             fontSize: 72,
-            fontFamily: 'TrulyMadly',
+            fontFamily: FontKeys.TrulyMadly,
             color: 'black',
             strokeThickness: 1
           },
@@ -153,10 +153,6 @@ export default class TitleScene extends Phaser.Scene {
       },
       callbackScope: this
     });
-
-    if (!this.sound.get('bgm')) {
-      this.sound.play('bgm', { loop: true, volume: SoundConfig.bgmVolume });
-    }
 
     // this.scene.start("LevelScene");
   }

@@ -3,14 +3,14 @@ import { SceneKeys } from '../Config/SceneKeys';
 
 import AlignTool from '../Util/AlignTool';
 
-import { BUTTON_TYPE } from '../Enum/enum';
+import { ButtonType } from '../Enum/enum';
 import { IButton } from '../Interfaces/interface';
 
 export default class Button 
 extends Phaser.GameObjects.Image 
 implements IButton{
 
-  private buttonType: BUTTON_TYPE;
+  private buttonType: ButtonType;
   private isEnabled: boolean;
 
   constructor(
@@ -19,7 +19,7 @@ implements IButton{
     y: number,
     scalePercentage: number,
     depth: number,
-    buttonType: BUTTON_TYPE
+    buttonType: ButtonType
   ) {
     super(scene, x, y, 'play');
     this.buttonType = buttonType;
@@ -53,7 +53,7 @@ implements IButton{
    */
   private setSettings(): void {
     switch (this.buttonType) {
-      case BUTTON_TYPE.Play:
+      case ButtonType.Play:
         this.on(
           'pointerdown',
           () => {
@@ -67,7 +67,7 @@ implements IButton{
         this.isEnabled = false;
         break;
 
-      case BUTTON_TYPE.HowTo:
+      case ButtonType.HowTo:
         this.on(
           'pointerdown',
           () => {
@@ -81,7 +81,7 @@ implements IButton{
         this.isEnabled = false;
         break;
 
-      case BUTTON_TYPE.BackFromGameOver:
+      case ButtonType.BackFromGameOver:
         this.setFlipX(true);
         this.on(
           'pointerdown',
@@ -96,7 +96,7 @@ implements IButton{
         );
         break;
 
-      case BUTTON_TYPE.BackFromHowTo:
+      case ButtonType.BackFromHowTo:
         this.setFlipX(true);
         this.on(
           'pointerdown',
@@ -110,7 +110,7 @@ implements IButton{
         );
         break;
 
-      case BUTTON_TYPE.Restart:
+      case ButtonType.Restart:
         this.setTexture('restart');
         this.on(
           'pointerdown',

@@ -3,7 +3,7 @@ import * as Phaser from 'phaser';
 import { SceneKeys } from '../Config/SceneKeys';
 import DepthConfig from '../Config/DepthConfig';
 
-import { BUTTON_TYPE } from '../Enum/enum';
+import { ButtonType, FontKeys } from '../Enum/enum';
 
 import AlignTool from '../Util/AlignTool';
 import { TextPopUp, ANIMATION_TYPE as TEXT_ANIM_TYPE } from '../Util/TextPopUp';
@@ -49,7 +49,7 @@ export default class HowToScene extends Phaser.Scene {
       duration: 0.01,
       style: {
         fontSize: 40,
-        fontFamily: 'TrulyMadly',
+        fontFamily: FontKeys.TrulyMadly,
         color: 'black',
         strokeThickness: 1
       },
@@ -64,7 +64,7 @@ export default class HowToScene extends Phaser.Scene {
       duration: 0.01,
       style: {
         fontSize: 40,
-        fontFamily: 'TrulyMadly',
+        fontFamily: FontKeys.TrulyMadly,
         color: 'black',
         strokeThickness: 1
       },
@@ -86,7 +86,7 @@ export default class HowToScene extends Phaser.Scene {
       duration: 0.01,
       style: {
         fontSize: 72,
-        fontFamily: 'SlopeOpera',
+        fontFamily: FontKeys.SlopeOpera,
         color: 'black',
         strokeThickness: 1
       },
@@ -111,7 +111,7 @@ export default class HowToScene extends Phaser.Scene {
           duration: this.goalTransTime,
           style: {
             fontSize: 48,
-            fontFamily: 'TrulyMadly',
+            fontFamily: FontKeys.TrulyMadly,
             color: 'black',
             strokeThickness: 1
           },
@@ -134,7 +134,7 @@ export default class HowToScene extends Phaser.Scene {
           duration: this.itemDescTransTime,
           style: {
             fontSize: 42,
-            fontFamily: 'TrulyMadly',
+            fontFamily: FontKeys.TrulyMadly,
             color: 'black',
             strokeThickness: 1
           },
@@ -225,7 +225,7 @@ export default class HowToScene extends Phaser.Scene {
       AlignTool.getYfromScreenHeight(this, 0.94),
       0.175,
       DepthConfig.gameHeaderUI,
-      BUTTON_TYPE.BackFromHowTo
+      ButtonType.BackFromHowTo
     );
   }
 

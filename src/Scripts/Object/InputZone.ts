@@ -1,7 +1,7 @@
 import * as Phaser from 'phaser';
 import AlignTool from '../Util/AlignTool';
 
-import { GAME_STATE } from '../Enum/enum';
+import { GameState } from '../Enum/enum';
 
 import { BlockManager } from '../Manager/BlockManager';
 import { ItemManager } from '../Manager/ItemManager';
@@ -14,7 +14,7 @@ class InputZoneHelper{
 
     private inputZone: Phaser.GameObjects.Zone;
     private inputDisabled: boolean;
-    private gameState: GAME_STATE;
+    private gameState: GameState;
 
     private instruction: Phaser.GameObjects.Text;
 
@@ -56,7 +56,7 @@ class InputZoneHelper{
         this.inputZone.on(
             'pointerdown',
             () => {
-                if (this.inputDisabled || this.gameState !== GAME_STATE.GAME_ON) {
+                if (this.inputDisabled || this.gameState !== GameState.GameOn) {
                     return;
                 }
                 if(this.instruction.visible){
@@ -79,16 +79,16 @@ class InputZoneHelper{
     }
 
     showMovingBlock(): void {
-        if (this.gameState === GAME_STATE.GAME_OVER) {
+        if (this.gameState === GameState.GameOver) {
           return;
         }
         BlockManager.showMovingBlock();
         this.inputDisabled = false;
     }
 
-    setState(gameState: GAME_STATE){
+    setState(gameState: GameState){
         this.gameState = gameState;
-        if (this.gameState === GAME_STATE.GAME_ON){
+        if (this.gameState === GameState.GameOn){
             this.inputDisabled = false;
             this.instruction.setVisible(true);
         }

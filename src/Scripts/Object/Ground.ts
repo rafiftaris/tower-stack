@@ -1,4 +1,5 @@
 import * as Phaser from 'phaser';
+import { TextureKeys } from "../Enum/enum";
 import AlignTool from '../Util/AlignTool';
 import { IGround } from '../Interfaces/interface';
 
@@ -21,13 +22,13 @@ export default class Ground implements IGround{
       let margin: number;
 
       if (i == 0) {
-        image = 'grass-left';
+        image = TextureKeys.GrassLeft;
         margin = 0;
       } else if (i == this.LENGTH - 1) {
-        image = 'grass-right';
+        image = TextureKeys.GrassRight;
         margin = this.groundTiles[i - 1].displayWidth;
       } else {
-        image = 'grass-mid';
+        image = TextureKeys.GrassMid;
         margin = this.groundTiles[i - 1].displayWidth;
       }
 
@@ -57,6 +58,7 @@ export default class Ground implements IGround{
 
     groundTile.setStatic(true);
     groundTile.setCollisionCategory(bitfield);
+    groundTile.setBounce(0);
   }
 
   /**

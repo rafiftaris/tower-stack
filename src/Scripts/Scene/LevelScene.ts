@@ -13,7 +13,7 @@ import { ImagePopUp } from '../Util/ImagePopUp';
 import { TextPopUp } from '../Util/TextPopUp';
 import AlignTool from '../Util/AlignTool';
 
-import { GAME_STATE } from '../Enum/enum';
+import { GameState, AudioKeys } from '../Enum/enum';
 import { IItem } from '../Interfaces/interface';
 
 import DepthConfig from '../Config/DepthConfig';
@@ -22,7 +22,7 @@ import SoundConfig from '../Config/SoundConfig';
 export default class LevelScene extends Phaser.Scene {
   private ground: Ground;
 
-  private gameState: GAME_STATE;
+  private gameState: GameState;
   private score: number;
 
   constructor() {
@@ -33,7 +33,7 @@ export default class LevelScene extends Phaser.Scene {
 
   create(): void {
     const bitfield = this.matter.world.nextCategory();
-    this.gameState = GAME_STATE.GAME_ON;
+    this.gameState = GameState.GameOn;
 
     this.initializeStaticElements(bitfield);
 
@@ -41,7 +41,7 @@ export default class LevelScene extends Phaser.Scene {
       AlignTool.getXfromScreenWidth(this, -0.5),
       AlignTool.getYfromScreenHeight(this, -1.25),
       AlignTool.getXfromScreenWidth(this, 2),
-      AlignTool.getYfromScreenHeight(this, 2.25)
+      AlignTool.getYfromScreenHeight(this, 2.5)
     );
 
     this.ground = new Ground(this, bitfield);
@@ -54,7 +54,7 @@ export default class LevelScene extends Phaser.Scene {
     
     this.matter.world.on('collisionstart', this.checkCollision, this);
 
-    if (Timer.timesUp() && this.gameState === GAME_STATE.GAME_ON) {
+    if (Timer.timesUp() && this.gameState === GameState.GameOn) {
       this.setGameOver();
     }
 
@@ -65,7 +65,7 @@ export default class LevelScene extends Phaser.Scene {
     let block: BuildingBlock;
 
     // Check if either object is world bounds
-    if (!obj1.gameObject || !obj2.gameObject || this.gameState === GAME_STATE.GAME_OVER) {
+    if (!obj1.gameObject || !obj2.gameObject || this.gameState === GameState.GameOver) {
       return;
     }
 
@@ -90,7 +90,7 @@ export default class LevelScene extends Phaser.Scene {
       // Falling block collided with ground
       else {
         if (!block.hasCollided) {
-          this.sound.play('thud', { volume: SoundConfig.sfxVolume });
+          this.sound.play(AudioKeys.Thud, { volume: SoundConfig.sfxVolume });
           block.hasCollided = true;
           BlockManager.addBlockToStack(block);
           BlockManager.checkStackedBlocks(this.ground);
@@ -119,7 +119,7 @@ export default class LevelScene extends Phaser.Scene {
       // Falling block collided with ground
       else {
         if (!block.hasCollided) {
-          this.sound.play('thud', { volume: SoundConfig.sfxVolume });
+          this.sound.play(AudioKeys.Thud, { volume: SoundConfig.sfxVolume });
           block.hasCollided = true;
           BlockManager.addBlockToStack(block);
           BlockManager.checkStackedBlocks(this.ground);
@@ -135,11 +135,11 @@ export default class LevelScene extends Phaser.Scene {
     BlockManager.init(this, bitfield);
     ItemManager.init(this);
     Timer.show();
-    InputZone.setState(GAME_STATE.GAME_ON);
+    InputZone.setState(GameState.GameOn);
   }
 
   setGameOver(): void {
-    this.gameState = GAME_STATE.GAME_OVER;
+    this.gameState = GameState.GameOver;
 
     InputZone.setState(this.gameState);
 
@@ -158,7 +158,7 @@ export default class LevelScene extends Phaser.Scene {
   }
 
   zoomCamera(): void{
-    let zoomFactor = 1 / Math.cbrt(BlockManager.getMaxStackLevel());
+    let zoomFactor = 1 / Math.pow(BlockManager.getMaxStackLevel(), 1/4);
     this.cameras.main.zoomTo(zoomFactor,500);
 
     const newHeight = AlignTool.getYfromScreenHeight(this,1) / zoomFactor;

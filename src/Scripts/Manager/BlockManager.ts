@@ -10,6 +10,7 @@ import { ANIMATION_TYPE, TextPopUp } from '../Util/TextPopUp';
 
 import SoundConfig from '../Config/SoundConfig';
 import { IGround } from '../Interfaces/interface';
+import { AudioKeys } from '../Enum/enum';
 
 class BlockManagerHelper {
   private readonly freezeDelay = 2000;
@@ -211,7 +212,7 @@ class BlockManagerHelper {
         false
       );
 
-      this.scene.sound.play('score', { volume: SoundConfig.sfxVolume });
+      this.scene.sound.play(AudioKeys.Score, { volume: SoundConfig.sfxVolume });
       this.score += currentBlockScore;
     }
   }
