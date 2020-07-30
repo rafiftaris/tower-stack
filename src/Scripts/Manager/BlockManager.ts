@@ -12,6 +12,8 @@ import SoundConfig from '../Config/SoundConfig';
 import { IGround } from '../Interfaces/interface';
 
 class BlockManagerHelper {
+  private readonly freezeDelay = 2000;
+
   private static instance: BlockManagerHelper;
 
   private scene!: Phaser.Scene;
@@ -84,7 +86,7 @@ class BlockManagerHelper {
    * @returns: delay duration
    */
   getDelayDuration(): number {
-    return this.stackedBlocks.length * 750 + 1000;
+    return this.stackedBlocks.length * 750 + this.freezeDelay + 250;
   }
 
   /**
@@ -116,19 +118,26 @@ class BlockManagerHelper {
     }
 
     this.scene.time.addEvent({
-      delay: 1000,
+      delay: this.freezeDelay,
       callback: this.freezeStack,
       callbackScope: this
     });
 
     // Calculate Score
-    this.scene.time.addEvent({
-      delay: 750,
-      callback: this.countBlockScore,
-      args: [ground],
-      callbackScope: this,
-      repeat: this.stackedBlocks.length
-    });
+    this.scene.time.delayedCall(
+      this.freezeDelay,
+      () => {
+        this.scene.time.addEvent({
+          delay: 750,
+          callback: this.countBlockScore,
+          args: [ground],
+          callbackScope: this,
+          repeat: this.stackedBlocks.length
+        });
+      },
+      null,
+      this
+    )
   }
 
   /**
@@ -277,7 +286,7 @@ class BlockManagerHelper {
     this.stackedBlocks.forEach((block, index) => {
       // Freeze box when not falling, remove from stack otherwise
       const body = <MatterJS.BodyType>block.body;
-      if (body.velocity.y < 2) {
+      if (body.velocity.y < 1.5) {
         block.setStatic(true);
         block.setIgnoreGravity(true);
       } else {
@@ -297,7 +306,6 @@ class BlockManagerHelper {
       this.movingBlock.x,
       this.movingBlock.movingBlockStartingHeight + (AlignTool.getYfromScreenHeight(this.scene,1) - newHeight) / 2
     );
-    console.log(AlignTool.getYfromScreenHeight(this.scene,0.1), this.movingBlock.y);
   }
 }
 

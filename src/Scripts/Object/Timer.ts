@@ -155,7 +155,7 @@ class TimerHelper implements ITimer{
       return;
     }
 
-    this.countdown -= 3;
+    this.countdown -= 1;
     if (this.countdown < 0) {
       this.countdown = 0;
     }
@@ -165,7 +165,7 @@ class TimerHelper implements ITimer{
     TextPopUp.showText({
       x: x,
       y: y,
-      text: '-3',
+      text: '-1',
       duration: 1,
       style: {
         fontSize: 48,

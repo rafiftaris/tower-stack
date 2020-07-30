@@ -49,6 +49,7 @@ export default class Bird extends Phaser.Physics.Matter.Sprite implements IItem 
    */
   fly(direction: DIRECTION, height: number): void {
     this.direction = direction;
+    this.isHit = false;
 
     if (direction == DIRECTION.right) {
       this.setPosition(AlignTool.getXfromScreenWidth(this.scene, -1), height);
@@ -100,7 +101,6 @@ export default class Bird extends Phaser.Physics.Matter.Sprite implements IItem 
   }
 
   resetSettings(): void {
-    this.isHit = false;
     this.setAngle(0);
     this.setAngularVelocity(0);
     this.setVelocity(0);

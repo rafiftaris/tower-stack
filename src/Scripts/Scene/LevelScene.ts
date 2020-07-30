@@ -77,7 +77,7 @@ export default class LevelScene extends Phaser.Scene {
       if (obj2.gameObject.itemType !== undefined) {
         if (!obj2.gameObject.isHit && !block.hasCollided) {
           if (obj2.gameObject.itemType == 'Hourglass') {
-            // console.log("hourglass hit");
+            console.log("hourglass hit");
             Timer.increase(obj2.position.x, obj2.position.y);
           } else {
             Timer.decrease(obj2.position.x, obj2.position.y);
@@ -106,7 +106,7 @@ export default class LevelScene extends Phaser.Scene {
       if (obj1.gameObject.itemType !== undefined) {
         if (!obj1.gameObject.isHit && !block.hasCollided) {
           if (obj1.gameObject.itemType == 'Hourglass') {
-            // console.log("hourglass hit");
+            console.log("hourglass hit");
             Timer.increase(obj1.position.x, obj1.position.y);
           } else {
             Timer.decrease(obj1.position.x, obj1.position.y);
@@ -159,7 +159,6 @@ export default class LevelScene extends Phaser.Scene {
     this.cameras.main.zoomTo(zoomFactor,500);
 
     const newHeight = AlignTool.getYfromScreenHeight(this,1) / zoomFactor;
-    console.log("new height", newHeight)
     this.cameras.main.pan(
       AlignTool.getXfromScreenWidth(this,1) / 2, 
       (2*AlignTool.getYfromScreenHeight(this,1) - newHeight) / 2, 500

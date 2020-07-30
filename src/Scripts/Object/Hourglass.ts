@@ -47,6 +47,7 @@ export default class Hourglass extends Phaser.Physics.Matter.Sprite
    * @param direction: left or right
    */
   fly(direction: DIRECTION, height: number): void {
+    this.isHit = false;
 
     if (direction == DIRECTION.right) {
       this.setPosition(AlignTool.getXfromScreenWidth(this.scene, -1), height);
@@ -89,6 +90,5 @@ export default class Hourglass extends Phaser.Physics.Matter.Sprite
     this.setAngle(0);
     this.setAngularVelocity(0);
     this.setVelocity(0);
-    this.isHit = false;
   }
 }

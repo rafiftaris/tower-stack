@@ -60,7 +60,7 @@ export default class HowToScene extends Phaser.Scene {
     this.birdInfo = TextPopUp.showText({
       x: AlignTool.getXfromScreenWidth(this, -0.6),
       y: AlignTool.getYfromScreenHeight(this, 0.75),
-      text: 'Lose 3 seconds when you hit',
+      text: 'Lose 1 second when you hit',
       duration: 0.01,
       style: {
         fontSize: 40,
@@ -99,6 +99,7 @@ export default class HowToScene extends Phaser.Scene {
       duration: this.titleTransTime * 1000
     });
 
+    // Goal Desc
     this.time.addEvent({
       delay: (this.titleTransTime + this.transDelay) * 1000,
       callback: () => {
@@ -121,6 +122,7 @@ export default class HowToScene extends Phaser.Scene {
       callbackScope: this
     });
 
+    // Item desc
     this.time.addEvent({
       delay:
         (this.titleTransTime + this.goalTransTime + this.transDelay * 2) * 1000,
@@ -143,6 +145,7 @@ export default class HowToScene extends Phaser.Scene {
       callbackScope: this
     });
 
+    // Hourglass info
     this.time.addEvent({
       delay:
         (this.titleTransTime +
@@ -160,6 +163,7 @@ export default class HowToScene extends Phaser.Scene {
       callbackScope: this
     });
 
+    // Hourglass image
     this.time.addEvent({
       delay:
         (this.titleTransTime +
@@ -191,6 +195,7 @@ export default class HowToScene extends Phaser.Scene {
       callbackScope: this
     });
 
+    // Bird info
     this.time.addEvent({
       delay:
         (this.titleTransTime +

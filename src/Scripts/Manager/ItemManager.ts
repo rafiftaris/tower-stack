@@ -39,10 +39,11 @@ class ItemManagerHelper {
       defaultKey: 'hourglass',
       maxSize: 2
     });
+    this.currentItem = null;
   }
 
   private generateItem(): void {
-    const delayRandomizer = Math.random() * 2;
+    const delayRandomizer = Math.random() + 1;
     this.scene.time.addEvent({
       delay: delayRandomizer * 1000,
       callback: () => {
@@ -52,7 +53,7 @@ class ItemManagerHelper {
           return;
         }
 
-        if (itemRandomizer <= 1.25) {
+        if (itemRandomizer <= 1) {
           this.currentItem = this.birdGroup.get();
         } else {
           this.currentItem = this.hourglassGroup.get();
@@ -65,6 +66,7 @@ class ItemManagerHelper {
 
           const directionRandomizer = Math.floor(Math.random() * 2);
           const heightRandomizer = (Math.random()*this.heightRange) + this.startingHeight;
+          
           if (directionRandomizer == 0) {
             this.currentItem.fly(DIRECTION.left, heightRandomizer);
           } else {
