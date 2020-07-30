@@ -61,7 +61,7 @@ implements IBUildingBlock{
     this.tween = this.scene.tweens.add({
       targets: this,
       x: AlignTool.getXfromScreenWidth(this.scene, 0.9),
-      duration: 600,
+      duration: 800,
       yoyo: true,
       repeat: -1
     });
