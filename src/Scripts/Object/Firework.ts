@@ -5,7 +5,7 @@ import DepthConfig from '../Config/DepthConfig';
 import { IFirework } from '../Interfaces/interface';
 
 export default class Firework
-extends Phaser.Physics.Matter.Image 
+extends Phaser.Physics.Matter.Sprite 
 implements IFirework{
     
   private frameNumber: number;

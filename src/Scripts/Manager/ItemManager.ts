@@ -1,16 +1,14 @@
 import * as Phaser from 'phaser';
-import { Direction } from '../Enum/enum';
-import Bird from '../Object/Bird';
-import Hourglass from '../Object/Hourglass';
+import { Direction, ItemTypes, EventNames } from '../Enum/enum';
+import Item from "../Object/Item";
 import AlignTool from '../Util/AlignTool';
 
 class ItemManagerHelper {
   private static instance: ItemManagerHelper;
 
   private scene!: Phaser.Scene;
-  private birdGroup: Phaser.GameObjects.Group;
-  private hourglassGroup: Phaser.GameObjects.Group;
-  private currentItem: Bird | Hourglass;
+  private itemGroup: Phaser.GameObjects.Group;
+  private currentItem: Item;
   private delay: number;
   private generator: Phaser.Time.TimerEvent;
 
@@ -29,16 +27,28 @@ class ItemManagerHelper {
     this.heightRange = AlignTool.getYfromScreenHeight(this.scene,0.25);
 
     // Init blocks group
-    this.birdGroup = scene.add.group({
-      classType: Bird,
-      defaultKey: 'bird',
-      maxSize: 2
+    this.itemGroup = scene.add.group({
+      classType: Item,
+      defaultKey: 'item',
+      maxSize: 3
     });
-    this.hourglassGroup = scene.add.group({
-      classType: Hourglass,
-      defaultKey: 'hourglass',
-      maxSize: 2
+
+    this.itemGroup.createMultiple({
+      classType: Item,
+      key: 'item',
+      active: false,
+      visible: false,
+      quantity: 2,
+      setScale:{ 
+        x: 0.1,
+        y: 0.1
+      },
+      setXY: {
+        x: AlignTool.getXfromScreenWidth(scene,-0.5),
+        y: this.startingHeight
+      },
     });
+
     this.currentItem = null;
   }
 
@@ -53,16 +63,19 @@ class ItemManagerHelper {
           return;
         }
 
+        let itemType: ItemTypes;
         if (itemRandomizer <= 1) {
-          this.currentItem = this.birdGroup.get();
+          itemType = ItemTypes.Bird
         } else {
-          this.currentItem = this.hourglassGroup.get();
+          itemType = ItemTypes.Hourglass
         }
+        
+        this.currentItem = this.itemGroup.get();
 
         if (this.currentItem) {
           this.currentItem.setActive(true);
           this.currentItem.setVisible(true);
-          this.currentItem.setDefaultSettings();
+          this.currentItem.setDefaultSettings(itemType);
 
           const directionRandomizer = Math.floor(Math.random() * 2);
           const heightRandomizer = (Math.random()*this.heightRange) + this.startingHeight;
@@ -72,6 +85,8 @@ class ItemManagerHelper {
           } else {
             this.currentItem.fly(Direction.Right, heightRandomizer);
           }
+
+          this.scene.events.emit(EventNames.ItemGenerated,[this.currentItem]);
         }
       },
       callbackScope: this
@@ -90,12 +105,12 @@ class ItemManagerHelper {
     });
   }
 
-  getBirdGroup(): Phaser.GameObjects.Group {
-    return this.birdGroup;
+  getItemGroup(): Phaser.GameObjects.Group {
+    return this.itemGroup;
   }
 
-  getHourglassGroup(): Phaser.GameObjects.Group {
-    return this.hourglassGroup;
+  getCurrentItem(): Item{
+    return this.currentItem;
   }
 
   checkItem(): void {

@@ -19,13 +19,13 @@ implements IBUildingBlock{
   
   private textureFrame: number;
   private tween: Phaser.Tweens.Tween;
-  public hasCollided: boolean;
+  public hasStacked: boolean;
 
-  constructor(scene: Phaser.Scene, bitfield: number) {
+   constructor(scene: Phaser.Scene, bitfield: number) {
     super(scene.matter.world, 0, 0, TextureKeys.Blocksheet, 0, CONFIG);
     this.textureFrame = 0;
     this.scene = scene;
-    this.hasCollided = false;
+    this.hasStacked = false;
 
     this.setDefaultSettings(bitfield);
   }
@@ -36,12 +36,16 @@ implements IBUildingBlock{
    * @param texture: texture index. If null, randomize index
    */
   setDefaultSettings(bitfield?: number, texture?: number): void {
-    this.hasCollided = false;
+    this.hasStacked = false;
     this.setActive(true);
     this.setVisible(true);
     this.setDepth(DepthConfig.block);
     this.setBounce(0);
     AlignTool.scaleToScreenWidth(this.scene, this, 0.14);
+    
+    // const body = <MatterJS.BodyType>this.body
+    // this.setOrigin(0.5,1);
+    
 
     this.changeTexture(texture);
 
@@ -83,8 +87,7 @@ implements IBUildingBlock{
   ): void {
     this.resetSettings();
     this.setPosition(position.x, position.y);
-    this.setVelocityY(AlignTool.getYfromScreenHeight(this.scene, 0.015));
-    this.setIgnoreGravity(false);
+    this.setVelocityY(AlignTool.getYfromScreenHeight(this.scene, 0.02));
     this.setDefaultSettings(bitfield, texture);
   }
 
@@ -96,7 +99,7 @@ implements IBUildingBlock{
     this.setVelocityY(0);
     this.setAngle(0);
     this.setAngularVelocity(0);
-    this.hasCollided = false;
+    this.hasStacked = false;
   }
 
   /**

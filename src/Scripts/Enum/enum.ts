@@ -46,3 +46,17 @@ export enum TextureKeys {
   Birdsheet = "birdsheet",
   Firework = "firework"
 }
+
+export enum ItemTypes{
+  Hourglass = "hourglass",
+  Bird = "bird"
+}
+
+export enum Color{
+  Green = "green",
+  Red = "red"
+}
+
+export enum EventNames{
+  ItemGenerated = "ItemGenerated"
+}

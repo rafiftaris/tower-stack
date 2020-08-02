@@ -1,9 +1,12 @@
 import * as Phaser from 'phaser';
 import AlignTool from '../Util/AlignTool';
-import { TIME_LIMIT } from '../Config/GameConfig';
 import { ANIMATION_TYPE, TextPopUp } from '../Util/TextPopUp';
+
+import { TIME_LIMIT } from '../Config/GameConfig';
+
 import { ITimer } from '../Interfaces/interface';
-import { TextureKeys, AudioKeys } from '../Enum/enum';
+
+import { TextureKeys, AudioKeys, ItemTypes, Color } from '../Enum/enum';
 
 class TimerHelper implements ITimer{
   private static instance: TimerHelper;
@@ -113,52 +116,33 @@ class TimerHelper implements ITimer{
     this.timerEvent = null;
   }
 
+
   /**
-   * Add time after block hit hourglass item and create text pop-up
+   * Increase/decrease time after block hit hourglass item and create text pop-up
    * @param x: Item position on x axis
    * @param y: Item position on y axis
    */
-  increase(x: number, y: number): void {
-    if (this.onCooldown) {
-      return;
-    }
-    this.countdown += 3;
-    this.displayText.setText(this.countdown.toString());
-
-    TextPopUp.showText({
-      x: x,
-      y: y,
-      text: '+3',
-      duration: 1,
-      style: {
-        fontSize: 48,
-        fontStyle: 'Bold',
-        fontFamily: 'Courier',
-        color: 'green',
-        strokeThickness: 1
-      },
-      animType: ANIMATION_TYPE.EASE_IN,
-      retain: false
-    })?.text as Phaser.GameObjects.Text;
-
-    this.scene.sound.play(AudioKeys.Bling);
-
-    this.addCooldown();
-  }
-
-  /**
-   * Decrease time after block hit bird item and create text pop-up
-   * @param x: Item position on x axis
-   * @param y: Item position on y axis
-   */
-  decrease(x: number, y: number): void {
-    if (this.onCooldown) {
+  itemHit(itemType: ItemTypes, x: number, y: number): void {
+    if (this.onCooldown || this.countdown == 0) {
       return;
     }
 
-    this.countdown -= 1;
-    if (this.countdown < 0) {
-      this.countdown = 0;
+    let comboText: string;
+    let textColor: Color;
+
+    switch(itemType){
+        case ItemTypes.Hourglass:
+          this.countdown += 3;
+          comboText = "+3";
+          textColor = Color.Green;
+          this.scene.sound.play(AudioKeys.Bling);
+          break;
+        case ItemTypes.Bird:
+          this.countdown -= 3;
+          comboText = "-3";
+          textColor = Color.Red;
+          this.scene.sound.play(AudioKeys.Bam);
+          break;
     }
 
     this.displayText.setText(this.countdown.toString());
@@ -166,20 +150,18 @@ class TimerHelper implements ITimer{
     TextPopUp.showText({
       x: x,
       y: y,
-      text: '-1',
+      text: comboText,
       duration: 1,
       style: {
         fontSize: 48,
         fontStyle: 'Bold',
         fontFamily: 'Courier',
-        color: 'red',
+        color: textColor,
         strokeThickness: 1
       },
       animType: ANIMATION_TYPE.EASE_IN,
       retain: false
     })?.text as Phaser.GameObjects.Text;
-
-    this.scene.sound.play(AudioKeys.Bam);
 
     this.addCooldown();
   }

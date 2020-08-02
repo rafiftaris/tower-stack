@@ -5,6 +5,7 @@ import { Timer } from '../Object/Timer';
 import { InputZone } from '../Object/InputZone';
 import Ground from '../Object/Ground';
 import BuildingBlock from '../Object/Block';
+import Item from '../Object/Item'; 
 
 import { BlockManager } from '../Manager/BlockManager';
 import { ItemManager } from '../Manager/ItemManager';
@@ -13,8 +14,7 @@ import { ImagePopUp } from '../Util/ImagePopUp';
 import { TextPopUp } from '../Util/TextPopUp';
 import AlignTool from '../Util/AlignTool';
 
-import { GameState, AudioKeys } from '../Enum/enum';
-import { IItem } from '../Interfaces/interface';
+import { GameState, AudioKeys, EventNames } from '../Enum/enum';
 
 import DepthConfig from '../Config/DepthConfig';
 import SoundConfig from '../Config/SoundConfig';
@@ -46,87 +46,71 @@ export default class LevelScene extends Phaser.Scene {
 
     this.ground = new Ground(this, bitfield);
 
+    const droppingBlocks = <BuildingBlock[]>BlockManager.getDroppingBlockGroup().getChildren();
+    const items = <Item[]>ItemManager.getItemGroup().getChildren();
+
+    // Set collision
+    droppingBlocks.forEach(block => {
+      block.setOnCollideWith(
+        this.ground.getGroundArray(),
+        () => {
+          if(!this.sound.get(AudioKeys.Thud)?.isPlaying){
+            this.sound.play(AudioKeys.Thud, { volume: SoundConfig.thudVolume });
+          }
+          if(!block.hasStacked){
+            BlockManager.addBlockToStack();
+            BlockManager.checkStackedBlocks(this.ground);
+            this.zoomCamera();
+          }
+        }
+      );
+
+      block.setOnCollideWith(
+        droppingBlocks,
+        () => {
+          if(!BlockManager.getCurrentDroppingBlock()){
+            return;
+          }
+          if(!this.sound.get(AudioKeys.Thud)?.isPlaying){
+            this.sound.play(AudioKeys.Thud, { volume: SoundConfig.thudVolume });
+          }
+          if(!block.hasStacked){
+            BlockManager.addBlockToStack();
+            BlockManager.checkStackedBlocks(this.ground);
+            this.zoomCamera();
+          }
+        }
+      );
+
+      // Must use custom event listener because item body is resetted everytime
+      this.events.addListener(
+        EventNames.ItemGenerated,
+        (item: Item) => {
+          block.setOnCollideWith(
+            item,
+            () => {
+              const currentItem = ItemManager.getCurrentItem();
+              Timer.itemHit(currentItem.itemType, block.body.position.x, block.body.position.y);
+              currentItem.hideAfterHit();
+            }
+          );
+        },
+        this
+      );
+
+    });
+
   }
 
   update(): void {
     BlockManager.checkStackedBlocks(this.ground);
     ItemManager.checkItem();
-    
-    this.matter.world.on('collisionstart', this.checkCollision, this);
 
     if (Timer.timesUp() && this.gameState === GameState.GameOn) {
       this.setGameOver();
     }
 
     this.input.activePointer;
-  }
-
-  checkCollision(event, obj1, obj2) {
-    let block: BuildingBlock;
-
-    // Check if either object is world bounds
-    if (!obj1.gameObject || !obj2.gameObject || this.gameState === GameState.GameOver) {
-      return;
-    }
-
-    // hasCollided undefined on ground objects
-    if (obj1.gameObject.hasCollided !== undefined) {
-      block = <BuildingBlock>obj1.gameObject;
-
-      // Falling block collided with item
-      if (obj2.gameObject.itemType !== undefined) {
-        if (!obj2.gameObject.isHit && !block.hasCollided) {
-          if (obj2.gameObject.itemType == 'Hourglass') {
-            console.log("hourglass hit");
-            Timer.increase(obj2.position.x, obj2.position.y);
-          } else {
-            Timer.decrease(obj2.position.x, obj2.position.y);
-          }
-          const item = <IItem>obj2.gameObject;
-          item.hideAfterHit();
-        }
-      }
-
-      // Falling block collided with ground
-      else {
-        if (!block.hasCollided) {
-          this.sound.play(AudioKeys.Thud, { volume: SoundConfig.sfxVolume });
-          block.hasCollided = true;
-          BlockManager.addBlockToStack(block);
-          BlockManager.checkStackedBlocks(this.ground);
-          this.zoomCamera();
-        }
-      }
-    }
-
-    if (obj2.gameObject.hasCollided !== undefined) {
-      block = <BuildingBlock>obj2.gameObject;
-
-      // Falling block collided with item
-      if (obj1.gameObject.itemType !== undefined) {
-        if (!obj1.gameObject.isHit && !block.hasCollided) {
-          if (obj1.gameObject.itemType == 'Hourglass') {
-            console.log("hourglass hit");
-            Timer.increase(obj1.position.x, obj1.position.y);
-          } else {
-            Timer.decrease(obj1.position.x, obj1.position.y);
-          }
-          const item = <IItem>obj1.gameObject;
-          item.hideAfterHit();
-        }
-      }
-
-      // Falling block collided with ground
-      else {
-        if (!block.hasCollided) {
-          this.sound.play(AudioKeys.Thud, { volume: SoundConfig.sfxVolume });
-          block.hasCollided = true;
-          BlockManager.addBlockToStack(block);
-          BlockManager.checkStackedBlocks(this.ground);
-          this.zoomCamera();
-        }
-      }
-    }
   }
 
   initializeStaticElements(bitfield: number): void {

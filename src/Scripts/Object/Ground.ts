@@ -11,7 +11,7 @@ export default class Ground implements IGround{
   readonly DEPTH = 3;
 
   private scene: Phaser.Scene;
-  private groundTiles: Phaser.Physics.Matter.Image[];
+  private groundTiles: Phaser.Physics.Matter.Sprite[];
 
   constructor(scene: Phaser.Scene, bitfield: number) {
     this.groundTiles = [];
@@ -45,7 +45,7 @@ export default class Ground implements IGround{
    */
   private setDefaultSettings(
     index: number,
-    groundTile: Phaser.Physics.Matter.Image,
+    groundTile: Phaser.Physics.Matter.Sprite,
     bitfield: number
   ): void {
     AlignTool.scaleToScreenWidth(this.scene, groundTile, 0.25);
@@ -64,7 +64,7 @@ export default class Ground implements IGround{
   /**
    * Get array of the ground blocks.
    */
-  getGroundArray(): Phaser.Physics.Matter.Image[] {
+  getGroundArray(): Phaser.Physics.Matter.Sprite[] {
     return this.groundTiles;
   }
 }

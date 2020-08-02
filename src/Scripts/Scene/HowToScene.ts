@@ -3,14 +3,14 @@ import * as Phaser from 'phaser';
 import { SceneKeys } from '../Config/SceneKeys';
 import DepthConfig from '../Config/DepthConfig';
 
-import { ButtonType, FontKeys } from '../Enum/enum';
+import { ButtonType, FontKeys, ItemTypes } from '../Enum/enum';
 
 import AlignTool from '../Util/AlignTool';
 import { TextPopUp, ANIMATION_TYPE as TEXT_ANIM_TYPE } from '../Util/TextPopUp';
 import { ImagePopUp, ANIMATION_TYPE } from '../Util/ImagePopUp';
 
 import Ground from '../Object/Ground';
-import Bird from '../Object/Bird';
+import Item from '../Object/Item';
 import Button from '../Object/Button';
 
 export default class HowToScene extends Phaser.Scene {
@@ -28,7 +28,7 @@ export default class HowToScene extends Phaser.Scene {
   private birdInfo: Phaser.GameObjects.Text;
 
   private hourglass: Phaser.GameObjects.Image;
-  private bird: Bird;
+  private bird: Item;
   private backToTitleButton: Button;
 
   constructor() {
@@ -72,8 +72,8 @@ export default class HowToScene extends Phaser.Scene {
       retain: true
     })?.text as Phaser.GameObjects.Text;
 
-    this.bird = new Bird(this);
-    this.bird.setDefaultSettings();
+    this.bird = new Item(this);
+    this.bird.setDefaultSettings(ItemTypes.Bird);
     this.bird.setPosition(
       AlignTool.getXfromScreenWidth(this, -0.15),
       AlignTool.getYfromScreenHeight(this, 0.75)

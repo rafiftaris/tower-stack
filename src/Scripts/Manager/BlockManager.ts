@@ -18,9 +18,9 @@ class BlockManagerHelper {
   private static instance: BlockManagerHelper;
 
   private scene!: Phaser.Scene;
-  private stackedBlocks!: BuildingBlock[];
-  private blocksGroup!: Phaser.GameObjects.Group;
-  private movingBlock!: BuildingBlock;
+  private stackedBlocks: BuildingBlock[];
+  private blocksGroup: Phaser.GameObjects.Group;
+  private movingBlock: BuildingBlock;
   private currentDroppingBlock: BuildingBlock;
 
   private score = 0;
@@ -45,13 +45,28 @@ class BlockManagerHelper {
       defaultKey: 'block',
       maxSize: 30
     });
-    this.movingBlock = this.getBlockFromGroup();
+
+    this.blocksGroup.createMultiple({
+      classType: BuildingBlock,
+      key: 'block',
+      active: false,
+      visible: false,
+      quantity: 30,
+      setXY: {
+        x: AlignTool.getXfromScreenWidth(scene,-1),
+        y: AlignTool.getYfromScreenHeight(scene,0)
+      }
+    });
+
+    // console.log(this.blocksGroup.getLength());
+
+    this.movingBlock = this.blocksGroup.get();
     this.movingBlock.setMovingBlockSettings(this.bitfield);
   }
 
   /**
    * Get building block from block group
-   * @returns: building block
+   * @returns building block
    */
   private getBlockFromGroup(): BuildingBlock {
     const block: BuildingBlock = this.blocksGroup.get();
@@ -68,7 +83,7 @@ class BlockManagerHelper {
 
   /**
    * Get current score
-   * @returns: score
+   * @returns score
    */
   getScore(): number {
     return this.score;
@@ -76,7 +91,7 @@ class BlockManagerHelper {
 
   /**
    * Get moving block
-   * @returns: Building block
+   * @returns Building block
    */
   getMovingBlock(): BuildingBlock {
     return this.movingBlock;
@@ -84,7 +99,7 @@ class BlockManagerHelper {
 
   /**
    * Get delay duration for game over panel popup
-   * @returns: delay duration
+   * @returns delay duration
    */
   getDelayDuration(): number {
     return this.stackedBlocks.length * 750 + this.freezeDelay + 250;
@@ -92,10 +107,34 @@ class BlockManagerHelper {
 
   /**
    * Get current max level of block stack
-   * @returns: max stack level
+   * @returns max stack level
    */
   getMaxStackLevel(): number{
     return this.maxStackLevel
+  }
+
+  /**
+   * Get dropping block group
+   * @returns dropping block group
+   */
+  getDroppingBlockGroup(): Phaser.GameObjects.Group{
+    return this.blocksGroup;
+  }
+
+  /**
+   * Get stacked blocks
+   * @returns stacked blocks
+   */
+  getStackedBlock(): BuildingBlock[]{
+    return this.stackedBlocks;
+  }
+
+  /**
+   * Get current dropping block
+   * @returns current dropping block
+   */
+  getCurrentDroppingBlock(): BuildingBlock{
+    return this.currentDroppingBlock;
   }
 
   /**
@@ -273,8 +312,9 @@ class BlockManagerHelper {
    * Add block to stacked blocks.
    * @param block: block that is going to be added
    */
-  addBlockToStack(block: BuildingBlock): void {
-    this.stackedBlocks.push(block);
+  addBlockToStack(): void {
+    this.currentDroppingBlock.hasStacked = true;
+    this.stackedBlocks.push(this.currentDroppingBlock);
     this.currentDroppingBlock = null;
   }
 

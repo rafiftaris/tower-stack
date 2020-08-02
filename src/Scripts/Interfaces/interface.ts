@@ -1,12 +1,14 @@
-import { Direction } from '../Enum/enum';
+import { Direction, ItemTypes } from '../Enum/enum';
 
 interface IItem {
-  itemType: string;
+  itemType: ItemTypes;
   isHit: boolean;
 
   fly(direction: Direction, height: number): void;
 
-  setDefaultSettings(): void;
+  setDefaultSettings(itemType: ItemTypes): void;
+
+  animate(): void;
 
   hideAfterHit(): void;
 
@@ -54,7 +56,7 @@ interface IGameOverPanel{
 }
 
 interface IGround{
-  getGroundArray(): Phaser.Physics.Matter.Image[]
+  getGroundArray(): Phaser.Physics.Matter.Sprite[]
 }
 
 interface ITimer{
@@ -66,9 +68,7 @@ interface ITimer{
 
   destroyTimeEvent(): void
 
-  increase(x: number, y: number): void
-
-  decrease(x: number, y: number): void
+  itemHit(itemType: ItemTypes, x: number, y: number): void
 }
 
 interface IBackground{
