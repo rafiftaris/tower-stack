@@ -32,7 +32,7 @@ export default class Ground implements IGround {
         margin = this.groundTiles[i - 1].displayWidth;
       }
 
-      const groundTile = scene.matter.add.image(0, 0, image);
+      const groundTile = scene.matter.add.sprite(0, 0, image);
       this.setDefaultSettings(i, groundTile, bitfield);
       this.groundTiles.push(groundTile);
     }

@@ -93,11 +93,13 @@ class ItemManagerHelper {
 
           this.itemGroup.getChildren().forEach((elem) => {
             const item = <Item>elem;
+            const itemBody = <MatterJS.BodyType>(item.body);
+            
             item.setOnCollideWith(blocks, () => {
               Timer.itemHit(
                 item.itemType,
-                item.body.position.x,
-                item.body.position.y
+                itemBody.position.x,
+                itemBody.position.y
               );
               item.hideAfterHit();
             });
