@@ -7,10 +7,8 @@ import SoundConfig from '../Config/SoundConfig';
 import { ButtonType, TextureKeys, FontKeys, AudioKeys } from '../Enum/enum';
 import { IGameOverPanel } from '../Interfaces/interface';
 
-export default class GameOverPanel
-extends Phaser.GameObjects.Image 
-implements IGameOverPanel{
-    
+export default class GameOverPanel extends Phaser.GameObjects.Image
+  implements IGameOverPanel {
   private text: Phaser.GameObjects.Text;
   private displayText: string;
   private restartButton: Button;
@@ -88,10 +86,10 @@ implements IGameOverPanel{
       retain: true
     })?.text as Phaser.GameObjects.Text;
 
-    let highScoreText = TextPopUp.showText({
+    const highScoreText = TextPopUp.showText({
       x: AlignTool.getXfromScreenWidth(this.scene, 0.5),
       y: AlignTool.getYfromScreenHeight(this.scene, 0.5),
-      text: "New High Score!",
+      text: 'New High Score!',
       duration: 0.01,
       style: {
         fontSize: 32,
@@ -104,18 +102,20 @@ implements IGameOverPanel{
     })?.text as Phaser.GameObjects.Text;
     highScoreText.setVisible(false);
 
-    if(newHighScore){
+    if (newHighScore) {
       this.scene.time.addEvent({
         delay: 500,
         callback: () => {
-          highScoreText.setVisible(!highScoreText.visible)
+          highScoreText.setVisible(!highScoreText.visible);
         },
         callbackScope: this,
         repeat: -1
       });
     }
-    
-    this.scene.sound.play(AudioKeys.GameOver, { volume: SoundConfig.sfxVolume });
+
+    this.scene.sound.play(AudioKeys.GameOver, {
+      volume: SoundConfig.sfxVolume
+    });
     this.text.setDepth(DepthConfig.gameOverContent);
     highScoreText.setDepth(DepthConfig.gameOverContent);
   }

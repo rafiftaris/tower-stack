@@ -10,7 +10,7 @@ const CONFIG = {
   frictionAir: 0
 };
 
-export default class Hourglass extends Phaser.Physics.Matter.Sprite
+export default class Item extends Phaser.Physics.Matter.Sprite
   implements IItem {
   private direction: Direction;
   private frameNumber: number;
@@ -39,20 +39,20 @@ export default class Hourglass extends Phaser.Physics.Matter.Sprite
     this.frameNumber = 0;
     this.setDepth(DepthConfig.item);
 
-    switch(this.itemType){
-        case (ItemTypes.Hourglass):
-            this.setTexture(TextureKeys.Hourglass);
-            AlignTool.scaleToScreenHeight(this.scene, this, 0.09);
-            this.setCircle(this.displayWidth/2);
-            break;
-        case (ItemTypes.Bird):
-            this.setTexture(TextureKeys.Birdsheet,0);
-            AlignTool.scaleToScreenHeight(this.scene, this, 0.1);
-            this.setFlipX(false);
-            this.setRectangle(this.displayWidth, this.displayHeight);
-            break;
+    switch (this.itemType) {
+      case ItemTypes.Hourglass:
+        this.setTexture(TextureKeys.Hourglass);
+        AlignTool.scaleToScreenHeight(this.scene, this, 0.09);
+        this.setCircle(this.displayWidth / 2);
+        break;
+      case ItemTypes.Bird:
+        this.setTexture(TextureKeys.Birdsheet, 0);
+        AlignTool.scaleToScreenHeight(this.scene, this, 0.1);
+        this.setFlipX(false);
+        this.setRectangle(this.displayWidth, this.displayHeight);
+        break;
     }
-    
+
     this.setSensor(true);
     this.setIgnoreGravity(true);
     this.animate();
@@ -74,12 +74,10 @@ export default class Hourglass extends Phaser.Physics.Matter.Sprite
         x: AlignTool.getXfromScreenWidth(this.scene, 2.1),
         duration: 4500
       });
-
     } else if (direction === Direction.Left) {
-
-        if(this.itemType === ItemTypes.Bird){
-            this.setFlipX(true);
-        }
+      if (this.itemType === ItemTypes.Bird) {
+        this.setFlipX(true);
+      }
 
       this.setPosition(AlignTool.getXfromScreenWidth(this.scene, 2), height);
 
@@ -102,7 +100,9 @@ export default class Hourglass extends Phaser.Physics.Matter.Sprite
     this.animationEvent = this.scene.time.addEvent({
       delay: 100,
       callback: () => {
-          if(this.itemType !== ItemTypes.Bird){ return; }
+        if (this.itemType !== ItemTypes.Bird) {
+          return;
+        }
         this.frameNumber = (this.frameNumber + 1) % 9;
         this.setFrame(this.frameNumber);
       },
@@ -136,8 +136,8 @@ export default class Hourglass extends Phaser.Physics.Matter.Sprite
     this.setAngularVelocity(0);
     this.setVelocity(0);
 
-    if(this.itemType === ItemTypes.Bird){
-        this.setFlipX(false);
+    if (this.itemType === ItemTypes.Bird) {
+      this.setFlipX(false);
     }
   }
 }

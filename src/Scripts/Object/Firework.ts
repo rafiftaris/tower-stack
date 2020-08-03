@@ -1,13 +1,11 @@
 import * as Phaser from 'phaser';
-import { TextureKeys, AudioKeys } from "../Enum/enum";
+import { TextureKeys, AudioKeys } from '../Enum/enum';
 import AlignTool from '../Util/AlignTool';
 import DepthConfig from '../Config/DepthConfig';
 import { IFirework } from '../Interfaces/interface';
 
-export default class Firework
-extends Phaser.Physics.Matter.Sprite 
-implements IFirework{
-    
+export default class Firework extends Phaser.Physics.Matter.Sprite
+  implements IFirework {
   private frameNumber: number;
   private realX: number;
   private realY: number;

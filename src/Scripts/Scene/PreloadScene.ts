@@ -1,7 +1,7 @@
 import * as Phaser from 'phaser';
 import { SceneKeys } from '../Config/SceneKeys';
 
-import { AudioKeys, TextureKeys } from "../Enum/enum";
+import { AudioKeys, TextureKeys } from '../Enum/enum';
 
 export default class PreloadScene extends Phaser.Scene {
   constructor() {
@@ -10,10 +10,14 @@ export default class PreloadScene extends Phaser.Scene {
 
   preload(): void {
     this.load.path = 'src/Assets/';
-    this.load.spritesheet(TextureKeys.Blocksheet, 'spritesheet/blocks-sheet.png', {
-      frameWidth: 32,
-      frameHeight: 32
-    });
+    this.load.spritesheet(
+      TextureKeys.Blocksheet,
+      'spritesheet/blocks-sheet.png',
+      {
+        frameWidth: 32,
+        frameHeight: 32
+      }
+    );
     this.load.spritesheet(TextureKeys.Birdsheet, 'spritesheet/bird.png', {
       frameWidth: 1029 / 3,
       frameHeight: 902 / 3
@@ -38,17 +42,23 @@ export default class PreloadScene extends Phaser.Scene {
     this.load.audio(AudioKeys.Bgm, ['sound/bgm.mp3', 'sound/bgm.ogg']);
     this.load.audio(AudioKeys.Bling, ['sound/bling.mp3', 'sound/bling.ogg']);
     this.load.audio(AudioKeys.Bam, ['sound/bam.mp3', 'sound/bam.ogg']);
-    this.load.audio(AudioKeys.GameOver, ['sound/game-over.mp3', 'sound/game-over.ogg']);
+    this.load.audio(AudioKeys.GameOver, [
+      'sound/game-over.mp3',
+      'sound/game-over.ogg'
+    ]);
     this.load.audio(AudioKeys.Score, ['sound/score.mp3', 'sound/score.ogg']);
-    this.load.audio(AudioKeys.Firework, ['sound/firework.mp3', 'sound/firework.ogg']);
+    this.load.audio(AudioKeys.Firework, [
+      'sound/firework.mp3',
+      'sound/firework.ogg'
+    ]);
   }
 
   create(): void {
     this.scene.run(SceneKeys.GameUI);
     this.scene.sendToBack(SceneKeys.GameUI);
-    
+
     this.scene.stop(SceneKeys.Preload);
-    
+
     this.scene.start(SceneKeys.Title);
   }
 }

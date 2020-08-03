@@ -5,7 +5,7 @@ import { Timer } from '../Object/Timer';
 import { InputZone } from '../Object/InputZone';
 import Ground from '../Object/Ground';
 import BuildingBlock from '../Object/Block';
-import Item from '../Object/Item'; 
+import Item from '../Object/Item';
 
 import { BlockManager } from '../Manager/BlockManager';
 import { ItemManager } from '../Manager/ItemManager';
@@ -46,60 +46,41 @@ export default class LevelScene extends Phaser.Scene {
 
     this.ground = new Ground(this, bitfield);
 
-    const droppingBlocks = <BuildingBlock[]>BlockManager.getDroppingBlockGroup().getChildren();
-    const items = <Item[]>ItemManager.getItemGroup().getChildren();
+    const droppingBlocks = <BuildingBlock[]>(
+      BlockManager.getBlockGroup().getChildren()
+    );
 
     // Set collision
-    droppingBlocks.forEach(block => {
-      block.setOnCollideWith(
-        this.ground.getGroundArray(),
-        () => {
-          if(!this.sound.get(AudioKeys.Thud)?.isPlaying){
-            this.sound.play(AudioKeys.Thud, { volume: SoundConfig.thudVolume });
-          }
-          if(!block.hasStacked){
-            BlockManager.addBlockToStack();
-            BlockManager.checkStackedBlocks(this.ground);
-            this.zoomCamera();
-          }
+    droppingBlocks.forEach((block) => {
+      block.setOnCollideWith(this.ground.getGroundArray(), () => {
+        if (!this.sound.get(AudioKeys.Thud)?.isPlaying) {
+          this.sound.play(AudioKeys.Thud, { volume: SoundConfig.thudVolume });
         }
-      );
-
-      block.setOnCollideWith(
-        droppingBlocks,
-        () => {
-          if(!BlockManager.getCurrentDroppingBlock()){
-            return;
-          }
-          if(!this.sound.get(AudioKeys.Thud)?.isPlaying){
-            this.sound.play(AudioKeys.Thud, { volume: SoundConfig.thudVolume });
-          }
-          if(!block.hasStacked){
-            BlockManager.addBlockToStack();
-            BlockManager.checkStackedBlocks(this.ground);
-            this.zoomCamera();
-          }
+        if (!block.hasStacked) {
+          BlockManager.addBlockToStack();
+          BlockManager.checkStackedBlocks(this.ground);
+          this.zoomCamera();
         }
-      );
+      });
 
-      // Must use custom event listener because item body is resetted everytime
-      this.events.addListener(
-        EventNames.ItemGenerated,
-        (item: Item) => {
-          block.setOnCollideWith(
-            item,
-            () => {
-              const currentItem = ItemManager.getCurrentItem();
-              Timer.itemHit(currentItem.itemType, block.body.position.x, block.body.position.y);
-              currentItem.hideAfterHit();
-            }
-          );
-        },
-        this
-      );
-
+      block.setOnCollideWith(droppingBlocks, () => {
+        if (
+          !BlockManager.getCurrentDroppingBlock() ||
+          !block.active ||
+          !block.visible
+        ) {
+          return;
+        }
+        if (!this.sound.get(AudioKeys.Thud)?.isPlaying) {
+          this.sound.play(AudioKeys.Thud, { volume: SoundConfig.thudVolume });
+        }
+        if (!block.hasStacked) {
+          BlockManager.addBlockToStack();
+          BlockManager.checkStackedBlocks(this.ground);
+          this.zoomCamera();
+        }
+      });
     });
-
   }
 
   update(): void {
@@ -141,16 +122,17 @@ export default class LevelScene extends Phaser.Scene {
     );
   }
 
-  zoomCamera(): void{
-    let zoomFactor = 1 / Math.pow(BlockManager.getMaxStackLevel(), 1/4);
-    this.cameras.main.zoomTo(zoomFactor,500);
+  zoomCamera(): void {
+    const zoomFactor = 1 / Math.pow(BlockManager.getMaxStackLevel(), 1 / 3);
+    this.cameras.main.zoomTo(zoomFactor, 500);
 
-    const newHeight = AlignTool.getYfromScreenHeight(this,1) / zoomFactor;
+    const newHeight = AlignTool.getYfromScreenHeight(this, 1) / zoomFactor;
     this.cameras.main.pan(
-      AlignTool.getXfromScreenWidth(this,1) / 2, 
-      (2*AlignTool.getYfromScreenHeight(this,1) - newHeight) / 2, 500
+      AlignTool.getXfromScreenWidth(this, 1) / 2,
+      (2 * AlignTool.getYfromScreenHeight(this, 1) - newHeight) / 2,
+      500
     );
-    
+
     BlockManager.updateHeight(newHeight);
     ItemManager.updateHeightRange(newHeight);
   }

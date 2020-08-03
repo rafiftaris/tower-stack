@@ -8,7 +8,7 @@ import { ITimer } from '../Interfaces/interface';
 
 import { TextureKeys, AudioKeys, ItemTypes, Color } from '../Enum/enum';
 
-class TimerHelper implements ITimer{
+class TimerHelper implements ITimer {
   private static instance: TimerHelper;
 
   private displayText: Phaser.GameObjects.Text;
@@ -63,7 +63,7 @@ class TimerHelper implements ITimer{
   /**
    * Hide timer
    */
-  hide(): void{
+  hide(): void {
     this.displayText.setVisible(false);
     this.stopwatch.setVisible(false);
   }
@@ -71,7 +71,7 @@ class TimerHelper implements ITimer{
   /**
    * Reset and show timer
    */
-  show(): void{
+  show(): void {
     this.displayText.setVisible(true);
     this.stopwatch.setVisible(true);
     this.countdown = TIME_LIMIT;
@@ -116,7 +116,6 @@ class TimerHelper implements ITimer{
     this.timerEvent = null;
   }
 
-
   /**
    * Increase/decrease time after block hit hourglass item and create text pop-up
    * @param x: Item position on x axis
@@ -130,19 +129,22 @@ class TimerHelper implements ITimer{
     let comboText: string;
     let textColor: Color;
 
-    switch(itemType){
-        case ItemTypes.Hourglass:
-          this.countdown += 3;
-          comboText = "+3";
-          textColor = Color.Green;
-          this.scene.sound.play(AudioKeys.Bling);
-          break;
-        case ItemTypes.Bird:
-          this.countdown -= 3;
-          comboText = "-3";
-          textColor = Color.Red;
-          this.scene.sound.play(AudioKeys.Bam);
-          break;
+    switch (itemType) {
+      case ItemTypes.Hourglass:
+        this.countdown += 3;
+        comboText = '+3';
+        textColor = Color.Green;
+        this.scene.sound.play(AudioKeys.Bling);
+        break;
+      case ItemTypes.Bird:
+        this.countdown -= 3;
+        if (this.countdown < 0) {
+          this.countdown = 0;
+        }
+        comboText = '-3';
+        textColor = Color.Red;
+        this.scene.sound.play(AudioKeys.Bam);
+        break;
     }
 
     this.displayText.setText(this.countdown.toString());

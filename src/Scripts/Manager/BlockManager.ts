@@ -53,12 +53,10 @@ class BlockManagerHelper {
       visible: false,
       quantity: 30,
       setXY: {
-        x: AlignTool.getXfromScreenWidth(scene,-1),
-        y: AlignTool.getYfromScreenHeight(scene,0)
+        x: AlignTool.getXfromScreenWidth(scene, -1),
+        y: AlignTool.getYfromScreenHeight(scene, 0)
       }
     });
-
-    // console.log(this.blocksGroup.getLength());
 
     this.movingBlock = this.blocksGroup.get();
     this.movingBlock.setMovingBlockSettings(this.bitfield);
@@ -102,22 +100,22 @@ class BlockManagerHelper {
    * @returns delay duration
    */
   getDelayDuration(): number {
-    return this.stackedBlocks.length * 750 + this.freezeDelay + 250;
+    return this.stackedBlocks.length * 750 + this.freezeDelay + 500;
   }
 
   /**
    * Get current max level of block stack
    * @returns max stack level
    */
-  getMaxStackLevel(): number{
-    return this.maxStackLevel
+  getMaxStackLevel(): number {
+    return this.maxStackLevel;
   }
 
   /**
    * Get dropping block group
    * @returns dropping block group
    */
-  getDroppingBlockGroup(): Phaser.GameObjects.Group{
+  getBlockGroup(): Phaser.GameObjects.Group {
     return this.blocksGroup;
   }
 
@@ -125,7 +123,7 @@ class BlockManagerHelper {
    * Get stacked blocks
    * @returns stacked blocks
    */
-  getStackedBlock(): BuildingBlock[]{
+  getStackedBlock(): BuildingBlock[] {
     return this.stackedBlocks;
   }
 
@@ -133,7 +131,7 @@ class BlockManagerHelper {
    * Get current dropping block
    * @returns current dropping block
    */
-  getCurrentDroppingBlock(): BuildingBlock{
+  getCurrentDroppingBlock(): BuildingBlock {
     return this.currentDroppingBlock;
   }
 
@@ -177,7 +175,9 @@ class BlockManagerHelper {
       },
       null,
       this
-    )
+    );
+
+    this.blocksGroup.clear();
   }
 
   /**
@@ -202,7 +202,7 @@ class BlockManagerHelper {
    * @param ground: ground
    * @param countScore: set true for counting score
    */
-  private getBlockLevel(block: BuildingBlock, ground: Ground): number{
+  private getBlockLevel(block: BuildingBlock, ground: Ground): number {
     const groundBlock = ground.getGroundArray()[0];
     const blockY = AlignTool.getYfromScreenHeight(
       this.scene,
@@ -216,8 +216,8 @@ class BlockManagerHelper {
     );
     const blockLevel =
       Math.ceil((blockY - maxHeight) / block.displayHeight) + 1;
-    
-    return blockLevel
+
+    return blockLevel;
   }
 
   /**
@@ -230,7 +230,7 @@ class BlockManagerHelper {
       AnimationHelper.ChangeAlpha(this.scene, block, 0.5, 0);
 
       const currentBlockScore = this.getBlockLevel(block, ground);
-      
+
       const scoreText = TextPopUp.showText({
         x: block.x,
         y: block.y,
@@ -291,8 +291,8 @@ class BlockManagerHelper {
         // console.log("fall",this.stackedBlocks.length);
       }
 
-      let level = this.getBlockLevel(block, ground);
-      if(level > currentMaxLevel) {
+      const level = this.getBlockLevel(block, ground);
+      if (level > currentMaxLevel) {
         currentMaxLevel = level;
       }
     });
@@ -342,10 +342,11 @@ class BlockManagerHelper {
    * Update height of moving block
    * @params newHeight: new height adjustment
    */
-  updateHeight(newHeight: number): void{
+  updateHeight(newHeight: number): void {
     this.movingBlock.setPosition(
       this.movingBlock.x,
-      this.movingBlock.movingBlockStartingHeight + (AlignTool.getYfromScreenHeight(this.scene,1) - newHeight) / 2
+      this.movingBlock.movingBlockStartingHeight +
+        (AlignTool.getYfromScreenHeight(this.scene, 1) - newHeight) / 2
     );
   }
 }

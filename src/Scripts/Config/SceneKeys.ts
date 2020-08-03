@@ -4,5 +4,5 @@ export enum SceneKeys {
   Title = 'TitleScene',
   Level = 'LevelScene',
   HowTo = 'InstructionScene',
-  GameOver = "GameOverScene"
+  GameOver = 'GameOverScene'
 }

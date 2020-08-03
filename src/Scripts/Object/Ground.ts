@@ -1,9 +1,9 @@
 import * as Phaser from 'phaser';
-import { TextureKeys } from "../Enum/enum";
+import { TextureKeys } from '../Enum/enum';
 import AlignTool from '../Util/AlignTool';
 import { IGround } from '../Interfaces/interface';
 
-export default class Ground implements IGround{
+export default class Ground implements IGround {
   readonly PADDING_LEFT = 160;
   readonly PADDING_TOP = 1100;
   readonly SCALE = 5;

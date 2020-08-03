@@ -1,12 +1,11 @@
 import * as Phaser from 'phaser';
-import { TextureKeys } from "../Enum/enum";
+import { TextureKeys } from '../Enum/enum';
 import AlignTool from '../Util/AlignTool';
 import DepthConfig from '../Config/DepthConfig';
-import {IBackground} from "../Interfaces/interface";
+import { IBackground } from '../Interfaces/interface';
 
-export default class Background 
-extends Phaser.GameObjects.TileSprite 
-implements IBackground{
+export default class Background extends Phaser.GameObjects.TileSprite
+  implements IBackground {
   constructor(scene: Phaser.Scene) {
     super(
       scene,

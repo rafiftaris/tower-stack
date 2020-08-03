@@ -18,70 +18,70 @@ interface IItem {
 }
 
 interface IButton {
-  setEnabled(value: boolean): void
+  setEnabled(value: boolean): void;
 }
 
 interface IBUildingBlock {
-  setDefaultSettings(bitfield?: number, texture?: number): void
+  setDefaultSettings(bitfield?: number, texture?: number): void;
 
-  setMovingBlockSettings(bitfield: number): void 
+  setMovingBlockSettings(bitfield: number): void;
 
   setDroppingBlockSettings(
     position: Phaser.Math.Vector2,
     bitfield: number,
     texture: number
-  ): void
+  ): void;
 
-  changeTexture(frame?: number): void
+  changeTexture(frame?: number): void;
 
-  hide(): Phaser.Math.Vector2 
+  hide(): Phaser.Math.Vector2;
 
-  show(): void 
+  show(): void;
 
-  getTextureFrame(): number
+  getTextureFrame(): number;
 
-  getTween(): Phaser.Tweens.Tween
+  getTween(): Phaser.Tweens.Tween;
 }
 
-interface IFirework{
-  setDefaultSettings(scalePercentage: number): void
+interface IFirework {
+  setDefaultSettings(scalePercentage: number): void;
 
-  show(playSound: boolean): void 
+  show(playSound: boolean): void;
 
-  hide(): void
+  hide(): void;
 }
 
-interface IGameOverPanel{
-  showScore(score: number, newHighScore: boolean): void
+interface IGameOverPanel {
+  showScore(score: number, newHighScore: boolean): void;
 }
 
-interface IGround{
-  getGroundArray(): Phaser.Physics.Matter.Sprite[]
+interface IGround {
+  getGroundArray(): Phaser.Physics.Matter.Sprite[];
 }
 
-interface ITimer{
-  createTimerEvent(): void
+interface ITimer {
+  createTimerEvent(): void;
 
-  tick(): void
+  tick(): void;
 
-  timesUp(): boolean
+  timesUp(): boolean;
 
-  destroyTimeEvent(): void
+  destroyTimeEvent(): void;
 
-  itemHit(itemType: ItemTypes, x: number, y: number): void
+  itemHit(itemType: ItemTypes, x: number, y: number): void;
 }
 
-interface IBackground{
-  update(): void
+interface IBackground {
+  update(): void;
 }
 
 export {
-  IItem, 
-  IBUildingBlock, 
-  IButton, 
-  IFirework, 
-  IGameOverPanel, 
+  IItem,
+  IBUildingBlock,
+  IButton,
+  IFirework,
+  IGameOverPanel,
   IGround,
   ITimer,
   IBackground
-}
+};

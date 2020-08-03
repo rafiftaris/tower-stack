@@ -1,11 +1,11 @@
-import { SceneKeys } from "./Config/SceneKeys";
+import { SceneKeys } from './Config/SceneKeys';
 
-import TitleScene from "./Scene/TitleScene";
-import HowToScene from "./Scene/HowToScene";
-import PreloadScene from "./Scene/PreloadScene";
-import GameUI from "./Scene/GameUI";
-import LevelScene from "./Scene/LevelScene";
-import GameOverScene from "./Scene/GameOverScene";
+import TitleScene from './Scene/TitleScene';
+import HowToScene from './Scene/HowToScene';
+import PreloadScene from './Scene/PreloadScene';
+import GameUI from './Scene/GameUI';
+import LevelScene from './Scene/LevelScene';
+import GameOverScene from './Scene/GameOverScene';
 
 const registerScenes = (game: Phaser.Game): void => {
   const scene = game.scene;

@@ -9,7 +9,7 @@ import DepthConfig from '../Config/DepthConfig';
 import SoundConfig from '../Config/SoundConfig';
 import { SceneKeys } from '../Config/SceneKeys';
 
-import { Timer } from "../Object/Timer";
+import { Timer } from '../Object/Timer';
 import Button from '../Object/Button';
 
 import { ButtonType, FontKeys, AudioKeys } from '../Enum/enum';
@@ -95,8 +95,8 @@ export default class TitleScene extends Phaser.Scene {
       delay: 3000,
       callback: () => {
         let highscore = 0;
-        if(localStorage.getItem("highScore") !== null){
-          highscore = parseInt(localStorage.getItem("highScore"));
+        if (localStorage.getItem('highScore') !== null) {
+          highscore = parseInt(localStorage.getItem('highScore'));
         }
 
         this.highScoreText = TextPopUp.showText({

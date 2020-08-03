@@ -1,5 +1,5 @@
 import * as Phaser from 'phaser';
-import { TextureKeys } from "../Enum/enum";
+import { TextureKeys } from '../Enum/enum';
 import AlignTool from '../Util/AlignTool';
 import DepthConfig from '../Config/DepthConfig';
 import { IBUildingBlock } from '../Interfaces/interface';
@@ -7,21 +7,23 @@ import { IBUildingBlock } from '../Interfaces/interface';
 const CONFIG = {
   label: 'Block',
   mass: 10000,
-  frictionAir: 0,
+  frictionAir: 0.05,
   friction: 0.99,
   frictionStatic: 10000000
 };
 
-export default class BuildingBlock
-extends Phaser.Physics.Matter.Sprite 
-implements IBUildingBlock{
-  public readonly movingBlockStartingHeight = AlignTool.getYfromScreenHeight(this.scene,0.1);
-  
+export default class BuildingBlock extends Phaser.Physics.Matter.Sprite
+  implements IBUildingBlock {
+  public readonly movingBlockStartingHeight = AlignTool.getYfromScreenHeight(
+    this.scene,
+    0.1
+  );
+
   private textureFrame: number;
   private tween: Phaser.Tweens.Tween;
   public hasStacked: boolean;
 
-   constructor(scene: Phaser.Scene, bitfield: number) {
+  constructor(scene: Phaser.Scene, bitfield: number) {
     super(scene.matter.world, 0, 0, TextureKeys.Blocksheet, 0, CONFIG);
     this.textureFrame = 0;
     this.scene = scene;
@@ -42,10 +44,9 @@ implements IBUildingBlock{
     this.setDepth(DepthConfig.block);
     this.setBounce(0);
     AlignTool.scaleToScreenWidth(this.scene, this, 0.14);
-    
+
     // const body = <MatterJS.BodyType>this.body
     // this.setOrigin(0.5,1);
-    
 
     this.changeTexture(texture);
 
@@ -87,7 +88,7 @@ implements IBUildingBlock{
   ): void {
     this.resetSettings();
     this.setPosition(position.x, position.y);
-    this.setVelocityY(AlignTool.getYfromScreenHeight(this.scene, 0.02));
+    this.setVelocityY(AlignTool.getYfromScreenHeight(this.scene, 0.04));
     this.setDefaultSettings(bitfield, texture);
   }
 

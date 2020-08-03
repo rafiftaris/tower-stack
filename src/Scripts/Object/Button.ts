@@ -6,10 +6,8 @@ import AlignTool from '../Util/AlignTool';
 import { ButtonType } from '../Enum/enum';
 import { IButton } from '../Interfaces/interface';
 
-export default class Button 
-extends Phaser.GameObjects.Image 
-implements IButton{
-
+export default class Button extends Phaser.GameObjects.Image
+  implements IButton {
   private buttonType: ButtonType;
   private isEnabled: boolean;
 
@@ -87,9 +85,9 @@ implements IButton{
           'pointerdown',
           () => {
             if (this.isEnabled) {
-                this.scene.scene.stop(SceneKeys.GameOver);
-                this.scene.scene.stop(SceneKeys.Level);
-                this.scene.scene.start(SceneKeys.Title);
+              this.scene.scene.stop(SceneKeys.GameOver);
+              this.scene.scene.stop(SceneKeys.Level);
+              this.scene.scene.start(SceneKeys.Title);
             }
           },
           this

@@ -17,46 +17,46 @@ export enum ButtonType {
 }
 
 export enum FontKeys {
-  TrulyMadly = "TrulyMadly",
-  SlopeOpera = "SlopeOpera"
+  TrulyMadly = 'TrulyMadly',
+  SlopeOpera = 'SlopeOpera'
 }
 
 export enum AudioKeys {
-  Thud = "thud",
-  Bgm = "bgm",
-  Bling = "bling",
-  Bam = "bam",
-  GameOver = "gameover",
-  Score = "score",
-  Firework = "firework"
+  Thud = 'thud',
+  Bgm = 'bgm',
+  Bling = 'bling',
+  Bam = 'bam',
+  GameOver = 'gameover',
+  Score = 'score',
+  Firework = 'firework'
 }
 
 export enum TextureKeys {
-  Title = "title",
-  Panel = "panel",
-  Restart = "restart",
-  Play = "play",
-  Stopwatch = "stopwatch",
-  Background = "background",
-  Hourglass = "hourglass",
-  GrassLeft = "grass-left",
-  GrassMid = "grass-mid",
-  GrassRight = "grass-right",
-  Blocksheet = "blocksheet",
-  Birdsheet = "birdsheet",
-  Firework = "firework"
+  Title = 'title',
+  Panel = 'panel',
+  Restart = 'restart',
+  Play = 'play',
+  Stopwatch = 'stopwatch',
+  Background = 'background',
+  Hourglass = 'hourglass',
+  GrassLeft = 'grass-left',
+  GrassMid = 'grass-mid',
+  GrassRight = 'grass-right',
+  Blocksheet = 'blocksheet',
+  Birdsheet = 'birdsheet',
+  Firework = 'firework'
 }
 
-export enum ItemTypes{
-  Hourglass = "hourglass",
-  Bird = "bird"
+export enum ItemTypes {
+  Hourglass = 'hourglass',
+  Bird = 'bird'
 }
 
-export enum Color{
-  Green = "green",
-  Red = "red"
+export enum Color {
+  Green = 'green',
+  Red = 'red'
 }
 
-export enum EventNames{
-  ItemGenerated = "ItemGenerated"
+export enum EventNames {
+  ItemGenerated = 'ItemGenerated'
 }

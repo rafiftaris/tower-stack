@@ -1,7 +1,9 @@
 import * as Phaser from 'phaser';
 import { Direction, ItemTypes, EventNames } from '../Enum/enum';
-import Item from "../Object/Item";
+import Item from '../Object/Item';
+import { Timer } from '../Object/Timer';
 import AlignTool from '../Util/AlignTool';
+import { BlockManager } from './BlockManager';
 
 class ItemManagerHelper {
   private static instance: ItemManagerHelper;
@@ -24,7 +26,7 @@ class ItemManagerHelper {
     this.scene = scene;
 
     this.startingHeight = AlignTool.getYfromScreenHeight(this.scene, 0.3);
-    this.heightRange = AlignTool.getYfromScreenHeight(this.scene,0.25);
+    this.heightRange = AlignTool.getYfromScreenHeight(this.scene, 0.25);
 
     // Init blocks group
     this.itemGroup = scene.add.group({
@@ -39,14 +41,14 @@ class ItemManagerHelper {
       active: false,
       visible: false,
       quantity: 2,
-      setScale:{ 
+      setScale: {
         x: 0.1,
         y: 0.1
       },
       setXY: {
-        x: AlignTool.getXfromScreenWidth(scene,-0.5),
+        x: AlignTool.getXfromScreenWidth(scene, -0.5),
         y: this.startingHeight
-      },
+      }
     });
 
     this.currentItem = null;
@@ -65,11 +67,11 @@ class ItemManagerHelper {
 
         let itemType: ItemTypes;
         if (itemRandomizer <= 1) {
-          itemType = ItemTypes.Bird
+          itemType = ItemTypes.Bird;
         } else {
-          itemType = ItemTypes.Hourglass
+          itemType = ItemTypes.Hourglass;
         }
-        
+
         this.currentItem = this.itemGroup.get();
 
         if (this.currentItem) {
@@ -78,7 +80,8 @@ class ItemManagerHelper {
           this.currentItem.setDefaultSettings(itemType);
 
           const directionRandomizer = Math.floor(Math.random() * 2);
-          const heightRandomizer = (Math.random()*this.heightRange) + this.startingHeight;
+          const heightRandomizer =
+            Math.random() * this.heightRange + this.startingHeight;
 
           if (directionRandomizer == 0) {
             this.currentItem.fly(Direction.Left, heightRandomizer);
@@ -86,7 +89,19 @@ class ItemManagerHelper {
             this.currentItem.fly(Direction.Right, heightRandomizer);
           }
 
-          this.scene.events.emit(EventNames.ItemGenerated,[this.currentItem]);
+          const blocks = BlockManager.getBlockGroup().getChildren();
+
+          this.itemGroup.getChildren().forEach((elem) => {
+            const item = <Item>elem;
+            item.setOnCollideWith(blocks, () => {
+              Timer.itemHit(
+                item.itemType,
+                item.body.position.x,
+                item.body.position.y
+              );
+              item.hideAfterHit();
+            });
+          });
         }
       },
       callbackScope: this
@@ -109,7 +124,7 @@ class ItemManagerHelper {
     return this.itemGroup;
   }
 
-  getCurrentItem(): Item{
+  getCurrentItem(): Item {
     return this.currentItem;
   }
 
@@ -125,9 +140,10 @@ class ItemManagerHelper {
     }
   }
 
-  updateHeightRange(newHeight: number): void{
-    this.startingHeight = AlignTool.getYfromScreenHeight(this.scene, 0.3) + 
-    (AlignTool.getYfromScreenHeight(this.scene,1) - newHeight) / 2;
+  updateHeightRange(newHeight: number): void {
+    this.startingHeight =
+      AlignTool.getYfromScreenHeight(this.scene, 0.3) +
+      (AlignTool.getYfromScreenHeight(this.scene, 1) - newHeight) / 2;
   }
 
   setGameOver(): void {
