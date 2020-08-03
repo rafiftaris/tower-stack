@@ -60,7 +60,7 @@ export default class HowToScene extends Phaser.Scene {
     this.birdInfo = TextPopUp.showText({
       x: AlignTool.getXfromScreenWidth(this, -0.6),
       y: AlignTool.getYfromScreenHeight(this, 0.75),
-      text: 'Lose 1 second when you hit',
+      text: 'Lose 2 second when you hit',
       duration: 0.01,
       style: {
         fontSize: 40,

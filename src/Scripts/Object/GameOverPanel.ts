@@ -38,7 +38,7 @@ export default class GameOverPanel extends Phaser.GameObjects.Image
       ButtonType.BackFromGameOver
     );
 
-    AlignTool.scaleToScreenHeight(scene, this, 0.4);
+    AlignTool.scaleToScreenWidth(scene, this, 0.9);
     this.setDepth(DepthConfig.gameOverPanel);
     scene.add.existing(this);
 

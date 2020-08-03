@@ -137,11 +137,11 @@ class TimerHelper implements ITimer {
         this.scene.sound.play(AudioKeys.Bling);
         break;
       case ItemTypes.Bird:
-        this.countdown -= 3;
+        this.countdown -= 2;
         if (this.countdown < 0) {
           this.countdown = 0;
         }
-        comboText = '-3';
+        comboText = '-2';
         textColor = Color.Red;
         this.scene.sound.play(AudioKeys.Bam);
         break;
