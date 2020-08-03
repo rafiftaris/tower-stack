@@ -14,14 +14,16 @@ import { AudioKeys } from '../Enum/enum';
 
 class BlockManagerHelper {
   private readonly freezeDelay = 2000;
+  private smallPendulumForce: Phaser.Math.Vector2;
 
   private static instance: BlockManagerHelper;
 
   private scene!: Phaser.Scene;
   private stackedBlocks: BuildingBlock[];
   private blocksGroup: Phaser.GameObjects.Group;
-  private movingBlock: BuildingBlock;
+  private aimBlock: BuildingBlock;
   private currentDroppingBlock: BuildingBlock;
+  private pivot: BuildingBlock;
 
   private score = 0;
   private bitfield: number;
@@ -38,6 +40,10 @@ class BlockManagerHelper {
     this.score = 0;
     this.bitfield = bitfield;
     this.maxStackLevel = 1;
+    this.smallPendulumForce = new Phaser.Math.Vector2(
+      0,
+      AlignTool.getYfromScreenHeight(this.scene,0.00025)
+    );
 
     // Init blocks group
     this.blocksGroup = scene.add.group({
@@ -58,8 +64,22 @@ class BlockManagerHelper {
       }
     });
 
-    this.movingBlock = this.blocksGroup.get();
-    this.movingBlock.setMovingBlockSettings(this.bitfield);
+    this.pivot = this.blocksGroup.get();
+    this.pivot.setPivotBlockSettings();
+
+    this.aimBlock = this.blocksGroup.get();
+    this.aimBlock.setMovingBlockSettings(this.bitfield);
+
+    const pivotBody = <MatterJS.BodyType>(this.pivot.body);
+    const aimBlockBody = <MatterJS.BodyType>(this.aimBlock.body);
+
+    // Give spring-like physics that swings forever
+    this.scene.matter.add.joint(
+      pivotBody,
+      aimBlockBody,
+      AlignTool.getYfromScreenHeight(this.scene, 0.3),
+      0.5,
+    );
   }
 
   /**
@@ -92,7 +112,7 @@ class BlockManagerHelper {
    * @returns Building block
    */
   getMovingBlock(): BuildingBlock {
-    return this.movingBlock;
+    return this.aimBlock;
   }
 
   /**
@@ -140,7 +160,7 @@ class BlockManagerHelper {
    * @param ground: In-game ground sprites
    */
   setGameOver(ground: IGround): void {
-    this.movingBlock.hide();
+    this.aimBlock.hide();
     if (this.currentDroppingBlock) {
       this.scene.time.addEvent({
         delay: 1000,
@@ -184,16 +204,26 @@ class BlockManagerHelper {
    * Drop block from moving block position
    */
   dropBlock(): void {
-    const position: Phaser.Math.Vector2 = this.movingBlock.hide();
+    const position: Phaser.Math.Vector2 = this.aimBlock.hide();
 
     // Reset dropping block
     const blockBody = this.getBlockFromGroup();
-    blockBody.setDroppingBlockSettings(
+    blockBody.setFallingBlockSettings(
       position,
       this.bitfield,
-      this.movingBlock.getTextureFrame()
+      this.aimBlock.getTextureFrame()
     );
     this.currentDroppingBlock = blockBody;
+  }
+
+  swingAimBlock(): void{
+    // console.log(Math.abs(this.aimBlock.x-this.pivot.x));
+    // console.log(this.aimBlock.body.velocity.x);
+    if(Math.abs(this.aimBlock.body.velocity.x) < 0.1){
+      this.aimBlock.applyForce(
+        this.smallPendulumForce
+      );
+    }
   }
 
   /**
@@ -304,8 +334,8 @@ class BlockManagerHelper {
    * Show moving block after player drop a block.
    */
   showMovingBlock(): void {
-    this.movingBlock.show();
-    this.movingBlock.changeTexture();
+    this.aimBlock.show();
+    this.aimBlock.changeTexture();
   }
 
   /**
@@ -343,9 +373,9 @@ class BlockManagerHelper {
    * @params newHeight: new height adjustment
    */
   updateHeight(newHeight: number): void {
-    this.movingBlock.setPosition(
-      this.movingBlock.x,
-      this.movingBlock.movingBlockStartingHeight +
+    this.aimBlock.setPosition(
+      this.aimBlock.x,
+      this.aimBlock.movingBlockStartingHeight +
         (AlignTool.getYfromScreenHeight(this.scene, 1) - newHeight) / 2
     );
   }

@@ -26,7 +26,7 @@ interface IBUildingBlock {
 
   setMovingBlockSettings(bitfield: number): void;
 
-  setDroppingBlockSettings(
+  setFallingBlockSettings(
     position: Phaser.Math.Vector2,
     bitfield: number,
     texture: number

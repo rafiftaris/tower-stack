@@ -41,7 +41,7 @@ export default class LevelScene extends Phaser.Scene {
       AlignTool.getXfromScreenWidth(this, -0.5),
       AlignTool.getYfromScreenHeight(this, -1.25),
       AlignTool.getXfromScreenWidth(this, 2),
-      AlignTool.getYfromScreenHeight(this, 2.5)
+      AlignTool.getYfromScreenHeight(this, 3.5)
     );
 
     this.ground = new Ground(this, bitfield);
@@ -85,6 +85,7 @@ export default class LevelScene extends Phaser.Scene {
 
   update(): void {
     BlockManager.checkStackedBlocks(this.ground);
+    BlockManager.swingAimBlock();
     ItemManager.checkItem();
 
     if (Timer.timesUp() && this.gameState === GameState.GameOn) {
@@ -123,7 +124,7 @@ export default class LevelScene extends Phaser.Scene {
   }
 
   zoomCamera(): void {
-    const zoomFactor = 1 / Math.pow(BlockManager.getMaxStackLevel(), 1 / 3);
+    const zoomFactor = 1 / Math.pow(BlockManager.getMaxStackLevel(), 1 );
     this.cameras.main.zoomTo(zoomFactor, 500);
 
     const newHeight = AlignTool.getYfromScreenHeight(this, 1) / zoomFactor;

@@ -6,17 +6,17 @@ import { IBUildingBlock } from '../Interfaces/interface';
 
 const CONFIG = {
   label: 'Block',
-  mass: 10000,
-  frictionAir: 0.05,
-  friction: 0.99,
-  frictionStatic: 10000000
+  mass: 0,
+  frictionAir: 0,
+  friction: 0,
+  frictionStatic: 10000
 };
 
 export default class BuildingBlock extends Phaser.Physics.Matter.Sprite
   implements IBUildingBlock {
   public readonly movingBlockStartingHeight = AlignTool.getYfromScreenHeight(
     this.scene,
-    0.1
+    0.4
   );
 
   private textureFrame: number;
@@ -43,7 +43,7 @@ export default class BuildingBlock extends Phaser.Physics.Matter.Sprite
     this.setVisible(true);
     this.setDepth(DepthConfig.block);
     this.setBounce(0);
-    AlignTool.scaleToScreenWidth(this.scene, this, 0.14);
+    AlignTool.scaleToScreenWidth(this.scene, this, 0.25);
 
     // const body = <MatterJS.BodyType>this.body
     // this.setOrigin(0.5,1);
@@ -63,16 +63,25 @@ export default class BuildingBlock extends Phaser.Physics.Matter.Sprite
     this.resetSettings();
     AlignTool.alignX(this.scene, this, 0.1);
     this.setPosition(this.x, this.movingBlockStartingHeight);
-    this.tween = this.scene.tweens.add({
-      targets: this,
-      x: AlignTool.getXfromScreenWidth(this.scene, 0.9),
-      duration: 800,
-      yoyo: true,
-      repeat: -1
-    });
-    this.setIgnoreGravity(true);
     this.setCollisionCategory(null);
+
+    const forceVector = new Phaser.Math.Vector2(
+      0,
+      AlignTool.getYfromScreenHeight(this.scene,0.0005)
+    );
+    this.applyForce(forceVector);
     this.setDefaultSettings();
+  }
+
+  setPivotBlockSettings(): void{
+    this.setDefaultSettings();
+    this.setStatic(true);
+    this.setVisible(false);
+    this.setPosition(
+      AlignTool.getXfromScreenWidth(this.scene, 0.5),
+      AlignTool.getYfromScreenHeight(this.scene, 0.2)
+    );
+    this.setIgnoreGravity(true);
   }
 
   /**
@@ -81,7 +90,7 @@ export default class BuildingBlock extends Phaser.Physics.Matter.Sprite
    * @param bitfield: collision bitfield
    * @param texture: current texture index of moving block
    */
-  setDroppingBlockSettings(
+  setFallingBlockSettings(
     position: Phaser.Math.Vector2,
     bitfield: number,
     texture: number
@@ -120,7 +129,7 @@ export default class BuildingBlock extends Phaser.Physics.Matter.Sprite
    * @returns: position of moving block
    */
   hide(): Phaser.Math.Vector2 {
-    this.tween.pause();
+    // this.tween.pause();
     this.setVisible(false);
     const position = new Phaser.Math.Vector2(this.x, this.y);
     return position;
