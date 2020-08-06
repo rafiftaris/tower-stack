@@ -10,10 +10,10 @@ import { ANIMATION_TYPE, TextPopUp } from '../Util/TextPopUp';
 
 import SoundConfig from '../Config/SoundConfig';
 import { IGround } from '../Interfaces/interface';
-import { AudioKeys } from '../Enum/enum';
+import { AudioKeys, GameState } from '../Enum/enum';
+import { times } from 'lodash';
 
 class BlockManagerHelper {
-  private readonly freezeDelay = 2000;
   private smallPendulumForce: Phaser.Math.Vector2;
 
   private static instance: BlockManagerHelper;
@@ -22,12 +22,14 @@ class BlockManagerHelper {
   private stackedBlocks: BuildingBlock[];
   private blocksGroup: Phaser.GameObjects.Group;
   private aimBlock: BuildingBlock;
-  private currentDroppingBlock: BuildingBlock;
+  private currentFallingBlock: BuildingBlock;
   private pivot: BuildingBlock;
+  private joint: MatterJS.ConstraintType;
 
-  private score = 0;
   private bitfield: number;
-  private maxStackLevel: number;
+  private maxHeight: number;
+  private score: number;
+
 
   public static get Instance() {
     const instance = this.instance || (this.instance = new this());
@@ -37,19 +39,15 @@ class BlockManagerHelper {
   init(scene: Phaser.Scene, bitfield: number) {
     this.scene = scene;
     this.stackedBlocks = [];
-    this.score = 0;
     this.bitfield = bitfield;
-    this.maxStackLevel = 1;
-    this.smallPendulumForce = new Phaser.Math.Vector2(
-      0,
-      AlignTool.getYfromScreenHeight(this.scene,0.00025)
-    );
+    this.maxHeight = AlignTool.getYfromScreenHeight(scene,0.95);
+    this.score = 0;
 
     // Init blocks group
     this.blocksGroup = scene.add.group({
       classType: BuildingBlock,
       defaultKey: 'block',
-      maxSize: 30
+      maxSize: 15
     });
 
     this.blocksGroup.createMultiple({
@@ -57,9 +55,9 @@ class BlockManagerHelper {
       key: 'block',
       active: false,
       visible: false,
-      quantity: 30,
+      quantity: 15,
       setXY: {
-        x: AlignTool.getXfromScreenWidth(scene, -1),
+        x: AlignTool.getXfromScreenWidth(scene, 0),
         y: AlignTool.getYfromScreenHeight(scene, 0)
       }
     });
@@ -68,17 +66,11 @@ class BlockManagerHelper {
     this.pivot.setPivotBlockSettings();
 
     this.aimBlock = this.blocksGroup.get();
-    this.aimBlock.setMovingBlockSettings(this.bitfield);
+    this.joint = this.aimBlock.setAimBlockSettings(this.pivot);
 
-    const pivotBody = <MatterJS.BodyType>(this.pivot.body);
-    const aimBlockBody = <MatterJS.BodyType>(this.aimBlock.body);
-
-    // Give spring-like physics that swings forever
-    this.scene.matter.add.joint(
-      pivotBody,
-      aimBlockBody,
-      AlignTool.getYfromScreenHeight(this.scene, 0.3),
-      0.5,
+    this.smallPendulumForce = new Phaser.Math.Vector2(
+      0,
+      AlignTool.getYfromScreenHeight(this.scene,this.aimBlock.scalePercentage/1250)
     );
   }
 
@@ -116,22 +108,6 @@ class BlockManagerHelper {
   }
 
   /**
-   * Get delay duration for game over panel popup
-   * @returns delay duration
-   */
-  getDelayDuration(): number {
-    return this.stackedBlocks.length * 750 + this.freezeDelay + 500;
-  }
-
-  /**
-   * Get current max level of block stack
-   * @returns max stack level
-   */
-  getMaxStackLevel(): number {
-    return this.maxStackLevel;
-  }
-
-  /**
    * Get dropping block group
    * @returns dropping block group
    */
@@ -152,50 +128,15 @@ class BlockManagerHelper {
    * @returns current dropping block
    */
   getCurrentDroppingBlock(): BuildingBlock {
-    return this.currentDroppingBlock;
+    return this.currentFallingBlock;
   }
 
   /**
    * Prepare game over state by counting score on stacked blocks.
-   * @param ground: In-game ground sprites
    */
-  setGameOver(ground: IGround): void {
-    this.aimBlock.hide();
-    if (this.currentDroppingBlock) {
-      this.scene.time.addEvent({
-        delay: 1000,
-        callback: () => {
-          if (this.currentDroppingBlock) {
-            this.currentDroppingBlock.setIgnoreGravity(true);
-            this.currentDroppingBlock.setVisible(false);
-            this.currentDroppingBlock.setVelocityY(0);
-          }
-        },
-        callbackScope: this
-      });
-    }
-
-    this.scene.time.addEvent({
-      delay: this.freezeDelay,
-      callback: this.freezeStack,
-      callbackScope: this
-    });
-
-    // Calculate Score
-    this.scene.time.delayedCall(
-      this.freezeDelay,
-      () => {
-        this.scene.time.addEvent({
-          delay: 750,
-          callback: this.countBlockScore,
-          args: [ground],
-          callbackScope: this,
-          repeat: this.stackedBlocks.length
-        });
-      },
-      null,
-      this
-    );
+  setGameOver(): void {
+    // this.aimBlock.hide();
+    this.aimBlock.setStatic(true);
 
     this.blocksGroup.clear();
   }
@@ -213,76 +154,24 @@ class BlockManagerHelper {
       this.bitfield,
       this.aimBlock.getTextureFrame()
     );
-    this.currentDroppingBlock = blockBody;
+    this.currentFallingBlock = blockBody;
   }
 
+  /**
+   * Apply force to swing when it reaches highest point
+   */
   swingAimBlock(): void{
     // console.log(Math.abs(this.aimBlock.x-this.pivot.x));
     // console.log(this.aimBlock.body.velocity.x);
     if(Math.abs(this.aimBlock.body.velocity.x) < 0.1){
+      const sign = new Phaser.Math.Vector2(
+        Math.sign(this.aimBlock.x - this.pivot.x),
+        1
+      );
+
       this.aimBlock.applyForce(
-        this.smallPendulumForce
+        this.smallPendulumForce.multiply(sign)
       );
-    }
-  }
-
-  /**
-   * Get level of block, relative to ground
-   * @param block: current block
-   * @param ground: ground
-   * @param countScore: set true for counting score
-   */
-  private getBlockLevel(block: BuildingBlock, ground: Ground): number {
-    const groundBlock = ground.getGroundArray()[0];
-    const blockY = AlignTool.getYfromScreenHeight(
-      this.scene,
-      (groundBlock.y - groundBlock.displayHeight / 2 - block.y) /
-        AlignTool.getYfromScreenHeight(this.scene, 1)
-    );
-    const maxHeight = AlignTool.getYfromScreenHeight(
-      this.scene,
-      Math.sqrt(2 * (block.displayHeight / 2) ** 2) /
-        AlignTool.getYfromScreenHeight(this.scene, 1) // When block is standing on one of its corner
-    );
-    const blockLevel =
-      Math.ceil((blockY - maxHeight) / block.displayHeight) + 1;
-
-    return blockLevel;
-  }
-
-  /**
-   * Count score of each block and accumulate to final score
-   * @param ground: In-game ground sprites
-   */
-  private countBlockScore(ground: Ground): void {
-    if (this.stackedBlocks.length > 0) {
-      const block = this.stackedBlocks.shift();
-      AnimationHelper.ChangeAlpha(this.scene, block, 0.5, 0);
-
-      const currentBlockScore = this.getBlockLevel(block, ground);
-
-      const scoreText = TextPopUp.showText({
-        x: block.x,
-        y: block.y,
-        text: currentBlockScore.toString(),
-        duration: 1,
-        style: {
-          fontSize: 96,
-          fontStyle: 'Bold',
-          fontFamily: 'Courier',
-          color: 'black',
-          strokeThickness: 1
-        },
-        animType: ANIMATION_TYPE.EMBIGGEN,
-        retain: true
-      })?.text as Phaser.GameObjects.Text;
-
-      const firework = new Firework(this.scene, block.x, block.y, 0.14).show(
-        false
-      );
-
-      this.scene.sound.play(AudioKeys.Score, { volume: SoundConfig.sfxVolume });
-      this.score += currentBlockScore;
     }
   }
 
@@ -290,52 +179,39 @@ class BlockManagerHelper {
    * Check stacked blocks every update.
    * Remove block when its falling outside the ground.
    * Reduce horizontal speed when its rolling too fast.
+   * @returns game state
    */
-  checkStackedBlocks(ground: Ground): void {
-    let currentMaxLevel = 1;
-    this.stackedBlocks.forEach((block, index) => {
-      const body = <MatterJS.BodyType>block.body;
-      const velocityLimit = AlignTool.getXfromScreenWidth(this.scene, 0.002);
+  checkStackedBlocks(gameState: GameState, ground: Ground): GameState {
+    if(gameState === GameState.GameOver){
+      return;
+    }
 
-      // Check velocity limit
-      if (body.velocity.x >= velocityLimit) {
-        block.setVelocityX(velocityLimit);
-      } else if (body.velocity.x <= -velocityLimit) {
-        block.setVelocityX(-velocityLimit);
-      }
+    if(this.stackedBlocks.length < 2){
+      return GameState.GameOn;
+    }
+    const topmostBlock = this.stackedBlocks[this.stackedBlocks.length - 1];
+    // console.log("active",topmostBlock.active);
+    // console.log("visible",topmostBlock.visible);
+    // console.log("position",topmostBlock.body.position);
+    // Check if topmost block position is not on the top of the stack
+    const TOL = 10;
+    if((this.maxHeight - topmostBlock.y) <= topmostBlock.displayHeight/2 - TOL){
+      console.log('top height', topmostBlock.y);
+      console.log('diff', (this.maxHeight - topmostBlock.y));
+      console.log('diff limit', topmostBlock.displayHeight/2);
+      return GameState.GameOverSetup
+    }
 
-      // Check if falling
-      if (
-        block.y >= AlignTool.getYfromScreenHeight(this.scene, 0.925) ||
-        block.x <= AlignTool.getXfromScreenWidth(this.scene, 0) ||
-        block.x >= AlignTool.getXfromScreenWidth(this.scene, 1)
-      ) {
-        block.setPosition(
-          AlignTool.getXfromScreenWidth(this.scene, 0.5),
-          AlignTool.getYfromScreenHeight(this.scene, 1)
-        );
-        block.setVisible(false);
-        block.setActive(false);
-
-        this.stackedBlocks.splice(index, 1);
-        // console.log("fall",this.stackedBlocks.length);
-      }
-
-      const level = this.getBlockLevel(block, ground);
-      if (level > currentMaxLevel) {
-        currentMaxLevel = level;
-      }
-    });
-
-    this.maxStackLevel = currentMaxLevel;
+    return GameState.GameOn
   }
 
   /**
    * Show moving block after player drop a block.
    */
-  showMovingBlock(): void {
+  showAimBlock(): void {
     this.aimBlock.show();
     this.aimBlock.changeTexture();
+    this.aimBlock.updateDegree(this.aimBlock.getDegree() + 2, this.pivot);
   }
 
   /**
@@ -343,41 +219,99 @@ class BlockManagerHelper {
    * @param block: block that is going to be added
    */
   addBlockToStack(): void {
-    this.currentDroppingBlock.hasStacked = true;
-    this.stackedBlocks.push(this.currentDroppingBlock);
-    this.currentDroppingBlock = null;
-  }
+    this.currentFallingBlock.hasStacked = true;
 
-  /**
-   * Freeze stack after game over.
-   */
-  freezeStack(): void {
-    this.currentDroppingBlock?.setVisible(false);
-    this.currentDroppingBlock?.setActive(false);
-    this.stackedBlocks.forEach((block, index) => {
-      // Freeze box when not falling, remove from stack otherwise
-      const body = <MatterJS.BodyType>block.body;
-      if (body.velocity.y < 1.5) {
-        block.setStatic(true);
-        block.setIgnoreGravity(true);
-      } else {
-        block.setVisible(false);
-        block.setActive(false);
-        this.stackedBlocks.splice(index, 1);
-      }
-    });
+    this.stackedBlocks.push(this.currentFallingBlock);
+    // console.log('max height', this.maxHeight);
+    // console.log('top height', this.currentFallingBlock.y);
+
+    // Set boxes below to static so the game becomes easier
+    if(this.stackedBlocks.length > 4){
+      this.stackedBlocks[this.stackedBlocks.length - 4].setStatic(true);
+    }
+
+    this.score++;
+
+    this.currentFallingBlock = null;
   }
 
   /**
    * Update height of moving block
    * @params newHeight: new height adjustment
    */
-  updateHeight(newHeight: number): void {
-    this.aimBlock.setPosition(
-      this.aimBlock.x,
-      this.aimBlock.movingBlockStartingHeight +
-        (AlignTool.getYfromScreenHeight(this.scene, 1) - newHeight) / 2
-    );
+  updateHeight(): void {
+    this.stackedBlocks.forEach((block,idx) => {
+      const index = this.stackedBlocks.length - idx;
+
+      // if(index > 8){
+      //   return;
+      // }
+      if(index == 7){
+        console.log('deactivate', idx);
+        block.deactivate();
+        this.stackedBlocks.shift();
+      } 
+      // else if(index == 7){
+      //   console.log('set static');
+      //   block.setStatic(true);
+      // } 
+      else {
+        this.scene.time.addEvent({
+          delay:100,
+          callback: () => {
+            // block.setStatic(true);
+            this.scene.tweens.add({
+              targets: block,
+              y: block.y + block.displayHeight,
+              duration: 500,
+            });
+            // block.setStatic(false);
+          },
+          callbackScope: this
+        })
+        
+        // block.setPosition(
+        //   block.x,
+        //   block.y + block.displayHeight
+        // );
+      }
+      console.log(idx,block.body.position);
+    });
+
+    // let blockSequence = 1;
+    // while(blockSequence <= 5){
+    //   let index = this.stackedBlocks.length - blockSequence;
+    //   let block = this.stackedBlocks[index];
+
+    //   if(!block){
+    //     break;
+    //   }
+
+    //   if(blockSequence < 5){
+    //     this.scene.time.addEvent({
+    //       delay:100,
+    //       callback: () => {
+    //         // block.setStatic(true);
+    //         this.scene.tweens.add({
+    //           targets: block,
+    //           y: block.y + block.displayHeight,
+    //           duration: 500,
+    //         });
+    //         // block.setStatic(false);
+    //       },
+    //       callbackScope: this
+    //     })
+    //   } else {
+    //     console.log('deactivate');
+    //     block.deactivate();
+    //   }
+
+    //   blockSequence++;
+    // }
+
+    // this.stackedBlocks[7]?.setActive(false);
+    // this.stackedBlocks[7]?.setVisible(false);
+    // this.stackedBlocks[7]?.setStatic(true);
   }
 }
 

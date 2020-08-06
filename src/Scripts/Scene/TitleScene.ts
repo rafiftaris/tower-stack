@@ -12,7 +12,7 @@ import { SceneKeys } from '../Config/SceneKeys';
 import { Timer } from '../Object/Timer';
 import Button from '../Object/Button';
 
-import { ButtonType, FontKeys, AudioKeys } from '../Enum/enum';
+import { ButtonType, FontKeys, AudioKeys, LocalStorageKeys } from '../Enum/enum';
 import { IGround, IButton } from '../Interfaces/interface';
 
 export default class TitleScene extends Phaser.Scene {
@@ -95,8 +95,8 @@ export default class TitleScene extends Phaser.Scene {
       delay: 3000,
       callback: () => {
         let highscore = 0;
-        if (localStorage.getItem('highScore') !== null) {
-          highscore = parseInt(localStorage.getItem('highScore'));
+        if (localStorage.getItem(LocalStorageKeys.HighScore) !== null) {
+          highscore = parseInt(localStorage.getItem(LocalStorageKeys.HighScore));
         }
 
         this.highScoreText = TextPopUp.showText({
@@ -162,6 +162,5 @@ export default class TitleScene extends Phaser.Scene {
   initializeStaticElements(): void {
     TextPopUp.init(this, DepthConfig.score);
     ImagePopUp.init(this, DepthConfig.gameOverPanel);
-    Timer.hide();
   }
 }

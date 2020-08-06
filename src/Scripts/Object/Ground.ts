@@ -2,40 +2,43 @@ import * as Phaser from 'phaser';
 import { TextureKeys } from '../Enum/enum';
 import AlignTool from '../Util/AlignTool';
 import { IGround } from '../Interfaces/interface';
+import BuildingBlock from './Block';
 
 export default class Ground implements IGround {
-  readonly PADDING_LEFT = 160;
-  readonly PADDING_TOP = 1100;
-  readonly SCALE = 5;
   readonly LENGTH = 3;
-  readonly DEPTH = 3;
 
   private scene: Phaser.Scene;
   private groundTiles: Phaser.Physics.Matter.Sprite[];
+  private groundTileBodies: MatterJS.BodyType[];
+
+  private timeline: Phaser.Tweens.Timeline;
 
   constructor(scene: Phaser.Scene, bitfield: number) {
     this.groundTiles = [];
+    this.groundTileBodies = [];
     this.scene = scene;
+    this.timeline = this.scene.tweens.createTimeline();
 
     for (let i = 0; i < this.LENGTH; i++) {
-      let image: string;
+      let textureKey: string;
       let margin: number;
 
       if (i == 0) {
-        image = TextureKeys.GrassLeft;
+        textureKey = TextureKeys.GrassLeft;
         margin = 0;
       } else if (i == this.LENGTH - 1) {
-        image = TextureKeys.GrassRight;
+        textureKey = TextureKeys.GrassRight;
         margin = this.groundTiles[i - 1].displayWidth;
       } else {
-        image = TextureKeys.GrassMid;
+        textureKey = TextureKeys.GrassMid;
         margin = this.groundTiles[i - 1].displayWidth;
       }
 
-      const groundTile = scene.matter.add.sprite(0, 0, image);
+      let groundTile = scene.matter.add.sprite(0, 0, textureKey);
       this.setDefaultSettings(i, groundTile, bitfield);
-      this.groundTiles.push(groundTile);
+      
     }
+    
   }
 
   /**
@@ -59,6 +62,9 @@ export default class Ground implements IGround {
     groundTile.setStatic(true);
     groundTile.setCollisionCategory(bitfield);
     groundTile.setBounce(0);
+
+    this.groundTiles.push(groundTile);
+    this.groundTileBodies.push(<MatterJS.BodyType>groundTile.body);
   }
 
   /**
@@ -67,4 +73,62 @@ export default class Ground implements IGround {
   getGroundArray(): Phaser.Physics.Matter.Sprite[] {
     return this.groundTiles;
   }
+
+  /**
+   * Move ground down after stack added
+   */
+  moveDown(block: BuildingBlock): void{
+    this.scene.time.addEvent({
+      delay: 100,
+      callback: () => {
+        this.scene.tweens.add({
+          targets: this.groundTiles,
+          y: this.groundTiles[1].y + block.displayHeight,
+          duration: 500
+        });
+      },
+      callbackScope: this
+    });
+    
+
+    // this.groundTiles.forEach(ground => {
+    //   ground.setPosition(
+    //     ground.x,
+    //     ground.y + block.displayHeight
+    //   );
+    // });
+  }
+
+  /**
+   * Give earthquake effect when game over
+   */
+  // shake(): void{
+  //   if(this.timeline.isPlaying()){
+  //     return;
+  //   }
+  //   const positionX = this.groundTiles
+
+  //   this.timeline.add({
+  //     targets: this.groundTiles,
+  //     x: positionX - 10,
+  //     duration: 10
+  //   });
+
+  //   this.timeline.add({
+  //     targets: this.groundTiles,
+  //     x: positionX + 10,
+  //     duration: 20,
+  //     yoyo: true,
+  //     repeat: 10
+  //   });
+
+  //   this.timeline.add({
+  //     targets: this.groundTiles,
+  //     x: positionX,
+  //     duration: 10
+  //   });
+
+  //   this.timeline.play();
+  //   console.log('shake some asses');
+  // }
 }

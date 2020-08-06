@@ -1,6 +1,7 @@
 export enum GameState {
   GameOn,
-  GameOver
+  GameOver,
+  GameOverSetup
 }
 
 export enum Direction {
@@ -57,6 +58,12 @@ export enum Color {
   Red = 'red'
 }
 
-export enum EventNames {
-  ItemGenerated = 'ItemGenerated'
+export enum EventKeys {
+  ItemGenerated = 'ItemGenerated',
+  BlockDrop = 'BlockDrop',
+  ResetBackground = 'ResetBackground'
+}
+
+export enum LocalStorageKeys {
+  HighScore = 'HighScore'
 }

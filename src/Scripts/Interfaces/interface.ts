@@ -1,4 +1,5 @@
 import { Direction, ItemTypes } from '../Enum/enum';
+import BuildingBlock from '../Object/Block';
 
 interface IItem {
   itemType: ItemTypes;
@@ -24,7 +25,7 @@ interface IButton {
 interface IBUildingBlock {
   setDefaultSettings(bitfield?: number, texture?: number): void;
 
-  setMovingBlockSettings(bitfield: number): void;
+  setAimBlockSettings(pivot: BuildingBlock): void;
 
   setFallingBlockSettings(
     position: Phaser.Math.Vector2,
@@ -73,6 +74,10 @@ interface ITimer {
 
 interface IBackground {
   update(): void;
+
+  scrollDown(): void;
+
+  reset(): void;
 }
 
 export {
