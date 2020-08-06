@@ -275,7 +275,13 @@ class BlockManagerHelper {
         //   block.y + block.displayHeight
         // );
       }
-      console.log(idx,block.body.position);
+      console.log(idx,{
+        "position": block.body.position,
+        "active": block.active,
+        "visible": block.visible,
+        "hasStacked": block.hasStacked,
+        "static": block.isStatic()
+      });
     });
 
     // let blockSequence = 1;
