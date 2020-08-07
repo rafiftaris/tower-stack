@@ -70,8 +70,8 @@ export default class Button extends Phaser.GameObjects.Image
           'pointerdown',
           () => {
             if (this.isEnabled) {
-              this.scene.scene.stop(SceneKeys.Title);
-              this.scene.scene.start(SceneKeys.HowTo);
+              // this.scene.scene.stop(SceneKeys.Title);
+              // this.scene.scene.start(SceneKeys.HowTo);
             }
           },
           this

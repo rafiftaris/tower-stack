@@ -57,7 +57,7 @@ interface IGameOverPanel {
 }
 
 interface IGround {
-  getGroundArray(): Phaser.Physics.Matter.Sprite[];
+  // getGroundArray(): Phaser.Physics.Matter.Sprite[];
 }
 
 interface ITimer {

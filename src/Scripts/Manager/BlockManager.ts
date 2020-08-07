@@ -47,7 +47,7 @@ class BlockManagerHelper {
     this.blocksGroup = scene.add.group({
       classType: BuildingBlock,
       defaultKey: 'block',
-      maxSize: 15
+      maxSize: 50
     });
 
     this.blocksGroup.createMultiple({
@@ -55,9 +55,9 @@ class BlockManagerHelper {
       key: 'block',
       active: false,
       visible: false,
-      quantity: 15,
+      quantity: 50,
       setXY: {
-        x: AlignTool.getXfromScreenWidth(scene, 0),
+        x: AlignTool.getXfromScreenWidth(scene, -0.5),
         y: AlignTool.getYfromScreenHeight(scene, 0)
       }
     });
@@ -87,8 +87,11 @@ class BlockManagerHelper {
       block.setDefaultSettings(this.bitfield);
 
       return block;
-    }
-    return null;
+    } 
+
+    const newBlock = new BuildingBlock(this.scene,this.bitfield);
+    newBlock.setDefaultSettings(this.bitfield);
+    return newBlock;
   }
 
   /**
@@ -138,6 +141,20 @@ class BlockManagerHelper {
     // this.aimBlock.hide();
     this.aimBlock.setStatic(true);
 
+    let penalty = 0;
+    this.stackedBlocks.forEach(block => {
+      console.log(block.body.velocity);
+      if(
+        Math.abs(block.body.velocity.x) >= 0.5 || 
+        Math.abs(block.body.velocity.y) >= 0.5
+      ){
+        block.setVisible(false);
+        new Firework(this.scene, block.x, block.y, block.scalePercentage).show(false);
+        penalty++;
+      }
+    });
+    this.score -= penalty;
+
     this.blocksGroup.clear();
   }
 
@@ -176,6 +193,29 @@ class BlockManagerHelper {
   }
 
   /**
+   * Move swing block up
+   */
+  moveSwingUp(): void{
+    console.log("move up");
+    let diff = this.aimBlock.displayHeight;
+    // if(n == 2){
+    //   diff *= 2;
+    // }
+
+    this.scene.tweens.add({
+      targets: this.aimBlock,
+      y: this.aimBlock.y - diff,
+      duration: 500
+    });
+
+    this.scene.tweens.add({
+      targets: this.pivot,
+      y: this.pivot.y - diff,
+      duration: 500
+    });
+  }
+
+  /**
    * Check stacked blocks every update.
    * Remove block when its falling outside the ground.
    * Reduce horizontal speed when its rolling too fast.
@@ -186,13 +226,20 @@ class BlockManagerHelper {
       return;
     }
 
-    if(this.stackedBlocks.length < 2){
-      return GameState.GameOn;
-    }
     const topmostBlock = this.stackedBlocks[this.stackedBlocks.length - 1];
+    if(!topmostBlock) { return GameState.GameOn; }
+
+    if(this.stackedBlocks.length >= 2){
+      const newMax = this.stackedBlocks[this.stackedBlocks.length - 2].y;
+      
+      if(newMax < this.maxHeight){
+        this.maxHeight = newMax;
+      }
+    }
     // console.log("active",topmostBlock.active);
     // console.log("visible",topmostBlock.visible);
-    // console.log("position",topmostBlock.body.position);
+    // console.log("position",[topmostBlock.body.position, this.maxHeight - topmostBlock.y]);
+
     // Check if topmost block position is not on the top of the stack
     const TOL = 10;
     if((this.maxHeight - topmostBlock.y) <= topmostBlock.displayHeight/2 - TOL){

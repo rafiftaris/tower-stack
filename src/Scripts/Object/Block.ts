@@ -17,7 +17,7 @@ export default class BuildingBlock extends Phaser.Physics.Matter.Sprite
   implements IBUildingBlock {
   public readonly movingBlockStartingHeight = AlignTool.getYfromScreenHeight(
     this.scene,
-    0.2
+    0.1
   );
   public readonly jointLength = AlignTool.getYfromScreenHeight(this.scene, 0.3);
   public readonly scalePercentage = 0.22;
@@ -106,6 +106,7 @@ export default class BuildingBlock extends Phaser.Physics.Matter.Sprite
     
     const sign = Math.sign(pivot.x - this.x);
 
+    
     this.setPosition(
       pivot.x + (deltaX * sign), 
       pivot.y + deltaY

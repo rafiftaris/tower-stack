@@ -38,13 +38,13 @@ export default class LevelScene extends Phaser.Scene {
 
     this.initializeStaticElements(bitfield);
 
-    this.cameras.main.zoomTo(0.4,500);
+    // this.cameras.main.zoomTo(0.4,500);
 
     this.matter.world.setBounds(
       AlignTool.getXfromScreenWidth(this, -0.5),
-      AlignTool.getYfromScreenHeight(this, -0.25),
+      AlignTool.getYfromScreenHeight(this, -8.5),
       AlignTool.getXfromScreenWidth(this, 2),
-      AlignTool.getYfromScreenHeight(this, 2)
+      AlignTool.getYfromScreenHeight(this, 10)
     );
 
     this.ground = new Ground(this, bitfield);
@@ -55,12 +55,11 @@ export default class LevelScene extends Phaser.Scene {
 
     // Set collision
     droppingBlocks.forEach((block) => {
-      block.setOnCollideWith(this.ground.getGroundArray(), 
+      block.setOnCollideWith(this.ground.getGround(), 
       () => {
-        if (!this.sound.get(AudioKeys.Thud)?.isPlaying) {
-          this.sound.play(AudioKeys.Thud, { volume: SoundConfig.thudVolume });
-        }
         if (!block.hasStacked) {
+          this.sound.play(AudioKeys.Thud, { volume: SoundConfig.thudVolume });
+
           BlockManager.addBlockToStack();
 
           this.moveUp();
@@ -74,10 +73,10 @@ export default class LevelScene extends Phaser.Scene {
         ) {
           return;
         }
-        if (!this.sound.get(AudioKeys.Thud)?.isPlaying) {
-          this.sound.play(AudioKeys.Thud, { volume: SoundConfig.thudVolume });
-        }
+
         if (!block.hasStacked) {
+          this.sound.play(AudioKeys.Thud, { volume: SoundConfig.thudVolume });
+
           BlockManager.addBlockToStack();
           
           this.moveUp();
@@ -112,7 +111,7 @@ export default class LevelScene extends Phaser.Scene {
     InputZone.setState(this.gameState);
 
     this.shakeCamera();
-    // this.ground.shake();
+    this.ground.shake();
 
     // ItemManager.setGameOver();
     BlockManager.setGameOver();
@@ -125,7 +124,7 @@ export default class LevelScene extends Phaser.Scene {
         }
       },
       callbackScope: this
-    })
+    });
   }
 
   /**
@@ -135,6 +134,8 @@ export default class LevelScene extends Phaser.Scene {
     if(this.timeline.isPlaying()){
       return;
     }
+
+    let peak = this.cameras.main.y;
     const cameraX = this.cameras.main.x
 
     this.timeline.add({
@@ -158,6 +159,18 @@ export default class LevelScene extends Phaser.Scene {
     });
 
     this.timeline.play();
+
+    // this.time.delayedCall(
+    //   10+20*10+10+50,
+    //   () => {
+    //     this.cameras.main.pan(
+    //       AlignTool.getXfromScreenWidth(this, 0.5),
+    //       AlignTool.getYfromScreenHeight(this, 0.5),
+    //       750
+    //     );
+    //   }
+    // );
+   
     console.log('shake some ass');
   }
 
@@ -169,11 +182,24 @@ export default class LevelScene extends Phaser.Scene {
     const movingBlock = BlockManager.getMovingBlock();
     
     if(stackedBlock.length > 1){
-      if(stackedBlock.length < 6){
-        this.ground.moveDown(movingBlock);
-      }
       console.log('update height');
-      BlockManager.updateHeight();
+
+      // if(stackedBlock.length < 6){
+      //   this.ground.moveDown(movingBlock);
+      // }
+      // BlockManager.updateHeight();
+      this.updateHeight(stackedBlock.length);
     }
+
+  }
+
+  updateHeight(n: number): void{
+    this.cameras.main.pan(
+      AlignTool.getXfromScreenWidth(this, 0.5),
+      AlignTool.getYfromScreenHeight(this, 0.5) - (BlockManager.getMovingBlock().displayHeight * (n-1)),
+      500
+    );
+
+    BlockManager.moveSwingUp();
   }
 }
