@@ -58,7 +58,9 @@ export default class GameUI extends Phaser.Scene {
 
     let currentHighScore = 0;
     if (localStorage.getItem(LocalStorageKeys.HighScore) !== null) {
-      currentHighScore = parseInt(localStorage.getItem(LocalStorageKeys.HighScore));
+      currentHighScore = parseInt(
+        localStorage.getItem(LocalStorageKeys.HighScore)
+      );
     }
 
     if (score > currentHighScore) {

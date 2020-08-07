@@ -39,7 +39,7 @@ class BackgroundHelper implements IBackground {
   /**
    * Scroll down when stacking
    */
-  scrollDown(): void{
+  scrollDown(): void {
     this.scene.time.addEvent({
       delay: 1,
       callback: () => {
@@ -53,7 +53,7 @@ class BackgroundHelper implements IBackground {
   /**
    * Reset tile position to normal
    */
-  reset(): void{
+  reset(): void {
     this.background.tilePositionY = 0;
   }
 }

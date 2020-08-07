@@ -73,17 +73,13 @@ export default class BuildingBlock extends Phaser.Physics.Matter.Sprite
 
     const forceVector = new Phaser.Math.Vector2(
       0,
-      AlignTool.getYfromScreenHeight(this.scene,0.0005)
+      AlignTool.getYfromScreenHeight(this.scene, 0.0005)
     );
     this.applyForce(forceVector);
-    this.setFriction(
-      0,
-      0,
-      0
-    );
+    this.setFriction(0, 0, 0);
 
-    const pivotBody = <MatterJS.BodyType>(pivot.body);
-    const aimBlockBody = <MatterJS.BodyType>(this.body);
+    const pivotBody = <MatterJS.BodyType>pivot.body;
+    const aimBlockBody = <MatterJS.BodyType>this.body;
 
     // Give spring-like physics that swings forever
     return this.scene.matter.add.joint(
@@ -99,18 +95,14 @@ export default class BuildingBlock extends Phaser.Physics.Matter.Sprite
    * @param degree degree between aim block and pivot block
    * @param pivot pivot block
    */
-  private setAimBlockPosition(degree: number, pivot: BuildingBlock): void{
+  private setAimBlockPosition(degree: number, pivot: BuildingBlock): void {
     const radian = MathHelper.degreeToRadian(degree + 90);
     const deltaX = Math.cos(radian) * this.jointLength;
     const deltaY = Math.sin(radian) * this.jointLength;
-    
+
     const sign = Math.sign(pivot.x - this.x);
 
-    
-    this.setPosition(
-      pivot.x + (deltaX * sign), 
-      pivot.y + deltaY
-    );
+    this.setPosition(pivot.x + deltaX * sign, pivot.y + deltaY);
   }
 
   /**
@@ -118,7 +110,7 @@ export default class BuildingBlock extends Phaser.Physics.Matter.Sprite
    * @param newDegree new degree update
    * @param pivot pivot block
    */
-  updateDegree(newDegree: number, pivot: BuildingBlock): void{
+  updateDegree(newDegree: number, pivot: BuildingBlock): void {
     this.degree = newDegree;
     this.setAimBlockPosition(this.degree, pivot);
   }
@@ -127,20 +119,21 @@ export default class BuildingBlock extends Phaser.Physics.Matter.Sprite
    * Get degree difference of aim block and pivot
    * @returns degree difference
    */
-  getDegree(): number{
+  getDegree(): number {
     return this.degree;
   }
 
   /**
    * Set pivot block settings.
    */
-  setPivotBlockSettings(): void{
+  setPivotBlockSettings(): void {
     this.setDefaultSettings();
     this.setStatic(true);
     this.setVisible(false);
     this.setPosition(
       AlignTool.getXfromScreenWidth(this.scene, 0.5),
-      this.movingBlockStartingHeight - AlignTool.getYfromScreenHeight(this.scene, 0.2)
+      this.movingBlockStartingHeight -
+        AlignTool.getYfromScreenHeight(this.scene, 0.2)
     );
     this.setIgnoreGravity(true);
   }
@@ -226,7 +219,7 @@ export default class BuildingBlock extends Phaser.Physics.Matter.Sprite
   /**
    * Deactivate block
    */
-  deactivate(): void{
+  deactivate(): void {
     this.setVisible(false);
     this.setActive(false);
   }

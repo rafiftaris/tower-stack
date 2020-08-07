@@ -30,7 +30,6 @@ class BlockManagerHelper {
   private maxHeight: number;
   private score: number;
 
-
   public static get Instance() {
     const instance = this.instance || (this.instance = new this());
     return instance;
@@ -40,7 +39,7 @@ class BlockManagerHelper {
     this.scene = scene;
     this.stackedBlocks = [];
     this.bitfield = bitfield;
-    this.maxHeight = AlignTool.getYfromScreenHeight(scene,0.95);
+    this.maxHeight = AlignTool.getYfromScreenHeight(scene, 0.95);
     this.score = 0;
 
     // Init blocks group
@@ -70,7 +69,10 @@ class BlockManagerHelper {
 
     this.smallPendulumForce = new Phaser.Math.Vector2(
       0,
-      AlignTool.getYfromScreenHeight(this.scene,this.aimBlock.scalePercentage/1250)
+      AlignTool.getYfromScreenHeight(
+        this.scene,
+        this.aimBlock.scalePercentage / 1250
+      )
     );
   }
 
@@ -87,9 +89,9 @@ class BlockManagerHelper {
       block.setDefaultSettings(this.bitfield);
 
       return block;
-    } 
+    }
 
-    const newBlock = new BuildingBlock(this.scene,this.bitfield);
+    const newBlock = new BuildingBlock(this.scene, this.bitfield);
     newBlock.setDefaultSettings(this.bitfield);
     return newBlock;
   }
@@ -142,14 +144,16 @@ class BlockManagerHelper {
     this.aimBlock.setStatic(true);
 
     let penalty = 0;
-    this.stackedBlocks.forEach(block => {
-      console.log(block.body.velocity);
-      if(
-        Math.abs(block.body.velocity.x) >= 0.5 || 
-        Math.abs(block.body.velocity.y) >= 0.5
-      ){
+    this.stackedBlocks.forEach((block) => {
+      const blockBody = <MatterJS.BodyType>block.body;
+      if (
+        Math.abs(blockBody.velocity.x) >= 0.5 ||
+        Math.abs(blockBody.velocity.y) >= 0.5
+      ) {
         block.setVisible(false);
-        new Firework(this.scene, block.x, block.y, block.scalePercentage).show(false);
+        new Firework(this.scene, block.x, block.y, block.scalePercentage).show(
+          false
+        );
         penalty++;
       }
     });
@@ -177,27 +181,27 @@ class BlockManagerHelper {
   /**
    * Apply force to swing when it reaches highest point
    */
-  swingAimBlock(): void{
+  swingAimBlock(): void {
     // console.log(Math.abs(this.aimBlock.x-this.pivot.x));
     // console.log(this.aimBlock.body.velocity.x);
-    if(Math.abs(this.aimBlock.body.velocity.x) < 0.1){
+    const aimBlockBody = <MatterJS.BodyType>this.aimBlock.body;
+
+    if (Math.abs(aimBlockBody.velocity.x) < 0.1) {
       const sign = new Phaser.Math.Vector2(
         Math.sign(this.aimBlock.x - this.pivot.x),
         1
       );
 
-      this.aimBlock.applyForce(
-        this.smallPendulumForce.multiply(sign)
-      );
+      this.aimBlock.applyForce(this.smallPendulumForce.multiply(sign));
     }
   }
 
   /**
    * Move swing block up
    */
-  moveSwingUp(): void{
-    console.log("move up");
-    let diff = this.aimBlock.displayHeight;
+  moveSwingUp(): void {
+    console.log('move up');
+    const diff = this.aimBlock.displayHeight;
     // if(n == 2){
     //   diff *= 2;
     // }
@@ -222,17 +226,19 @@ class BlockManagerHelper {
    * @returns game state
    */
   checkStackedBlocks(gameState: GameState, ground: Ground): GameState {
-    if(gameState === GameState.GameOver){
+    if (gameState === GameState.GameOver) {
       return;
     }
 
     const topmostBlock = this.stackedBlocks[this.stackedBlocks.length - 1];
-    if(!topmostBlock) { return GameState.GameOn; }
+    if (!topmostBlock) {
+      return GameState.GameOn;
+    }
 
-    if(this.stackedBlocks.length >= 2){
+    if (this.stackedBlocks.length >= 2) {
       const newMax = this.stackedBlocks[this.stackedBlocks.length - 2].y;
-      
-      if(newMax < this.maxHeight){
+
+      if (newMax < this.maxHeight) {
         this.maxHeight = newMax;
       }
     }
@@ -242,14 +248,17 @@ class BlockManagerHelper {
 
     // Check if topmost block position is not on the top of the stack
     const TOL = 10;
-    if((this.maxHeight - topmostBlock.y) <= topmostBlock.displayHeight/2 - TOL){
-      console.log('top height', topmostBlock.y);
-      console.log('diff', (this.maxHeight - topmostBlock.y));
-      console.log('diff limit', topmostBlock.displayHeight/2);
-      return GameState.GameOverSetup
+    if (
+      this.maxHeight - topmostBlock.y <=
+      topmostBlock.displayHeight / 2 - TOL
+    ) {
+      // console.log('top height', topmostBlock.y);
+      // console.log('diff', (this.maxHeight - topmostBlock.y));
+      // console.log('diff limit', topmostBlock.displayHeight/2);
+      return GameState.GameOverSetup;
     }
 
-    return GameState.GameOn
+    return GameState.GameOn;
   }
 
   /**
@@ -273,7 +282,7 @@ class BlockManagerHelper {
     // console.log('top height', this.currentFallingBlock.y);
 
     // Set boxes below to static so the game becomes easier
-    if(this.stackedBlocks.length > 4){
+    if (this.stackedBlocks.length > 4) {
       this.stackedBlocks[this.stackedBlocks.length - 4].setStatic(true);
     }
 
@@ -287,48 +296,48 @@ class BlockManagerHelper {
    * @params newHeight: new height adjustment
    */
   updateHeight(): void {
-    this.stackedBlocks.forEach((block,idx) => {
+    this.stackedBlocks.forEach((block, idx) => {
       const index = this.stackedBlocks.length - idx;
 
       // if(index > 8){
       //   return;
       // }
-      if(index == 7){
-        console.log('deactivate', idx);
+      if (index == 7) {
+        // console.log('deactivate', idx);
         block.deactivate();
         this.stackedBlocks.shift();
-      } 
+      }
       // else if(index == 7){
       //   console.log('set static');
       //   block.setStatic(true);
-      // } 
+      // }
       else {
         this.scene.time.addEvent({
-          delay:100,
+          delay: 100,
           callback: () => {
             // block.setStatic(true);
             this.scene.tweens.add({
               targets: block,
               y: block.y + block.displayHeight,
-              duration: 500,
+              duration: 500
             });
             // block.setStatic(false);
           },
           callbackScope: this
-        })
-        
+        });
+
         // block.setPosition(
         //   block.x,
         //   block.y + block.displayHeight
         // );
       }
-      console.log(idx,{
-        "position": block.body.position,
-        "active": block.active,
-        "visible": block.visible,
-        "hasStacked": block.hasStacked,
-        "static": block.isStatic()
-      });
+      // console.log(idx,{
+      //   "position": block.body.position,
+      //   "active": block.active,
+      //   "visible": block.visible,
+      //   "hasStacked": block.hasStacked,
+      //   "static": block.isStatic()
+      // });
     });
 
     // let blockSequence = 1;

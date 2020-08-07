@@ -1,7 +1,7 @@
 import * as Phaser from 'phaser';
 import AlignTool from '../Util/AlignTool';
 
-import { GameState, EventKeys as EventKeys } from '../Enum/enum';
+import { GameState, EventKeys } from '../Enum/enum';
 
 import { BlockManager } from '../Manager/BlockManager';
 import { ItemManager } from '../Manager/ItemManager';
@@ -72,7 +72,7 @@ class InputZoneHelper {
           callbackScope: this
         });
 
-        if(BlockManager.getStackedBlock().length > 1){
+        if (BlockManager.getStackedBlock().length > 1) {
           scene.events.emit(EventKeys.BlockDrop);
         }
       },

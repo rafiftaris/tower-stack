@@ -6,7 +6,13 @@ import { TIME_LIMIT } from '../Config/GameConfig';
 
 import { ITimer } from '../Interfaces/interface';
 
-import { TextureKeys, AudioKeys, ItemTypes, Color, FontKeys } from '../Enum/enum';
+import {
+  TextureKeys,
+  AudioKeys,
+  ItemTypes,
+  Color,
+  FontKeys
+} from '../Enum/enum';
 
 class TimerHelper implements ITimer {
   private static instance: TimerHelper;

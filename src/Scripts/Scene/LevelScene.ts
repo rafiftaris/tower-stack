@@ -55,8 +55,7 @@ export default class LevelScene extends Phaser.Scene {
 
     // Set collision
     droppingBlocks.forEach((block) => {
-      block.setOnCollideWith(this.ground.getGround(), 
-      () => {
+      block.setOnCollideWith(this.ground.getGround(), () => {
         if (!block.hasStacked) {
           this.sound.play(AudioKeys.Thud, { volume: SoundConfig.thudVolume });
 
@@ -67,10 +66,7 @@ export default class LevelScene extends Phaser.Scene {
       });
 
       block.setOnCollideWith(droppingBlocks, () => {
-        if (
-          !block.active ||
-          !block.visible
-        ) {
+        if (!block.active || !block.visible) {
           return;
         }
 
@@ -78,7 +74,7 @@ export default class LevelScene extends Phaser.Scene {
           this.sound.play(AudioKeys.Thud, { volume: SoundConfig.thudVolume });
 
           BlockManager.addBlockToStack();
-          
+
           this.moveUp();
         }
       });
@@ -92,7 +88,10 @@ export default class LevelScene extends Phaser.Scene {
       this.setGameOver();
       this.gameState = GameState.GameOver;
     } else if (this.gameState === GameState.GameOn) {
-      this.gameState = BlockManager.checkStackedBlocks(this.gameState, this.ground);
+      this.gameState = BlockManager.checkStackedBlocks(
+        this.gameState,
+        this.ground
+      );
       // ItemManager.checkItem();
     }
 
@@ -119,7 +118,7 @@ export default class LevelScene extends Phaser.Scene {
     this.time.addEvent({
       delay: 500,
       callback: () => {
-        if(!this.scene.get(SceneKeys.GameOver).scene.isActive()){
+        if (!this.scene.get(SceneKeys.GameOver).scene.isActive()) {
           this.scene.run(SceneKeys.GameOver);
         }
       },
@@ -130,13 +129,13 @@ export default class LevelScene extends Phaser.Scene {
   /**
    * Give shake camera effect when game over
    */
-  shakeCamera(): void{
-    if(this.timeline.isPlaying()){
+  shakeCamera(): void {
+    if (this.timeline.isPlaying()) {
       return;
     }
 
-    let peak = this.cameras.main.y;
-    const cameraX = this.cameras.main.x
+    const peak = this.cameras.main.y;
+    const cameraX = this.cameras.main.x;
 
     this.timeline.add({
       targets: this.cameras.main,
@@ -170,19 +169,19 @@ export default class LevelScene extends Phaser.Scene {
     //     );
     //   }
     // );
-   
-    console.log('shake some ass');
+
+    // console.log('shake some ass');
   }
 
   moveUp(): void {
-    if(this.gameState === GameState.GameOver){
+    if (this.gameState === GameState.GameOver) {
       return;
     }
     const stackedBlock = BlockManager.getStackedBlock();
     const movingBlock = BlockManager.getMovingBlock();
-    
-    if(stackedBlock.length > 1){
-      console.log('update height');
+
+    if (stackedBlock.length > 1) {
+      // console.log('update height');
 
       // if(stackedBlock.length < 6){
       //   this.ground.moveDown(movingBlock);
@@ -190,13 +189,13 @@ export default class LevelScene extends Phaser.Scene {
       // BlockManager.updateHeight();
       this.updateHeight(stackedBlock.length);
     }
-
   }
 
-  updateHeight(n: number): void{
+  updateHeight(n: number): void {
     this.cameras.main.pan(
       AlignTool.getXfromScreenWidth(this, 0.5),
-      AlignTool.getYfromScreenHeight(this, 0.5) - (BlockManager.getMovingBlock().displayHeight * (n-1)),
+      AlignTool.getYfromScreenHeight(this, 0.5) -
+        BlockManager.getMovingBlock().displayHeight * (n - 1),
       500
     );
 

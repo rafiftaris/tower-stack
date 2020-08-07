@@ -12,7 +12,12 @@ import { SceneKeys } from '../Config/SceneKeys';
 import { Timer } from '../Object/Timer';
 import Button from '../Object/Button';
 
-import { ButtonType, FontKeys, AudioKeys, LocalStorageKeys } from '../Enum/enum';
+import {
+  ButtonType,
+  FontKeys,
+  AudioKeys,
+  LocalStorageKeys
+} from '../Enum/enum';
 import { IGround, IButton } from '../Interfaces/interface';
 
 export default class TitleScene extends Phaser.Scene {
@@ -96,7 +101,9 @@ export default class TitleScene extends Phaser.Scene {
       callback: () => {
         let highscore = 0;
         if (localStorage.getItem(LocalStorageKeys.HighScore) !== null) {
-          highscore = parseInt(localStorage.getItem(LocalStorageKeys.HighScore));
+          highscore = parseInt(
+            localStorage.getItem(LocalStorageKeys.HighScore)
+          );
         }
 
         this.highScoreText = TextPopUp.showText({

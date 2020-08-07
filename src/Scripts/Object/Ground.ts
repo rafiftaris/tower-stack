@@ -15,7 +15,7 @@ export default class Ground implements IGround {
   private timeline: Phaser.Tweens.Timeline;
 
   constructor(scene: Phaser.Scene, bitfield: number) {
-    let groundTiles: Phaser.GameObjects.Image[] = [];
+    const groundTiles: Phaser.GameObjects.Image[] = [];
     this.scene = scene;
     this.timeline = this.scene.tweens.createTimeline();
 
@@ -34,13 +34,12 @@ export default class Ground implements IGround {
         margin = groundTiles[i - 1].displayWidth;
       }
 
-      let groundTile = scene.add.image(
-        AlignTool.getXfromScreenWidth(scene,-0.2) + margin*i,
-        AlignTool.getYfromScreenHeight(scene,0.95),
+      const groundTile = scene.add.image(
+        AlignTool.getXfromScreenWidth(scene, -0.2) + margin * i,
+        AlignTool.getYfromScreenHeight(scene, 0.95),
         TextureKeys.GrassLeft
       );
       groundTiles.push(groundTile);
-      
     }
 
     this.groundContainer = scene.add.container(
@@ -49,12 +48,13 @@ export default class Ground implements IGround {
       groundTiles
     );
 
-    this.groundContainer.list.forEach((element,index) =>{
+    this.groundContainer.list.forEach((element, index) => {
       const child = <Phaser.GameObjects.Image>element;
-      AlignTool.scaleToScreenWidth(scene,child,0.25);
+      AlignTool.scaleToScreenWidth(scene, child, 0.25);
       child.setPosition(
-        AlignTool.getXfromScreenWidth(scene,0) + groundTiles[0].displayWidth*(index-1),
-        AlignTool.getYfromScreenHeight(scene,0)
+        AlignTool.getXfromScreenWidth(scene, 0) +
+          groundTiles[0].displayWidth * (index - 1),
+        AlignTool.getYfromScreenHeight(scene, 0)
       );
     });
 
@@ -63,8 +63,10 @@ export default class Ground implements IGround {
       groundTiles[0].displayHeight
     );
 
-    this.groundPhysContainer = <Phaser.Physics.Matter.Sprite>(scene.matter.add.gameObject(this.groundContainer));
-    this.groundPhysContainer.setIgnoreGravity(true)
+    this.groundPhysContainer = <Phaser.Physics.Matter.Sprite>(
+      scene.matter.add.gameObject(this.groundContainer)
+    );
+    this.groundPhysContainer.setIgnoreGravity(true);
     this.groundPhysContainer.setStatic(true);
   }
 
@@ -78,7 +80,7 @@ export default class Ground implements IGround {
   /**
    * Move ground down after stack added
    */
-  moveDown(block: BuildingBlock): void{
+  moveDown(block: BuildingBlock): void {
     this.scene.tweens.add({
       targets: this.groundPhysContainer,
       y: this.groundPhysContainer.y + block.displayHeight,
@@ -89,11 +91,12 @@ export default class Ground implements IGround {
   /**
    * Give earthquake effect when game over
    */
-  shake(): void{
-    if(this.timeline.isPlaying()){
+  shake(): void {
+    if (this.timeline.isPlaying()) {
       return;
     }
-    const positionX = this.groundPhysContainer.body.position.x;
+    const positionX = (<MatterJS.BodyType>this.groundPhysContainer.body)
+      .position.x;
 
     this.timeline.add({
       targets: this.groundPhysContainer,

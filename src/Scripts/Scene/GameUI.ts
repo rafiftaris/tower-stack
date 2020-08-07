@@ -65,7 +65,7 @@ export default class GameUI extends Phaser.Scene {
     Background.init(this);
   }
 
-  resetBackground(): void{
+  resetBackground(): void {
     Background.reset();
   }
 }
