@@ -1,12 +1,11 @@
 import * as Phaser from 'phaser';
 import AlignTool from '../Util/AlignTool';
 
-import { GameState } from '../Enum/enum';
+import { GameState, EventKeys as EventKeys } from '../Enum/enum';
 
 import { BlockManager } from '../Manager/BlockManager';
 import { ItemManager } from '../Manager/ItemManager';
 
-import { Timer } from '../Object/Timer';
 import { TextPopUp, ANIMATION_TYPE as TEXT_ANIM_TYPE } from '../Util/TextPopUp';
 
 class InputZoneHelper {
@@ -63,8 +62,7 @@ class InputZoneHelper {
           this.instruction.setVisible(false);
         }
         this.inputDisabled = true;
-        ItemManager.addGenerateItemEvent();
-        Timer.createTimerEvent();
+        // ItemManager.addGenerateItemEvent();
 
         BlockManager.dropBlock();
 
@@ -73,6 +71,10 @@ class InputZoneHelper {
           callback: this.showMovingBlock,
           callbackScope: this
         });
+
+        if(BlockManager.getStackedBlock().length > 1){
+          scene.events.emit(EventKeys.BlockDrop);
+        }
       },
       this
     );
@@ -82,7 +84,7 @@ class InputZoneHelper {
     if (this.gameState === GameState.GameOver) {
       return;
     }
-    BlockManager.showMovingBlock();
+    BlockManager.showAimBlock();
     this.inputDisabled = false;
   }
 

@@ -1,5 +1,5 @@
 import * as Phaser from 'phaser';
-import { Direction, ItemTypes, EventNames } from '../Enum/enum';
+import { Direction, ItemTypes, EventKeys } from '../Enum/enum';
 import Item from '../Object/Item';
 import { Timer } from '../Object/Timer';
 import AlignTool from '../Util/AlignTool';

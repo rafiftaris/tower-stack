@@ -6,17 +6,16 @@ import SoundConfig from '../Config/SoundConfig';
 
 import { InputZone } from '../Object/InputZone';
 import { Timer } from '../Object/Timer';
-import Background from '../Object/Background';
+import { Background } from '../Object/Background';
 
 import { IBackground } from '../Interfaces/interface';
 
 import { TextPopUp } from '../Util/TextPopUp';
 import { ImagePopUp } from '../Util/ImagePopUp';
 
-import { AudioKeys } from '../Enum/enum';
+import { AudioKeys, EventKeys } from '../Enum/enum';
 
 export default class GameUI extends Phaser.Scene {
-  private background: IBackground;
   // private fpsText: FpsText;
 
   constructor() {
@@ -27,17 +26,35 @@ export default class GameUI extends Phaser.Scene {
 
   create(): void {
     this.initializeStaticElements();
-    this.background = new Background(this);
+
     this.cameras.main.setBackgroundColor(BACKGROUND_COLOR);
     this.sound.play(AudioKeys.Bgm, {
       loop: true,
       volume: SoundConfig.bgmVolume
     });
     // this.fpsText = new FpsText(this);
+
+    // this.events.addListener(
+    //   EventKeys.BlockDrop,
+    //   () => {
+    //     console.log('scroll background');
+    //     Background.scrollDown();
+    //   },
+    //   this
+    // );
+
+    this.events.addListener(
+      EventKeys.ResetBackground,
+      () => {
+        console.log('reset background');
+        this.resetBackground();
+      },
+      this
+    );
   }
 
   update(): void {
-    this.background.update();
+    Background.update();
     // this.fpsText.update();
   }
 
@@ -45,7 +62,10 @@ export default class GameUI extends Phaser.Scene {
     TextPopUp.init(this, DepthConfig.gameHeaderUI);
     ImagePopUp.init(this, DepthConfig.gameHeaderUI);
     InputZone.init(this);
-    Timer.init(this, DepthConfig.gameHeaderUI);
-    Timer.hide();
+    Background.init(this);
+  }
+
+  resetBackground(): void{
+    Background.reset();
   }
 }

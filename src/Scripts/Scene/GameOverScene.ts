@@ -11,6 +11,7 @@ import AlignTool from '../Util/AlignTool';
 import { TextPopUp } from '../Util/TextPopUp';
 
 import { IFirework, IGameOverPanel } from '../Interfaces/interface';
+import { LocalStorageKeys } from '../Enum/enum';
 
 export default class GameUI extends Phaser.Scene {
   private gameOverPanel: IGameOverPanel;
@@ -52,16 +53,16 @@ export default class GameUI extends Phaser.Scene {
   showPanel(): void {
     this.fireworkA.show(true);
     this.fireworkB.show(true);
+
     const score = BlockManager.getScore();
-    console.log(score);
 
     let currentHighScore = 0;
-    if (localStorage.getItem('highScore') !== null) {
-      currentHighScore = parseInt(localStorage.getItem('highScore'));
+    if (localStorage.getItem(LocalStorageKeys.HighScore) !== null) {
+      currentHighScore = parseInt(localStorage.getItem(LocalStorageKeys.HighScore));
     }
 
     if (score > currentHighScore) {
-      localStorage.setItem('highScore', score.toString());
+      localStorage.setItem(LocalStorageKeys.HighScore, score.toString());
       this.gameOverPanel.showScore(score, true);
     } else {
       this.gameOverPanel.showScore(score, false);

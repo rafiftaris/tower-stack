@@ -1,7 +1,6 @@
 import * as Phaser from 'phaser';
 import { SceneKeys } from '../Config/SceneKeys';
 
-import { Timer } from '../Object/Timer';
 import { InputZone } from '../Object/InputZone';
 import Ground from '../Object/Ground';
 import BuildingBlock from '../Object/Block';
@@ -14,7 +13,7 @@ import { ImagePopUp } from '../Util/ImagePopUp';
 import { TextPopUp } from '../Util/TextPopUp';
 import AlignTool from '../Util/AlignTool';
 
-import { GameState, AudioKeys, EventNames } from '../Enum/enum';
+import { GameState, AudioKeys, EventKeys } from '../Enum/enum';
 
 import DepthConfig from '../Config/DepthConfig';
 import SoundConfig from '../Config/SoundConfig';
@@ -23,7 +22,8 @@ export default class LevelScene extends Phaser.Scene {
   private ground: Ground;
 
   private gameState: GameState;
-  private score: number;
+
+  private timeline: Phaser.Tweens.Timeline;
 
   constructor() {
     super({ key: SceneKeys.Level });
@@ -34,14 +34,17 @@ export default class LevelScene extends Phaser.Scene {
   create(): void {
     const bitfield = this.matter.world.nextCategory();
     this.gameState = GameState.GameOn;
+    this.timeline = this.tweens.createTimeline();
 
     this.initializeStaticElements(bitfield);
 
+    // this.cameras.main.zoomTo(0.4,500);
+
     this.matter.world.setBounds(
       AlignTool.getXfromScreenWidth(this, -0.5),
-      AlignTool.getYfromScreenHeight(this, -1.25),
+      AlignTool.getYfromScreenHeight(this, -8.5),
       AlignTool.getXfromScreenWidth(this, 2),
-      AlignTool.getYfromScreenHeight(this, 2.5)
+      AlignTool.getYfromScreenHeight(this, 10)
     );
 
     this.ground = new Ground(this, bitfield);
@@ -52,43 +55,45 @@ export default class LevelScene extends Phaser.Scene {
 
     // Set collision
     droppingBlocks.forEach((block) => {
-      block.setOnCollideWith(this.ground.getGroundArray(), () => {
-        if (!this.sound.get(AudioKeys.Thud)?.isPlaying) {
-          this.sound.play(AudioKeys.Thud, { volume: SoundConfig.thudVolume });
-        }
+      block.setOnCollideWith(this.ground.getGround(), 
+      () => {
         if (!block.hasStacked) {
+          this.sound.play(AudioKeys.Thud, { volume: SoundConfig.thudVolume });
+
           BlockManager.addBlockToStack();
-          BlockManager.checkStackedBlocks(this.ground);
-          this.zoomCamera();
+
+          this.moveUp();
         }
       });
 
       block.setOnCollideWith(droppingBlocks, () => {
         if (
-          !BlockManager.getCurrentDroppingBlock() ||
           !block.active ||
           !block.visible
         ) {
           return;
         }
-        if (!this.sound.get(AudioKeys.Thud)?.isPlaying) {
-          this.sound.play(AudioKeys.Thud, { volume: SoundConfig.thudVolume });
-        }
+
         if (!block.hasStacked) {
+          this.sound.play(AudioKeys.Thud, { volume: SoundConfig.thudVolume });
+
           BlockManager.addBlockToStack();
-          BlockManager.checkStackedBlocks(this.ground);
-          this.zoomCamera();
+          
+          this.moveUp();
         }
       });
     });
   }
 
   update(): void {
-    BlockManager.checkStackedBlocks(this.ground);
-    ItemManager.checkItem();
+    BlockManager.swingAimBlock();
 
-    if (Timer.timesUp() && this.gameState === GameState.GameOn) {
+    if (this.gameState === GameState.GameOverSetup) {
       this.setGameOver();
+      this.gameState = GameState.GameOver;
+    } else if (this.gameState === GameState.GameOn) {
+      this.gameState = BlockManager.checkStackedBlocks(this.gameState, this.ground);
+      // ItemManager.checkItem();
     }
 
     this.input.activePointer;
@@ -98,42 +103,103 @@ export default class LevelScene extends Phaser.Scene {
     TextPopUp.init(this, DepthConfig.score);
     ImagePopUp.init(this, DepthConfig.gameOverPanel);
     BlockManager.init(this, bitfield);
-    ItemManager.init(this);
-    Timer.show();
+    // ItemManager.init(this);
     InputZone.setState(GameState.GameOn);
   }
 
   setGameOver(): void {
-    this.gameState = GameState.GameOver;
-
     InputZone.setState(this.gameState);
 
-    Timer.destroyTimeEvent();
-    ItemManager.setGameOver();
-    BlockManager.setGameOver(this.ground);
+    this.shakeCamera();
+    this.ground.shake();
 
-    this.time.delayedCall(
-      BlockManager.getDelayDuration(),
-      () => {
-        this.scene.run(SceneKeys.GameOver);
+    // ItemManager.setGameOver();
+    BlockManager.setGameOver();
+
+    this.time.addEvent({
+      delay: 500,
+      callback: () => {
+        if(!this.scene.get(SceneKeys.GameOver).scene.isActive()){
+          this.scene.run(SceneKeys.GameOver);
+        }
       },
-      null,
-      this
-    );
+      callbackScope: this
+    });
   }
 
-  zoomCamera(): void {
-    const zoomFactor = 1 / Math.pow(BlockManager.getMaxStackLevel(), 1 / 3);
-    this.cameras.main.zoomTo(zoomFactor, 500);
+  /**
+   * Give shake camera effect when game over
+   */
+  shakeCamera(): void{
+    if(this.timeline.isPlaying()){
+      return;
+    }
 
-    const newHeight = AlignTool.getYfromScreenHeight(this, 1) / zoomFactor;
+    let peak = this.cameras.main.y;
+    const cameraX = this.cameras.main.x
+
+    this.timeline.add({
+      targets: this.cameras.main,
+      x: cameraX - 10,
+      duration: 10
+    });
+
+    this.timeline.add({
+      targets: this.cameras.main,
+      x: cameraX + 10,
+      duration: 20,
+      yoyo: true,
+      repeat: 10
+    });
+
+    this.timeline.add({
+      targets: this.cameras.main,
+      x: cameraX,
+      duration: 10
+    });
+
+    this.timeline.play();
+
+    // this.time.delayedCall(
+    //   10+20*10+10+50,
+    //   () => {
+    //     this.cameras.main.pan(
+    //       AlignTool.getXfromScreenWidth(this, 0.5),
+    //       AlignTool.getYfromScreenHeight(this, 0.5),
+    //       750
+    //     );
+    //   }
+    // );
+   
+    console.log('shake some ass');
+  }
+
+  moveUp(): void {
+    if(this.gameState === GameState.GameOver){
+      return;
+    }
+    const stackedBlock = BlockManager.getStackedBlock();
+    const movingBlock = BlockManager.getMovingBlock();
+    
+    if(stackedBlock.length > 1){
+      console.log('update height');
+
+      // if(stackedBlock.length < 6){
+      //   this.ground.moveDown(movingBlock);
+      // }
+      // BlockManager.updateHeight();
+      this.updateHeight(stackedBlock.length);
+    }
+
+  }
+
+  updateHeight(n: number): void{
     this.cameras.main.pan(
-      AlignTool.getXfromScreenWidth(this, 1) / 2,
-      (2 * AlignTool.getYfromScreenHeight(this, 1) - newHeight) / 2,
+      AlignTool.getXfromScreenWidth(this, 0.5),
+      AlignTool.getYfromScreenHeight(this, 0.5) - (BlockManager.getMovingBlock().displayHeight * (n-1)),
       500
     );
 
-    BlockManager.updateHeight(newHeight);
-    ItemManager.updateHeightRange(newHeight);
+    BlockManager.moveSwingUp();
   }
 }
