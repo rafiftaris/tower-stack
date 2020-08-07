@@ -38,12 +38,12 @@ export default class LevelScene extends Phaser.Scene {
 
     this.initializeStaticElements(bitfield);
 
-    // this.cameras.main.zoomTo(0.4,500);
+    this.cameras.main.zoomTo(0.9,500);
 
     this.matter.world.setBounds(
-      AlignTool.getXfromScreenWidth(this, -0.5),
+      AlignTool.getXfromScreenWidth(this, -1),
       AlignTool.getYfromScreenHeight(this, -8.5),
-      AlignTool.getXfromScreenWidth(this, 2),
+      AlignTool.getXfromScreenWidth(this, 3),
       AlignTool.getYfromScreenHeight(this, 10)
     );
 
@@ -55,7 +55,7 @@ export default class LevelScene extends Phaser.Scene {
 
     // Set collision
     droppingBlocks.forEach((block) => {
-      block.setOnCollideWith(this.ground.getGround(), () => {
+      block.setOnCollideWith(this.ground.getGroundArray(), () => {
         if (!block.hasStacked) {
           this.sound.play(AudioKeys.Thud, { volume: SoundConfig.thudVolume });
 
@@ -110,7 +110,7 @@ export default class LevelScene extends Phaser.Scene {
     InputZone.setState(this.gameState);
 
     this.shakeCamera();
-    this.ground.shake();
+    // this.ground.shake();
 
     // ItemManager.setGameOver();
     BlockManager.setGameOver();

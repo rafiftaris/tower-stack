@@ -71,12 +71,13 @@ export default class BuildingBlock extends Phaser.Physics.Matter.Sprite
     this.setAimBlockPosition(this.degree, pivot);
     this.setCollisionCategory(null);
 
-    const forceVector = new Phaser.Math.Vector2(
-      0,
-      AlignTool.getYfromScreenHeight(this.scene, 0.0005)
-    );
-    this.applyForce(forceVector);
+    // const forceVector = new Phaser.Math.Vector2(
+    //   0,
+    //   AlignTool.getYfromScreenHeight(this.scene, 0.0005)
+    // );
+    // this.applyForce(forceVector);
     this.setFriction(0, 0, 0);
+    this.setVelocity(0,0);
 
     const pivotBody = <MatterJS.BodyType>pivot.body;
     const aimBlockBody = <MatterJS.BodyType>this.body;

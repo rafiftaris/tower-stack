@@ -56,7 +56,7 @@ class BlockManagerHelper {
       visible: false,
       quantity: 50,
       setXY: {
-        x: AlignTool.getXfromScreenWidth(scene, -0.5),
+        x: AlignTool.getXfromScreenWidth(scene, -1.5),
         y: AlignTool.getYfromScreenHeight(scene, 0)
       }
     });
@@ -66,14 +66,17 @@ class BlockManagerHelper {
 
     this.aimBlock = this.blocksGroup.get();
     this.joint = this.aimBlock.setAimBlockSettings(this.pivot);
+    this.aimBlock.updateDegree(30, this.pivot);
 
     this.smallPendulumForce = new Phaser.Math.Vector2(
       0,
       AlignTool.getYfromScreenHeight(
         this.scene,
-        this.aimBlock.scalePercentage / 1250
+        this.aimBlock.displayWidth / (10**6)
       )
     );
+
+    console.log(this.smallPendulumForce);
   }
 
   /**
@@ -147,8 +150,8 @@ class BlockManagerHelper {
     this.stackedBlocks.forEach((block) => {
       const blockBody = <MatterJS.BodyType>block.body;
       if (
-        Math.abs(blockBody.velocity.x) >= 0.5 ||
-        Math.abs(blockBody.velocity.y) >= 0.5
+        Math.abs(blockBody.velocity.x) >= (0.5*AlignTool.getXfromScreenWidth(this.scene,1)/720) || // 720
+        Math.abs(blockBody.velocity.y) >= (0.5*AlignTool.getYfromScreenHeight(this.scene,1)/1200)  //1200
       ) {
         block.setVisible(false);
         new Firework(this.scene, block.x, block.y, block.scalePercentage).show(
@@ -267,7 +270,10 @@ class BlockManagerHelper {
   showAimBlock(): void {
     this.aimBlock.show();
     this.aimBlock.changeTexture();
-    this.aimBlock.updateDegree(this.aimBlock.getDegree() + 2, this.pivot);
+    this.aimBlock.updateDegree(
+      this.aimBlock.getDegree() + 2, 
+      this.pivot
+    );
   }
 
   /**
