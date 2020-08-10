@@ -61,7 +61,8 @@ export enum Color {
 export enum EventKeys {
   ItemGenerated = 'ItemGenerated',
   BlockDrop = 'BlockDrop',
-  ResetBackground = 'ResetBackground'
+  ResetBackground = 'ResetBackground',
+  BlockGenerated = 'BlockGenerated'
 }
 
 export enum LocalStorageKeys {

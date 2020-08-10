@@ -13,7 +13,7 @@ import { ImagePopUp } from '../Util/ImagePopUp';
 import { TextPopUp, ANIMATION_TYPE as TEXT_ANIM_TYPE } from '../Util/TextPopUp';
 import AlignTool from '../Util/AlignTool';
 
-import { GameState, AudioKeys, FontKeys } from '../Enum/enum';
+import { GameState, AudioKeys, FontKeys, EventKeys } from '../Enum/enum';
 
 import DepthConfig from '../Config/DepthConfig';
 import SoundConfig from '../Config/SoundConfig';
@@ -83,36 +83,14 @@ export default class LevelScene extends Phaser.Scene {
 
     this.ground = new Ground(this, bitfield);
 
-    const droppingBlocks = <BuildingBlock[]>(
-      BlockManager.getBlockGroup().getChildren()
+    this.events.addListener(
+      EventKeys.BlockGenerated,
+      (block: BuildingBlock) => {
+        console.log('listend')
+        this.setCollision(block);
+      },
+      this
     );
-
-    // Set collision
-    droppingBlocks.forEach((block) => {
-      block.setOnCollideWith(this.ground.getGroundArray(), () => {
-        if (!block.hasStacked) {
-          this.sound.play(AudioKeys.Thud, { volume: SoundConfig.thudVolume });
-
-          BlockManager.addBlockToStack();
-
-          this.moveUp();
-        }
-      });
-
-      block.setOnCollideWith(droppingBlocks, () => {
-        if (!block.active || !block.visible) {
-          return;
-        }
-
-        if (!block.hasStacked) {
-          this.sound.play(AudioKeys.Thud, { volume: SoundConfig.thudVolume });
-
-          BlockManager.addBlockToStack();
-
-          this.moveUp();
-        }
-      });
-    });
   }
 
   update(): void {
@@ -138,6 +116,37 @@ export default class LevelScene extends Phaser.Scene {
     BlockManager.init(this, bitfield);
     // ItemManager.init(this);
     InputZone.setState(GameState.GameOn);
+  }
+
+  setCollision(block: BuildingBlock): void{
+    // Set collision
+    block.setOnCollideWith(
+      this.ground.getGroundArray(), 
+      () => {
+      if (!block.hasStacked) {
+        this.sound.play(AudioKeys.Thud, { volume: SoundConfig.thudVolume });
+
+        BlockManager.addBlockToStack();
+
+        this.moveUp();
+      }
+    });
+
+    block.setOnCollideWith(
+      BlockManager.getStackedBlock(),
+      () => {
+      if (!block.active || !block.visible) {
+        return;
+      }
+
+      if (!block.hasStacked) {
+        this.sound.play(AudioKeys.Thud, { volume: SoundConfig.thudVolume });
+
+        BlockManager.addBlockToStack();
+
+        this.moveUp();
+      }
+    });
   }
 
   setGameOver(): void {

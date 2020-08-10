@@ -42,7 +42,7 @@ export default class BuildingBlock extends Phaser.Physics.Matter.Sprite
    * @param bitfield: collision bitfield
    * @param texture: texture index. If null, randomize index
    */
-  setDefaultSettings(bitfield?: number, texture?: number): void {
+  setDefaultSettings(bitfield?: number, texture?: number): BuildingBlock {
     this.hasStacked = false;
     this.setActive(true);
     this.setVisible(true);
@@ -59,6 +59,8 @@ export default class BuildingBlock extends Phaser.Physics.Matter.Sprite
     if (bitfield) {
       this.setCollisionCategory(bitfield);
     }
+
+    return this;
   }
 
   /**
@@ -220,7 +222,7 @@ export default class BuildingBlock extends Phaser.Physics.Matter.Sprite
    * @param direction: swing direction
    * @returns direction of swing
    */
-  createSwingTween(direction: Direction): Direction{
+  createSwingTween(direction: Direction, divider: number): Direction{
     if(this.swingTween){
       if(this.swingDirection === Direction.Left){
         direction = Direction.Right;
@@ -237,7 +239,7 @@ export default class BuildingBlock extends Phaser.Physics.Matter.Sprite
     this.removeSwingTween();
     this.swingTween = this.scene.tweens.add({
       targets: this,
-      x: this.x + this.displayWidth/7.5*sign,
+      x: this.x + this.displayWidth/divider*sign,
       duration: 2000,
       yoyo: true,
       repeat: -1
