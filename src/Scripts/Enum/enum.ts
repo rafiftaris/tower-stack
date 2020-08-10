@@ -5,8 +5,8 @@ export enum GameState {
 }
 
 export enum Direction {
-  Right,
-  Left
+  Right = "right",
+  Left = 'left'
 }
 
 export enum ButtonType {

@@ -41,7 +41,7 @@ interface IBUildingBlock {
 
   getTextureFrame(): number;
 
-  getTween(): Phaser.Tweens.Tween;
+  getSwingTween(): Phaser.Tweens.Tween;
 }
 
 interface IFirework {

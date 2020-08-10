@@ -10,10 +10,10 @@ import { BlockManager } from '../Manager/BlockManager';
 import { ItemManager } from '../Manager/ItemManager';
 
 import { ImagePopUp } from '../Util/ImagePopUp';
-import { TextPopUp } from '../Util/TextPopUp';
+import { TextPopUp, ANIMATION_TYPE as TEXT_ANIM_TYPE } from '../Util/TextPopUp';
 import AlignTool from '../Util/AlignTool';
 
-import { GameState, AudioKeys, EventKeys } from '../Enum/enum';
+import { GameState, AudioKeys, FontKeys } from '../Enum/enum';
 
 import DepthConfig from '../Config/DepthConfig';
 import SoundConfig from '../Config/SoundConfig';
@@ -24,6 +24,9 @@ export default class LevelScene extends Phaser.Scene {
   private gameState: GameState;
 
   private timeline: Phaser.Tweens.Timeline;
+
+  private scoreText: Phaser.GameObjects.Text;
+  private warningText: Phaser.GameObjects.Text;
 
   constructor() {
     super({ key: SceneKeys.Level });
@@ -39,6 +42,37 @@ export default class LevelScene extends Phaser.Scene {
     this.initializeStaticElements(bitfield);
 
     this.cameras.main.zoomTo(0.9,500);
+
+    this.scoreText = TextPopUp.showText({
+      x: AlignTool.getXfromScreenWidth(this, 0.5),
+      y: AlignTool.getYfromScreenHeight(this, 0.6),
+      text: "Score: 0",
+      duration: 0.01,
+      style: {
+        fontSize: 64,
+        fontFamily: FontKeys.TrulyMadly,
+        color: 'Black',
+        strokeThickness: 1
+      },
+      animType: TEXT_ANIM_TYPE.EMBIGGEN,
+      retain: true
+    })?.text as Phaser.GameObjects.Text;
+
+    this.warningText = TextPopUp.showText({
+      x: AlignTool.getXfromScreenWidth(this, 0.5),
+      y: AlignTool.getYfromScreenHeight(this, 0.5),
+      text: "\t\t\t\t\t\t\tWarning: Tower imbalance\nDon't put block too far from middle",
+      duration: 0.01,
+      style: {
+        fontSize: 28,
+        fontFamily: FontKeys.TrulyMadly,
+        color: "Red",
+        strokeThickness: 0.5
+      },
+      animType: TEXT_ANIM_TYPE.EMBIGGEN,
+      retain: true
+    })?.text as Phaser.GameObjects.Text;
+    this.warningText.setVisible(false);
 
     this.matter.world.setBounds(
       AlignTool.getXfromScreenWidth(this, -1),
@@ -179,6 +213,7 @@ export default class LevelScene extends Phaser.Scene {
     }
     const stackedBlock = BlockManager.getStackedBlock();
     const movingBlock = BlockManager.getMovingBlock();
+    this.scoreText.setText("Score: " + BlockManager.getScore().toString());
 
     if (stackedBlock.length > 1) {
       // console.log('update height');
@@ -198,6 +233,14 @@ export default class LevelScene extends Phaser.Scene {
         BlockManager.getMovingBlock().displayHeight * (n - 1),
       500
     );
+    
+    const topmostBlock = BlockManager.getTopmostBlock();
+    this.tweens.add({
+      targets: this.scoreText,
+      x: topmostBlock.x,
+      y: topmostBlock.y - topmostBlock.displayHeight/2 - AlignTool.getYfromScreenHeight(this,0.05),
+      duration: 500
+    });
 
     BlockManager.moveSwingUp();
   }

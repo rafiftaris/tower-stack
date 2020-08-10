@@ -5,15 +5,12 @@ import { BACKGROUND_COLOR } from '../Config/GameConfig';
 import SoundConfig from '../Config/SoundConfig';
 
 import { InputZone } from '../Object/InputZone';
-import { Timer } from '../Object/Timer';
 import { Background } from '../Object/Background';
-
-import { IBackground } from '../Interfaces/interface';
 
 import { TextPopUp } from '../Util/TextPopUp';
 import { ImagePopUp } from '../Util/ImagePopUp';
 
-import { AudioKeys, EventKeys } from '../Enum/enum';
+import { AudioKeys, EventKeys, FontKeys } from '../Enum/enum';
 
 export default class GameUI extends Phaser.Scene {
   // private fpsText: FpsText;
@@ -46,7 +43,7 @@ export default class GameUI extends Phaser.Scene {
     this.events.addListener(
       EventKeys.ResetBackground,
       () => {
-        console.log('reset background');
+        // console.log('reset background');
         this.resetBackground();
       },
       this

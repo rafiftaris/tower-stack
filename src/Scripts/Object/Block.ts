@@ -1,7 +1,6 @@
 import * as Phaser from 'phaser';
-import { TextureKeys } from '../Enum/enum';
+import { TextureKeys, Direction } from '../Enum/enum';
 import AlignTool from '../Util/AlignTool';
-import MathHelper from '../Util/MathHelper';
 import DepthConfig from '../Config/DepthConfig';
 import { IBUildingBlock } from '../Interfaces/interface';
 
@@ -10,7 +9,7 @@ const CONFIG = {
   mass: 0,
   frictionAir: 0.05,
   friction: 0.8,
-  frictionStatic: 0.8
+  frictionStatic: 0.2
 };
 
 export default class BuildingBlock extends Phaser.Physics.Matter.Sprite
@@ -20,11 +19,12 @@ export default class BuildingBlock extends Phaser.Physics.Matter.Sprite
     0.1
   );
   public readonly jointLength = AlignTool.getYfromScreenHeight(this.scene, 0.3);
-  public readonly scalePercentage = 0.22;
+  public readonly scalePercentage = 0.2;
 
   private degree: number;
   private textureFrame: number;
-  private tween: Phaser.Tweens.Tween;
+  private swingTween: Phaser.Tweens.Tween;
+  private swingDirection: Direction;
   public hasStacked: boolean;
 
   constructor(scene: Phaser.Scene, bitfield: number) {
@@ -49,6 +49,7 @@ export default class BuildingBlock extends Phaser.Physics.Matter.Sprite
     this.setDepth(DepthConfig.block);
     this.setBounce(0);
     AlignTool.scaleToScreenWidth(this.scene, this, this.scalePercentage);
+    this.displayWidth *= 1.5;
 
     // const body = <MatterJS.BodyType>this.body
     // this.setOrigin(0.5,1);
@@ -97,7 +98,7 @@ export default class BuildingBlock extends Phaser.Physics.Matter.Sprite
    * @param pivot pivot block
    */
   private setAimBlockPosition(degree: number, pivot: BuildingBlock): void {
-    const radian = MathHelper.degreeToRadian(degree + 90);
+    const radian = Phaser.Math.DegToRad(degree + 90);
     const deltaX = Math.cos(radian) * this.jointLength;
     const deltaY = Math.sin(radian) * this.jointLength;
 
@@ -113,6 +114,9 @@ export default class BuildingBlock extends Phaser.Physics.Matter.Sprite
    */
   updateDegree(newDegree: number, pivot: BuildingBlock): void {
     this.degree = newDegree;
+    if(this.degree > 80){
+      this.degree = 80;
+    }
     this.setAimBlockPosition(this.degree, pivot);
   }
 
@@ -150,7 +154,7 @@ export default class BuildingBlock extends Phaser.Physics.Matter.Sprite
     bitfield: number,
     texture: number
   ): void {
-    console.log('block fall');
+    // console.log('block fall');
     this.resetSettings();
     this.setPosition(position.x, position.y);
     this.setVelocityY(AlignTool.getYfromScreenHeight(this.scene, 0.04));
@@ -188,7 +192,7 @@ export default class BuildingBlock extends Phaser.Physics.Matter.Sprite
    * @returns: position of moving block
    */
   hide(): Phaser.Math.Vector2 {
-    // this.tween.pause();
+    this.swingTween?.pause();
     this.setVisible(false);
     const position = new Phaser.Math.Vector2(this.x, this.y);
     return position;
@@ -204,6 +208,46 @@ export default class BuildingBlock extends Phaser.Physics.Matter.Sprite
   }
 
   /**
+   * Remove swing tween of stacked block
+   */
+  removeSwingTween(): void{
+    this.swingTween?.remove();
+    this.swingTween = null;  
+  }
+
+  /**
+   * Create swing effect of tower
+   * @param direction: swing direction
+   * @returns direction of swing
+   */
+  createSwingTween(direction: Direction): Direction{
+    if(this.swingTween){
+      if(this.swingDirection === Direction.Left){
+        direction = Direction.Right;
+      } else {
+        direction = Direction.Left;
+      }
+    }
+
+    let sign = 1;
+    if(direction === Direction.Left){
+      sign = -1;
+    }
+
+    this.removeSwingTween();
+    this.swingTween = this.scene.tweens.add({
+      targets: this,
+      x: this.x + this.displayWidth/7.5*sign,
+      duration: 2000,
+      yoyo: true,
+      repeat: -1
+    });
+
+    this.swingDirection = direction;
+    return this.swingDirection;
+  }
+
+  /**
    * Get texture frame index of block.
    */
   getTextureFrame(): number {
@@ -213,8 +257,8 @@ export default class BuildingBlock extends Phaser.Physics.Matter.Sprite
   /**
    * Get tween of moving block.
    */
-  getTween(): Phaser.Tweens.Tween {
-    return this.tween;
+  getSwingTween(): Phaser.Tweens.Tween {
+    return this.swingTween;
   }
 
   /**

@@ -20,7 +20,7 @@ export default class GameOverPanel extends Phaser.GameObjects.Image
     super(scene, centerX, centerY, TextureKeys.Panel);
     this.scene = scene;
 
-    this.displayText = '\t\t\t\tGAME OVER\nYour score: ';
+    this.displayText = '\t\t\tGAME OVER\nYour score: ';
     this.restartButton = new Button(
       this.scene,
       AlignTool.getXfromScreenWidth(scene, 0.65),
