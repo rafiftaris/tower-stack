@@ -26,6 +26,10 @@ export default class PreloadScene extends Phaser.Scene {
       frameWidth: 1536 / 6,
       frameHeight: 1280 / 5
     });
+    this.load.spritesheet(TextureKeys.Claw, 'spritesheet/claw.png', {
+      frameWidth: 300,
+      frameHeight: 300
+    });
 
     this.load.image(TextureKeys.Title, 'stack-it-up.png');
     this.load.image(TextureKeys.Panel, 'Panel.png');
@@ -37,6 +41,7 @@ export default class PreloadScene extends Phaser.Scene {
     this.load.image(TextureKeys.GrassLeft, 'spritesheet/GrassLeft.png');
     this.load.image(TextureKeys.GrassMid, 'spritesheet/GrassMid.png');
     this.load.image(TextureKeys.GrassRight, 'spritesheet/GrassRight.png');
+    this.load.image(TextureKeys.ClawPole, 'claw-pole.png');
 
     this.load.audio(AudioKeys.Thud, ['sound/thud.mp3', 'sound/thud.ogg']);
     this.load.audio(AudioKeys.Bgm, ['sound/bgm.mp3', 'sound/bgm.ogg']);

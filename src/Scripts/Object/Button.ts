@@ -126,7 +126,7 @@ export default class Button extends Phaser.GameObjects.Image
    * Enable/disable button for input
    * @param value: true to enable button, false otherwise
    */
-  public setEnabled(value: boolean) {
+  public setEnabled(value: boolean): void {
     this.isEnabled = value;
   }
 }

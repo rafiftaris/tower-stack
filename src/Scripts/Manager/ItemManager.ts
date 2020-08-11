@@ -1,5 +1,5 @@
 import * as Phaser from 'phaser';
-import { Direction, ItemTypes, EventKeys } from '../Enum/enum';
+import { Direction, ItemTypes } from '../Enum/enum';
 import Item from '../Object/Item';
 import { Timer } from '../Object/Timer';
 import AlignTool from '../Util/AlignTool';
@@ -54,6 +54,9 @@ class ItemManagerHelper {
     this.currentItem = null;
   }
 
+  /**
+   * Generate random item from pool
+   */
   private generateItem(): void {
     const delayRandomizer = Math.random() + 1;
     this.scene.time.addEvent({
@@ -110,6 +113,9 @@ class ItemManagerHelper {
     });
   }
 
+  /**
+   * Generate looping event to create item generator
+   */
   addGenerateItemEvent(): void {
     if (this.generator) {
       return;
@@ -122,14 +128,25 @@ class ItemManagerHelper {
     });
   }
 
+  /**
+   * Get item group
+   * @returns item group
+   */
   getItemGroup(): Phaser.GameObjects.Group {
     return this.itemGroup;
   }
 
+  /**
+   * Get current item
+   * @returns current item
+   */
   getCurrentItem(): Item {
     return this.currentItem;
   }
 
+  /**
+   * Check item
+   */
   checkItem(): void {
     if (this.currentItem) {
       if (

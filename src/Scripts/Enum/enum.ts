@@ -5,8 +5,8 @@ export enum GameState {
 }
 
 export enum Direction {
-  Right = "right",
-  Left = 'left'
+  Right = 1,
+  Left = -1
 }
 
 export enum ButtonType {
@@ -45,7 +45,9 @@ export enum TextureKeys {
   GrassRight = 'grass-right',
   Blocksheet = 'blocksheet',
   Birdsheet = 'birdsheet',
-  Firework = 'firework'
+  Firework = 'firework',
+  Claw = 'claw',
+  ClawPole = 'claw-pole'
 }
 
 export enum ItemTypes {

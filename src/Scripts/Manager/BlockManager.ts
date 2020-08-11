@@ -1,16 +1,14 @@
 import * as Phaser from 'phaser';
+import { STARTING_DEGREE } from '../Config/GameConfig';
 
 import BuildingBlock from '../Object/Block';
 import Ground from '../Object/Ground';
-import Firework from '../Object/Firework';
 
 import AlignTool from '../Util/AlignTool';
 
 import { GameState, Direction, EventKeys } from '../Enum/enum';
 
 class BlockManagerHelper {
-  private smallPendulumForce: Phaser.Math.Vector2;
-
   private static instance: BlockManagerHelper;
 
   private scene!: Phaser.Scene;
@@ -20,7 +18,7 @@ class BlockManagerHelper {
   private currentFallingBlock: BuildingBlock;
   private pivot: BuildingBlock;
   private pivotTween: Phaser.Tweens.Tween;
-  private pivotTweenDirection: number;
+  private pivotTweenDirection: Direction;
   private joint: MatterJS.ConstraintType;
 
   private bitfield: number;
@@ -48,23 +46,15 @@ class BlockManagerHelper {
       maxSize: 1000
     });
 
+    // Init pivot
     this.pivot = this.blocksGroup.get();
     this.pivot.setPivotBlockSettings();
-    this.pivotTweenDirection = 1;
+    this.pivotTweenDirection = Direction.Right;
 
+    // Swinging aim block and joint
     this.aimBlock = this.blocksGroup.get();
     this.joint = this.aimBlock.setAimBlockSettings(this.pivot);
-    this.aimBlock.updateDegree(30, this.pivot);
-
-    this.smallPendulumForce = new Phaser.Math.Vector2(
-      0,
-      AlignTool.getYfromScreenHeight(
-        this.scene,
-        this.aimBlock.displayWidth / (10**6)
-      )
-    );
-
-    // console.log(this.smallPendulumForce);
+    this.aimBlock.updateDegree(STARTING_DEGREE, this.pivot);
   }
 
   /**
@@ -72,20 +62,17 @@ class BlockManagerHelper {
    * @returns building block
    */
   private getBlockFromGroup(): BuildingBlock {
-    let block: BuildingBlock = this.blocksGroup.get();
+    const block: BuildingBlock = this.blocksGroup.get();
 
     if (block) {
-      this.scene.events.emit(
-        EventKeys.BlockGenerated,
-        block
-      );
-    } 
+      this.scene.events.emit(EventKeys.BlockGenerated, block);
+    }
 
     block.setActive(true);
     block.setVisible(true);
     block.setDefaultSettings(this.bitfield);
 
-    return block;  
+    return block;
   }
 
   /**
@@ -123,7 +110,7 @@ class BlockManagerHelper {
   /**
    * Get topmost block of stack
    */
-  getTopmostBlock(): BuildingBlock{
+  getTopmostBlock(): BuildingBlock {
     return this.stackedBlocks[this.stackedBlocks.length - 1];
   }
 
@@ -142,23 +129,9 @@ class BlockManagerHelper {
     // this.aimBlock.hide();
     this.aimBlock.setStatic(true);
 
-    let penalty = 0;
     this.stackedBlocks.forEach((block) => {
       block.removeSwingTween();
-
-      // const blockBody = <MatterJS.BodyType>block.body;
-      // if (
-      //   Math.abs(blockBody.velocity.x) >= (0.5*AlignTool.getXfromScreenWidth(this.scene,1)/720) || // 720
-      //   Math.abs(blockBody.velocity.y) >= (0.5*AlignTool.getYfromScreenHeight(this.scene,1)/1200)  //1200
-      // ) {
-      //   block.setVisible(false);
-      //   new Firework(this.scene, block.x, block.y, block.scalePercentage).show(
-      //     false
-      //   );
-      //   // penalty++;
-      // }
     });
-    this.score -= penalty;
 
     this.blocksGroup.clear();
   }
@@ -177,24 +150,6 @@ class BlockManagerHelper {
       this.aimBlock.getTextureFrame()
     );
     this.currentFallingBlock = blockBody;
-  }
-
-  /**
-   * Apply force to swing when it reaches highest point
-   */
-  swingAimBlock(): void {
-    // console.log(Math.abs(this.aimBlock.x-this.pivot.x));
-    // console.log(this.aimBlock.body.velocity.x);
-    const aimBlockBody = <MatterJS.BodyType>this.aimBlock.body;
-
-    if (Math.abs(aimBlockBody.velocity.x) < 0.1) {
-      const sign = new Phaser.Math.Vector2(
-        Math.sign(this.aimBlock.x - this.pivot.x),
-        1
-      );
-
-      this.aimBlock.applyForce(this.smallPendulumForce.multiply(sign));
-    }
   }
 
   /**
@@ -221,20 +176,17 @@ class BlockManagerHelper {
       duration: 500
     });
 
-    if(this.aimBlock.getDegree() == 80) {
-      this.scene.time.delayedCall(
-        500,
-        () => {
-          this.pivotTween = this.scene.tweens.add({
-            targets: this.pivot,
-            y: this.pivot.y - 30 * this.pivotTweenDirection,
-            duration: 750,
-            yoyo: true,
-            repeat: -1
-          });
-          this.pivotTweenDirection *= -1;
-        },
-      )
+    if (this.aimBlock.getDegree() == 80) {
+      this.scene.time.delayedCall(500, () => {
+        this.pivotTween = this.scene.tweens.add({
+          targets: this.pivot,
+          y: this.pivot.y - 30 * this.pivotTweenDirection,
+          duration: 750,
+          yoyo: true,
+          repeat: -1
+        });
+        this.pivotTweenDirection *= -1;
+      });
     }
   }
 
@@ -244,7 +196,7 @@ class BlockManagerHelper {
    * Reduce horizontal speed when its rolling too fast.
    * @returns game state
    */
-  checkStackedBlocks(gameState: GameState, ground: Ground): GameState {
+  checkStackedBlocks(gameState: GameState): GameState {
     if (gameState === GameState.GameOver) {
       return;
     }
@@ -261,7 +213,7 @@ class BlockManagerHelper {
         this.maxHeight = boundBlock.y;
       }
 
-      if(Math.abs(topmostBlock.angle) > 5 || Math.abs(boundBlock.angle) > 5){
+      if (Math.abs(topmostBlock.angle) > 5 || Math.abs(boundBlock.angle) > 5) {
         topmostBlock.removeSwingTween();
         boundBlock.removeSwingTween();
       }
@@ -285,10 +237,7 @@ class BlockManagerHelper {
   showAimBlock(): void {
     this.aimBlock.show();
     this.aimBlock.changeTexture();
-    this.aimBlock.updateDegree(
-      this.aimBlock.getDegree() + 2, 
-      this.pivot
-    );
+    this.aimBlock.updateDegree(this.aimBlock.getDegree() + 2, this.pivot);
   }
 
   /**
@@ -297,39 +246,33 @@ class BlockManagerHelper {
    */
   addBlockToStack(): void {
     this.currentFallingBlock.hasStacked = true;
-    
+
     this.stackedBlocks.push(this.currentFallingBlock);
-    let currentSlope =  this.stackedBlocks[this.stackedBlocks.length - 1].x - this.stackedBlocks[0].x;
+    const currentSlope =
+      this.stackedBlocks[this.stackedBlocks.length - 1].x -
+      this.stackedBlocks[0].x;
 
-    // console.log("distance",{
-    //   "current slope": currentSlope,
-    //   "limit": this.pivot.displayWidth*0.7
-    // });
-    if(this.stackedBlocks.length > 7){
-
+    if (this.stackedBlocks.length > 7) {
       let index = 4;
       let direction: Direction = this.slopeDirection;
-      let divider = 7.5 - (0.2*Math.floor(this.stackedBlocks.length / 10));
+      const divider = 7.5 - 0.2 * Math.floor(this.stackedBlocks.length / 10);
 
-      while(index > 0){
-        let block = this.stackedBlocks[this.stackedBlocks.length - index];
-        direction = block.createSwingTween(direction,divider);
+      while (index > 0) {
+        const block = this.stackedBlocks[this.stackedBlocks.length - index];
+        direction = block.createSwingTween(direction, divider);
         index--;
       }
       this.stackedBlocks[this.stackedBlocks.length - 4].removeSwingTween();
-
     } else {
-
-      if(this.slopeDistance < 0 && currentSlope < this.slopeDistance){
+      if (this.slopeDistance < 0 && currentSlope < this.slopeDistance) {
         this.slopeDistance = currentSlope;
         this.slopeDirection = Direction.Left;
       }
-  
-      if(this.slopeDistance > 0 && currentSlope > this.slopeDistance){
+
+      if (this.slopeDistance > 0 && currentSlope > this.slopeDistance) {
         this.slopeDistance = currentSlope;
         this.slopeDirection = Direction.Right;
       }
-  
     }
 
     // Set boxes below to static so the game becomes easier
@@ -338,18 +281,13 @@ class BlockManagerHelper {
     }
 
     // Check if boxes stacked too far from root
-    if(Math.abs(currentSlope) > this.pivot.displayWidth*0.7){
+    if (Math.abs(currentSlope) > this.pivot.displayWidth * 0.7) {
       let index = 1;
-      while(index <= 3){
-        let block = this.stackedBlocks[this.stackedBlocks.length - index];
-
-        let sign = 1;
-        if(this.slopeDirection === Direction.Left){
-          sign = -1;
-        }
+      while (index <= 3) {
+        const block = this.stackedBlocks[this.stackedBlocks.length - index];
 
         block.removeSwingTween();
-        block.setRotation(Phaser.Math.DegToRad(30*sign));
+        block.setRotation(Phaser.Math.DegToRad(30 * this.slopeDirection));
         index++;
       }
     }
@@ -367,47 +305,29 @@ class BlockManagerHelper {
     this.stackedBlocks.forEach((block, idx) => {
       const index = this.stackedBlocks.length - idx;
 
-      // if(index > 8){
-      //   return;
-      // }
       if (index == 7) {
-        // console.log('deactivate', idx);
         block.deactivate();
         this.stackedBlocks.shift();
-      }
-      // else if(index == 7){
-      //   console.log('set static');
-      //   block.setStatic(true);
-      // }
-      else {
+      } else {
         this.scene.time.addEvent({
           delay: 100,
           callback: () => {
-            // block.setStatic(true);
             this.scene.tweens.add({
               targets: block,
               y: block.y + block.displayHeight,
               duration: 500
             });
-            // block.setStatic(false);
           },
           callbackScope: this
         });
-
-        // block.setPosition(
-        //   block.x,
-        //   block.y + block.displayHeight
-        // );
       }
-      // console.log(idx,{
-      //   "position": block.body.position,
-      //   "active": block.active,
-      //   "visible": block.visible,
-      //   "hasStacked": block.hasStacked,
-      //   "static": block.isStatic()
-      // });
     });
 
+    /*
+    CODE DOESN'T WORK 
+    Push all stacks down so the block can be recycled.
+    Some blocks disappear randomly
+    */
     // let blockSequence = 1;
     // while(blockSequence <= 5){
     //   let index = this.stackedBlocks.length - blockSequence;

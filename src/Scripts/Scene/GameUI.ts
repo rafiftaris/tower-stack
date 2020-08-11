@@ -10,7 +10,7 @@ import { Background } from '../Object/Background';
 import { TextPopUp } from '../Util/TextPopUp';
 import { ImagePopUp } from '../Util/ImagePopUp';
 
-import { AudioKeys, EventKeys, FontKeys } from '../Enum/enum';
+import { AudioKeys, EventKeys } from '../Enum/enum';
 
 export default class GameUI extends Phaser.Scene {
   // private fpsText: FpsText;

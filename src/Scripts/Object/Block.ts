@@ -6,7 +6,7 @@ import { IBUildingBlock } from '../Interfaces/interface';
 
 const CONFIG = {
   label: 'Block',
-  mass: 0,
+  mass: 1,
   frictionAir: 0.05,
   friction: 0.8,
   frictionStatic: 0.2
@@ -14,7 +14,7 @@ const CONFIG = {
 
 export default class BuildingBlock extends Phaser.Physics.Matter.Sprite
   implements IBUildingBlock {
-  public readonly movingBlockStartingHeight = AlignTool.getYfromScreenHeight(
+  public readonly aimBlockStartingHeight = AlignTool.getYfromScreenHeight(
     this.scene,
     0.1
   );
@@ -80,10 +80,11 @@ export default class BuildingBlock extends Phaser.Physics.Matter.Sprite
     // );
     // this.applyForce(forceVector);
     this.setFriction(0, 0, 0);
-    this.setVelocity(0,0);
+    this.setVelocity(0, 0);
 
     const pivotBody = <MatterJS.BodyType>pivot.body;
     const aimBlockBody = <MatterJS.BodyType>this.body;
+    this.setMass(10 ** -5);
 
     // Give spring-like physics that swings forever
     return this.scene.matter.add.joint(
@@ -116,7 +117,7 @@ export default class BuildingBlock extends Phaser.Physics.Matter.Sprite
    */
   updateDegree(newDegree: number, pivot: BuildingBlock): void {
     this.degree = newDegree;
-    if(this.degree > 80){
+    if (this.degree > 80) {
       this.degree = 80;
     }
     this.setAimBlockPosition(this.degree, pivot);
@@ -139,7 +140,7 @@ export default class BuildingBlock extends Phaser.Physics.Matter.Sprite
     this.setVisible(false);
     this.setPosition(
       AlignTool.getXfromScreenWidth(this.scene, 0.5),
-      this.movingBlockStartingHeight -
+      this.aimBlockStartingHeight -
         AlignTool.getYfromScreenHeight(this.scene, 0.2)
     );
     this.setIgnoreGravity(true);
@@ -156,7 +157,6 @@ export default class BuildingBlock extends Phaser.Physics.Matter.Sprite
     bitfield: number,
     texture: number
   ): void {
-    // console.log('block fall');
     this.resetSettings();
     this.setPosition(position.x, position.y);
     this.setVelocityY(AlignTool.getYfromScreenHeight(this.scene, 0.04));
@@ -212,9 +212,9 @@ export default class BuildingBlock extends Phaser.Physics.Matter.Sprite
   /**
    * Remove swing tween of stacked block
    */
-  removeSwingTween(): void{
+  removeSwingTween(): void {
     this.swingTween?.remove();
-    this.swingTween = null;  
+    this.swingTween = null;
   }
 
   /**
@@ -222,24 +222,19 @@ export default class BuildingBlock extends Phaser.Physics.Matter.Sprite
    * @param direction: swing direction
    * @returns direction of swing
    */
-  createSwingTween(direction: Direction, divider: number): Direction{
-    if(this.swingTween){
-      if(this.swingDirection === Direction.Left){
+  createSwingTween(direction: Direction, divider: number): Direction {
+    if (this.swingTween) {
+      if (this.swingDirection === Direction.Left) {
         direction = Direction.Right;
       } else {
         direction = Direction.Left;
       }
     }
 
-    let sign = 1;
-    if(direction === Direction.Left){
-      sign = -1;
-    }
-
     this.removeSwingTween();
     this.swingTween = this.scene.tweens.add({
       targets: this,
-      x: this.x + this.displayWidth/divider*sign,
+      x: this.x + (this.displayWidth / divider) * direction,
       duration: 2000,
       yoyo: true,
       repeat: -1

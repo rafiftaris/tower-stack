@@ -26,7 +26,7 @@ export default class FpsText {
     this.text.setDepth(10);
   }
 
-  update() {
+  update(): void {
     this.text.setText(`fps: ${Math.floor(this.scene.game.loop.actualFps)}`);
   }
 }

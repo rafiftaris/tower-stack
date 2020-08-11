@@ -21,24 +21,18 @@ export default class Ground implements IGround {
 
     for (let i = 0; i < this.LENGTH; i++) {
       let textureKey: string;
-      let margin: number;
 
       if (i == 0) {
         textureKey = TextureKeys.GrassLeft;
-        margin = 0;
       } else if (i == this.LENGTH - 1) {
         textureKey = TextureKeys.GrassRight;
-        margin = this.groundTiles[i - 1].displayWidth;
       } else {
         textureKey = TextureKeys.GrassMid;
-        margin = this.groundTiles[i - 1].displayWidth;
       }
 
-      let groundTile = scene.matter.add.sprite(0, 0, textureKey);
+      const groundTile = scene.matter.add.sprite(0, 0, textureKey);
       this.setDefaultSettings(i, groundTile, bitfield);
-      
     }
-    
   }
 
   /**
@@ -77,7 +71,7 @@ export default class Ground implements IGround {
   /**
    * Move ground down after stack added
    */
-  moveDown(block: BuildingBlock): void{
+  moveDown(block: BuildingBlock): void {
     this.scene.time.addEvent({
       delay: 100,
       callback: () => {
@@ -89,7 +83,6 @@ export default class Ground implements IGround {
       },
       callbackScope: this
     });
-    
 
     // this.groundTiles.forEach(ground => {
     //   ground.setPosition(

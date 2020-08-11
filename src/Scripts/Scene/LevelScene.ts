@@ -4,10 +4,9 @@ import { SceneKeys } from '../Config/SceneKeys';
 import { InputZone } from '../Object/InputZone';
 import Ground from '../Object/Ground';
 import BuildingBlock from '../Object/Block';
-import Item from '../Object/Item';
+import Claw from '../Object/Claw';
 
 import { BlockManager } from '../Manager/BlockManager';
-import { ItemManager } from '../Manager/ItemManager';
 
 import { ImagePopUp } from '../Util/ImagePopUp';
 import { TextPopUp, ANIMATION_TYPE as TEXT_ANIM_TYPE } from '../Util/TextPopUp';
@@ -24,6 +23,7 @@ export default class LevelScene extends Phaser.Scene {
   private gameState: GameState;
 
   private timeline: Phaser.Tweens.Timeline;
+  private claw: Claw;
 
   private scoreText: Phaser.GameObjects.Text;
   private warningText: Phaser.GameObjects.Text;
@@ -41,12 +41,14 @@ export default class LevelScene extends Phaser.Scene {
 
     this.initializeStaticElements(bitfield);
 
-    this.cameras.main.zoomTo(0.9,500);
+    this.cameras.main.zoomTo(0.9, 500);
+
+    // this.claw = new Claw(this);
 
     this.scoreText = TextPopUp.showText({
       x: AlignTool.getXfromScreenWidth(this, 0.5),
       y: AlignTool.getYfromScreenHeight(this, 0.6),
-      text: "Score: 0",
+      text: 'Score: 0',
       duration: 0.01,
       style: {
         fontSize: 64,
@@ -61,12 +63,13 @@ export default class LevelScene extends Phaser.Scene {
     this.warningText = TextPopUp.showText({
       x: AlignTool.getXfromScreenWidth(this, 0.5),
       y: AlignTool.getYfromScreenHeight(this, 0.5),
-      text: "\t\t\t\t\t\t\tWarning: Tower imbalance\nDon't put block too far from middle",
+      text:
+        "\t\t\t\t\t\t\tWarning: Tower imbalance\nDon't put block too far from middle",
       duration: 0.01,
       style: {
         fontSize: 28,
         fontFamily: FontKeys.TrulyMadly,
-        color: "Red",
+        color: 'Red',
         strokeThickness: 0.5
       },
       animType: TEXT_ANIM_TYPE.EMBIGGEN,
@@ -86,7 +89,6 @@ export default class LevelScene extends Phaser.Scene {
     this.events.addListener(
       EventKeys.BlockGenerated,
       (block: BuildingBlock) => {
-        console.log('listend')
         this.setCollision(block);
       },
       this
@@ -94,15 +96,12 @@ export default class LevelScene extends Phaser.Scene {
   }
 
   update(): void {
-    BlockManager.swingAimBlock();
-
     if (this.gameState === GameState.GameOverSetup) {
       this.setGameOver();
       this.gameState = GameState.GameOver;
     } else if (this.gameState === GameState.GameOn) {
       this.gameState = BlockManager.checkStackedBlocks(
-        this.gameState,
-        this.ground
+        this.gameState
       );
       // ItemManager.checkItem();
     }
@@ -118,11 +117,9 @@ export default class LevelScene extends Phaser.Scene {
     InputZone.setState(GameState.GameOn);
   }
 
-  setCollision(block: BuildingBlock): void{
+  setCollision(block: BuildingBlock): void {
     // Set collision
-    block.setOnCollideWith(
-      this.ground.getGroundArray(), 
-      () => {
+    block.setOnCollideWith(this.ground.getGroundArray(), () => {
       if (!block.hasStacked) {
         this.sound.play(AudioKeys.Thud, { volume: SoundConfig.thudVolume });
 
@@ -132,9 +129,7 @@ export default class LevelScene extends Phaser.Scene {
       }
     });
 
-    block.setOnCollideWith(
-      BlockManager.getStackedBlock(),
-      () => {
+    block.setOnCollideWith(BlockManager.getStackedBlock(), () => {
       if (!block.active || !block.visible) {
         return;
       }
@@ -177,7 +172,6 @@ export default class LevelScene extends Phaser.Scene {
       return;
     }
 
-    const peak = this.cameras.main.y;
     const cameraX = this.cameras.main.x;
 
     this.timeline.add({
@@ -201,19 +195,6 @@ export default class LevelScene extends Phaser.Scene {
     });
 
     this.timeline.play();
-
-    // this.time.delayedCall(
-    //   10+20*10+10+50,
-    //   () => {
-    //     this.cameras.main.pan(
-    //       AlignTool.getXfromScreenWidth(this, 0.5),
-    //       AlignTool.getYfromScreenHeight(this, 0.5),
-    //       750
-    //     );
-    //   }
-    // );
-
-    // console.log('shake some ass');
   }
 
   moveUp(): void {
@@ -221,16 +202,9 @@ export default class LevelScene extends Phaser.Scene {
       return;
     }
     const stackedBlock = BlockManager.getStackedBlock();
-    const movingBlock = BlockManager.getMovingBlock();
-    this.scoreText.setText("Score: " + BlockManager.getScore().toString());
+    this.scoreText.setText('Score: ' + BlockManager.getScore().toString());
 
     if (stackedBlock.length > 1) {
-      // console.log('update height');
-
-      // if(stackedBlock.length < 6){
-      //   this.ground.moveDown(movingBlock);
-      // }
-      // BlockManager.updateHeight();
       this.updateHeight(stackedBlock.length);
     }
   }
@@ -242,12 +216,15 @@ export default class LevelScene extends Phaser.Scene {
         BlockManager.getMovingBlock().displayHeight * (n - 1),
       500
     );
-    
+
     const topmostBlock = BlockManager.getTopmostBlock();
     this.tweens.add({
       targets: this.scoreText,
       x: topmostBlock.x,
-      y: topmostBlock.y - topmostBlock.displayHeight/2 - AlignTool.getYfromScreenHeight(this,0.05),
+      y:
+        topmostBlock.y -
+        topmostBlock.displayHeight / 2 -
+        AlignTool.getYfromScreenHeight(this, 0.05),
       duration: 500
     });
 

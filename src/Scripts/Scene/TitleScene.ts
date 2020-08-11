@@ -6,16 +6,13 @@ import { TextPopUp, ANIMATION_TYPE as TEXT_ANIM_TYPE } from '../Util/TextPopUp';
 import AlignTool from '../Util/AlignTool';
 
 import DepthConfig from '../Config/DepthConfig';
-import SoundConfig from '../Config/SoundConfig';
 import { SceneKeys } from '../Config/SceneKeys';
 
-import { Timer } from '../Object/Timer';
 import Button from '../Object/Button';
 
 import {
   ButtonType,
   FontKeys,
-  AudioKeys,
   LocalStorageKeys
 } from '../Enum/enum';
 import { IGround, IButton } from '../Interfaces/interface';
