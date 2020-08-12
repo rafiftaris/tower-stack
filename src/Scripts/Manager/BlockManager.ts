@@ -7,6 +7,7 @@ import Ground from '../Object/Ground';
 import AlignTool from '../Util/AlignTool';
 
 import { GameState, Direction, EventKeys } from '../Enum/enum';
+import e = require('express');
 
 class BlockManagerHelper {
   private static instance: BlockManagerHelper;
@@ -38,6 +39,7 @@ class BlockManagerHelper {
     this.bitfield = bitfield;
     this.maxHeight = AlignTool.getYfromScreenHeight(scene, 0.95);
     this.score = 0;
+    this.slopeDistance = 0;
 
     // Init blocks group
     this.blocksGroup = scene.add.group({
@@ -221,6 +223,11 @@ class BlockManagerHelper {
 
     // Check if topmost block position is not on the top of the stack
     const TOL = 10;
+    // console.log(this.stackedBlocks.length,{
+    //   'maxheight': this.maxHeight,
+    //   'topmost': topmostBlock.y,
+    //   'diff': this.maxHeight - topmostBlock.y, 
+    //   'limit': topmostBlock.displayHeight / 2 - TOL})
     if (
       this.maxHeight - topmostBlock.y <=
       topmostBlock.displayHeight / 2 - TOL
@@ -255,10 +262,10 @@ class BlockManagerHelper {
     if (this.stackedBlocks.length > 7) {
       let index = 4;
       let direction: Direction = this.slopeDirection;
-      const divider = 7.5 - 0.2 * Math.floor(this.stackedBlocks.length / 10);
+      let divider = 7.5 - 0.2 * Math.floor(this.stackedBlocks.length / 10);
 
       while (index > 0) {
-        const block = this.stackedBlocks[this.stackedBlocks.length - index];
+        let block = this.stackedBlocks[this.stackedBlocks.length - index];
         direction = block.createSwingTween(direction, divider);
         index--;
       }
@@ -267,11 +274,16 @@ class BlockManagerHelper {
       if (this.slopeDistance < 0 && currentSlope < this.slopeDistance) {
         this.slopeDistance = currentSlope;
         this.slopeDirection = Direction.Left;
-      }
-
-      if (this.slopeDistance > 0 && currentSlope > this.slopeDistance) {
+      } else if (this.slopeDistance > 0 && currentSlope > this.slopeDistance) {
         this.slopeDistance = currentSlope;
         this.slopeDirection = Direction.Right;
+      } else if (this.slopeDistance == 0) {
+        this.slopeDistance = currentSlope;
+        if(this.slopeDistance > 0){
+          this.slopeDirection = Direction.Right;
+        } else {
+          this.slopeDirection = Direction.Left;
+        }
       }
     }
 

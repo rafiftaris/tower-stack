@@ -41,7 +41,7 @@ export default class LevelScene extends Phaser.Scene {
 
     this.initializeStaticElements(bitfield);
 
-    this.cameras.main.zoomTo(0.9, 500);
+    this.cameras.main.zoomTo(0.4, 500);
 
     // this.claw = new Claw(this);
 
